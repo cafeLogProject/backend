@@ -14,6 +14,41 @@ spring:
         show_sql: true
         format_sql: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:your_google_client_id} # Google 클라이언트 ID
+            client-secret: ${GOOGLE_CLIENT_SECRET:your_google_client_secret} # Google 클라이언트 비밀
+            scope:
+              - profile
+              - email
+
+          facebook:
+            client-id: ${FACEBOOK_CLIENT_ID:your_facebook_client_id} # Facebook 클라이언트 ID
+            client-secret: ${FACEBOOK_CLIENT_SECRET:your_facebook_client_secret} # Facebook 클라이언트 비밀
+            scope:
+              - public_profile
+              - email
+
+          naver:
+            client-id: ${NAVER_CLIENT_ID:your_naver_client_id} # Naver 클라이언트 ID
+            client-secret: ${NAVER_CLIENT_SECRET:your_naver_client_secret} # Naver 클라이언트 비밀
+            scope:
+              - name
+              - email
+            client-name: Naver
+            authorization-grant-type: authorization_code
+            redirect-uri: ${NAVER_REDIRECT_URI:http://localhost:8080/login/oauth2/code/naver} # 리디렉션 URI
+
+        provider:
+          naver:
+            authorization-uri: ${NAVER_AUTHORIZATION_URI} # Naver 인증 URI
+            token-uri: ${NAVER_TOKEN_URI} # Naver 토큰 URI
+            user-info-uri: ${NAVER_USER_INFO_URI} # Naver 사용자 정보 URI
+            user-name-attribute: response # 사용자 정보를 포함하는 키
+
 logging.level:
   org.hibernate.SQL: debug
   org.hibernate.orm.jdbc.bind: trace

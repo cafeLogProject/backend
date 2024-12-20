@@ -3,11 +3,9 @@ package cafeLogProject.cafeLog.entity;
 import cafeLogProject.cafeLog.entity.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static cafeLogProject.cafeLog.entity.enums.UserRole.ROLE_USER;
 
@@ -41,5 +39,14 @@ public class User extends BaseEntity {
     private String provider;
 
     @Enumerated(EnumType.STRING)
-    private UserRole role = ROLE_USER;
+    private UserRole role;
+
+    @Builder
+    public User(String username, String email, String provider) {
+        this.username = username;
+        this.email = email;
+        this.provider = provider;
+        this.role = ROLE_USER;
+    }
+
 }
