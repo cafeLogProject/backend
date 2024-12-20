@@ -1,11 +1,15 @@
 package cafeLogProject.cafeLog.entity;
 
+import cafeLogProject.cafeLog.entity.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static cafeLogProject.cafeLog.entity.UserRole.ROLE_USER;
+import java.util.ArrayList;
+import java.util.List;
+
+import static cafeLogProject.cafeLog.entity.enums.UserRole.ROLE_USER;
 
 /***
  * username = 사용자 이름, oauth2로만 로그인하기 때문에 중복을 피하기 위해 provider + "_" + providerID 와 같은 형식. -> ex) google_h3os13dh12712f9ajf
@@ -26,12 +30,16 @@ public class User extends BaseEntity {
 
     private String username;
 
+    private String profileImage;
+
+    private String nickname;
+
+    private String introduce;
+
     private String email;
 
     private String provider;
 
     @Enumerated(EnumType.STRING)
     private UserRole role = ROLE_USER;
-
-
 }

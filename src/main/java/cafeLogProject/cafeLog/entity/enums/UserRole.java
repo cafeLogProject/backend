@@ -1,4 +1,4 @@
-package cafeLogProject.cafeLog.entity;
+package cafeLogProject.cafeLog.entity.enums;
 
 public enum UserRole {
 

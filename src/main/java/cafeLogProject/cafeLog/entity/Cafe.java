@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "cafe_db")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Cafe{
+public class Cafe {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +20,9 @@ public class Cafe{
 
     private String location;
 
-    private int contentCount;
+    private float avgStar = 0;
+
+    private boolean isClosedDown = false;
+
 
 }
-
