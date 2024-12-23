@@ -1,6 +1,6 @@
 package cafeLogProject.cafeLog.oauth2;
 
-import lombok.RequiredArgsConstructor;
+import cafeLogProject.cafeLog.jwt.JWTUserDTO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -8,11 +8,22 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-@RequiredArgsConstructor
 public class CustomOAuth2User implements OAuth2User {
 
-    private final OAuth2UserDTO user;
-    private final Map<String, Object> attributes;
+
+    private final OAuth2UserDTO oAuth2UserDTO;
+    private Map<String, Object> attributes;
+    private final JWTUserDTO jwtUserDTO;
+    public CustomOAuth2User(OAuth2UserDTO user, Map<String, Object> attributes) {
+        this.oAuth2UserDTO = user;
+        this.attributes = attributes;
+        this.jwtUserDTO = null;
+    }
+
+    public CustomOAuth2User(JWTUserDTO jwtUserDTO) {
+        this.jwtUserDTO = jwtUserDTO;
+        this.oAuth2UserDTO = null;
+    }
 
     @Override
     public Map<String, Object> getAttributes() {
@@ -21,11 +32,11 @@ public class CustomOAuth2User implements OAuth2User {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(() -> String.valueOf(user.getRole()));
+        return Collections.singletonList(() -> String.valueOf(oAuth2UserDTO.getRole()));
     }
 
     @Override
     public String getName() {
-        return user.getUsername();
+        return oAuth2UserDTO.getUsername();
     }
 }

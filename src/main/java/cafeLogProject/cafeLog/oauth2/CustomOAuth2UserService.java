@@ -1,6 +1,7 @@
 package cafeLogProject.cafeLog.oauth2;
 
 import cafeLogProject.cafeLog.entity.User;
+import cafeLogProject.cafeLog.entity.enums.UserRole;
 import cafeLogProject.cafeLog.exception.ErrorCode;
 import cafeLogProject.cafeLog.exception.UserCreateException;
 import cafeLogProject.cafeLog.oauth2.provider.FacebookUser;
@@ -66,7 +67,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String email = oAuth2UserResponse.getEmail();
         String provider = oAuth2UserResponse.getProvider();
 
-        return new OAuth2UserDTO(username, email, provider);
+        return new OAuth2UserDTO(username, email, provider, UserRole.ROLE_USER);
     }
 
     /**
