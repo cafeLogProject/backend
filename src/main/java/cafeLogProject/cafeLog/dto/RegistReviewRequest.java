@@ -11,13 +11,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-//		  "visitDate" : "2024.12.19",
-//                  "rating" : 4,
-//                  "images" : ["사진링크", "사진링크"],
-//                  "cafeName" : "카페명",
-//                  "cafeId" : "카페Id",
-//                  "content" : "내용",
-//                  "tags" : [1, 3, 101]
 
 @Data
 @NoArgsConstructor
@@ -56,34 +49,3 @@ public class RegistReviewRequest {
     }
 }
 
-
-
-
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "review_id")
-//    private Long id;
-//
-//    private String content;
-//
-//    private int rating;
-//
-//    private LocalDate visitDate;
-//
-//    @ElementCollection
-//    @CollectionTable(name = "review_images", joinColumns = @JoinColumn(name = "review_id"))
-//    @Column(name = "image_url")
-//    private List<String> images = new ArrayList<>();
-//
-//    @ElementCollection(targetClass = Tag.class)
-//    @CollectionTable(name = "review_tags", joinColumns = @JoinColumn(name = "review_id"))
-//    @Column(name = "tag")
-//    private List<Integer> tags = new ArrayList<>();
-//
-//    @ManyToOne
-//    @JoinColumn(name = "cafe_id", nullable = false)
-//    private Cafe cafe;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
