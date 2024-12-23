@@ -2,9 +2,8 @@ package cafeLogProject.cafeLog.entity;
 
 import cafeLogProject.cafeLog.entity.enums.UserRole;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,8 @@ import static cafeLogProject.cafeLog.entity.enums.UserRole.ROLE_USER;
 @Entity
 @Getter
 @Table(name = "user_tb")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SuperBuilder
 public class User extends BaseEntity {
 
     @Id
@@ -42,4 +42,5 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private UserRole role = ROLE_USER;
+
 }

@@ -2,9 +2,8 @@ package cafeLogProject.cafeLog.entity;
 
 import cafeLogProject.cafeLog.entity.enums.Tag;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,7 +12,8 @@ import java.util.List;
 @Entity
 @Getter
 @Table(name = "review_tb")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SuperBuilder
 public class Review extends BaseEntity{
 
     @Id
