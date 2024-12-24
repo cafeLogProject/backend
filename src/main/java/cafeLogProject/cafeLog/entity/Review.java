@@ -2,6 +2,7 @@ package cafeLogProject.cafeLog.entity;
 
 import cafeLogProject.cafeLog.entity.enums.Tag;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -23,8 +24,10 @@ public class Review extends BaseEntity{
 
     private String content;
 
+//    @NotBlank
     private int rating;
 
+//    @NotBlank
     private LocalDate visitDate;
 
     @ElementCollection
@@ -39,10 +42,16 @@ public class Review extends BaseEntity{
     
     @ManyToOne
     @JoinColumn(name = "cafe_id", nullable = false)
+//    @NotBlank
     private Cafe cafe;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public void addImageId(String id) {
+        if (images.contains(id)) return;
+        images.add(id);
+    }
 
 }
