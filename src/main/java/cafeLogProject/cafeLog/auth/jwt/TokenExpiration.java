@@ -1,4 +1,4 @@
-package cafeLogProject.cafeLog.jwt;
+package cafeLogProject.cafeLog.auth.jwt;
 
 public class TokenExpiration {
 

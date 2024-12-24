@@ -1,13 +1,13 @@
-package cafeLogProject.cafeLog.oauth2;
+package cafeLogProject.cafeLog.auth.oauth2;
 
+import cafeLogProject.cafeLog.auth.oauth2.provider.FacebookUser;
+import cafeLogProject.cafeLog.auth.oauth2.provider.NaverUser;
 import cafeLogProject.cafeLog.entity.User;
 import cafeLogProject.cafeLog.entity.enums.UserRole;
 import cafeLogProject.cafeLog.exception.ErrorCode;
-import cafeLogProject.cafeLog.exception.UserCreateException;
-import cafeLogProject.cafeLog.oauth2.provider.FacebookUser;
-import cafeLogProject.cafeLog.oauth2.provider.GoogleUser;
-import cafeLogProject.cafeLog.oauth2.provider.NaverUser;
-import cafeLogProject.cafeLog.oauth2.provider.OAuth2UserResponse;
+import cafeLogProject.cafeLog.auth.exception.UserCreateException;
+import cafeLogProject.cafeLog.auth.oauth2.provider.GoogleUser;
+import cafeLogProject.cafeLog.auth.oauth2.provider.OAuth2UserResponse;
 import cafeLogProject.cafeLog.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

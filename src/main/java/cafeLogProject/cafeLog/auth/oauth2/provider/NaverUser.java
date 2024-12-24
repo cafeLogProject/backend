@@ -1,4 +1,4 @@
-package cafeLogProject.cafeLog.oauth2.provider;
+package cafeLogProject.cafeLog.auth.oauth2.provider;
 
 import lombok.RequiredArgsConstructor;
 

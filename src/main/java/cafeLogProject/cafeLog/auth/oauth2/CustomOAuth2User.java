@@ -1,6 +1,6 @@
-package cafeLogProject.cafeLog.oauth2;
+package cafeLogProject.cafeLog.auth.oauth2;
 
-import cafeLogProject.cafeLog.jwt.JWTUserDTO;
+import cafeLogProject.cafeLog.auth.jwt.JWTUserDTO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 

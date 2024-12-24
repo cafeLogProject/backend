@@ -1,14 +1,18 @@
 package cafeLogProject.cafeLog.config;
 
 
-import cafeLogProject.cafeLog.oauth2.CustomOAuth2UserService;
+import cafeLogProject.cafeLog.auth.jwt.*;
+import cafeLogProject.cafeLog.auth.oauth2.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -16,25 +20,39 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final CustomOAuth2UserService oAuth2UserService;
+    private final JWTLoginHandler loginHandler;
+    private final JWTUtil jwtUtil;
+    private final JWTTokenService tokenService;
+
+    @Bean
+    public JWTFilter jwtFilter() {
+        return new JWTFilter(jwtUtil, tokenService);
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                .csrf((auth) -> auth.disable());
+                .csrf(AbstractHttpConfigurer::disable);
 
         http
-                .formLogin((form) -> form.disable());
+                .formLogin(AbstractHttpConfigurer::disable);
 
         http
-                .oauth2Login((oAuth) -> oAuth
-                        .loginPage("/api/auth/login")
+                .oauth2Login((auth) -> auth
                         .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
-                                .userService(oAuth2UserService)));
+                                .userService(oAuth2UserService))
+                        .successHandler(loginHandler));
+
+        http
+                .addFilterAfter(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http
+                .addFilterBefore(new JWTLogoutFilter(tokenService), LogoutFilter.class);
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/api/auth/login", "reissue").permitAll()
+                        .requestMatchers("/", "/login").permitAll()
                         .requestMatchers("/api/**", "/logout").authenticated()
                         .anyRequest().denyAll());
 

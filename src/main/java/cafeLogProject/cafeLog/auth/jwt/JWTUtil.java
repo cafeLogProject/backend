@@ -1,8 +1,11 @@
-package cafeLogProject.cafeLog.jwt;
+package cafeLogProject.cafeLog.auth.jwt;
 
 import cafeLogProject.cafeLog.entity.enums.UserRole;
+import cafeLogProject.cafeLog.exception.ErrorCode;
+import cafeLogProject.cafeLog.auth.exception.TokenInvalidException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +17,7 @@ import java.util.Date;
 /***
  * JWT 토큰을 생성, 검증하는 유틸 클래스
  */
+@Slf4j
 @Component
 public class JWTUtil {
 
@@ -41,14 +45,14 @@ public class JWTUtil {
      * JWT 토큰에서 사용자 역할 추출
      */
     public UserRole getRole(String token) {
-        return parseClaims(token).get("role", UserRole.class);
+        return UserRole.valueOf(parseClaims(token).get("role", String.class));
     }
 
     /**
      * JWT 토큰에서 access 추출
      */
-    public String getAccessToken(String token) {
-        return parseClaims(token).get("access", String.class);
+    public String getTokenType(String token) {
+        return parseClaims(token).get("tokenType", String.class);
     }
 
     /**
@@ -61,13 +65,13 @@ public class JWTUtil {
     /**
      * JWT 토큰 생성
      */
-    public String createJWT(Long userId, String username, UserRole role, String access, Long expiredMs) {
+    public String createJWT(Long userId, String username, UserRole role, String tokenType, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("userId", userId)
                 .claim("username", username)
-                .claim("role", role)
-                .claim("access", access)
+                .claim("role", role.name())
+                .claim("tokenType", tokenType)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)
@@ -78,6 +82,11 @@ public class JWTUtil {
      * JWT 의 페이로드에서 특정 정보를 추출하는 공통 메소드
      */
     private Claims parseClaims(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
+        try {
+            return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
+        } catch (Exception e) {
+            log.error("Token parsing error: {}", e.getMessage());
+            throw new TokenInvalidException(ErrorCode.TOKEN_INVALID_ERROR);
+        }
     }
 }

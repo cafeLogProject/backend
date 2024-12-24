@@ -1,4 +1,4 @@
-package cafeLogProject.cafeLog.oauth2;
+package cafeLogProject.cafeLog.auth.oauth2;
 
 import cafeLogProject.cafeLog.entity.enums.UserRole;
 import lombok.AllArgsConstructor;
