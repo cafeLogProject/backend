@@ -29,7 +29,7 @@ public class CafeServiceImpl implements CafeService {
     @Override
     public Cafe findCafeById(Long cafeId) {
         Optional<Cafe> cafeOptional = cafeRepository.findById(cafeId);
-        if (cafeOptional.isEmpty()) throw new CafeNotFoundException(ErrorCode.CAFE_NOT_FOUND_ERROR);
+        if (cafeOptional.isEmpty()) throw new CafeNotFoundException(Long.toString(cafeId), ErrorCode.CAFE_NOT_FOUND_ERROR);
         return cafeOptional.get();
     }
 

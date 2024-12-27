@@ -22,31 +22,14 @@ public class ImageController {
     private final ReviewService reviewService;
 
     @PostMapping("/")
-    public ResponseEntity<?> registReviewImage(@RequestPart(value="file") List<ImageDto> imageDtoList,
-                                               @RequestParam(value="reviewId") long reviewId) {
-        // dto에 필수 입력란 @NotNull 설정 필요, @Valid 이용하여 필수 입력란 누락시 자동으로 400 error 리턴하도록 함
-        long userId = 1;
-        Review review = reviewService.findReviewById(reviewId);
-//        if (cafe == null) return 실패응답
-        imageService.addReviewImages(imageDtoList, review);
-        return ResponseEntity.ok().body(null);
-    }
-
-    @PostMapping("/test")
-    public ResponseEntity<?> saveReviewImageTest(@RequestPart(value="file") MultipartFile file){
-//    public ResponseEntity<?> saveImageTest(@RequestPart(value="file") ImageDto imageDto){
-        ImageDto imageDto = ImageDto.builder()
-                .file(file)
-                .build();
-        String imageId = imageService.addImage(imageDto);
+    public ResponseEntity<?> registReviewImage(@RequestPart(value="file") MultipartFile image) {
+        String imageId = imageService.addReviewImage(image);
         return ResponseEntity.ok().body(imageId);
     }
 
-
-    //오류발생
     @GetMapping("/")
-    public ResponseEntity<Resource> getImage(@RequestParam(value="imageIds") String imageId) {
-        Resource resource = imageService.loadImage(imageId).getImageFile();
+    public ResponseEntity<?> loadReviewImage(@RequestParam(value="imageIds") String imageId) {
+        Resource resource = imageService.loadReviewImage(imageId).getImageFile();
         String contentType = "image/jpeg";
 
         return ResponseEntity.ok()

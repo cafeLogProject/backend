@@ -7,7 +7,10 @@ import cafeLogProject.cafeLog.domains.review.domain.Review;
 import cafeLogProject.cafeLog.domains.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,40 +25,58 @@ public class ImageServiceImpl implements ImageService {
     private String profileImageRelativePath = "/src/main/resources/static/imgs/profile/";
 
     private final ReviewRepository reviewRepository;
-    ImageHandler imageHandler = new ImageHandler();
+    private final ImageHandler imageHandler;
 
     @Override
-    public String addImage(ImageDto imageDto) {
-        try {
-            System.out.println(basePath+testImageRelativePath);
-            String imageId = imageHandler.save(basePath+testImageRelativePath, imageDto.getFile());
-            return imageId;
-        } catch (IOException e) {
-            System.out.println("addImage error");
-            return "addImage error";
-        }
+    public String addReviewImage(MultipartFile multipartFile) {
+        String path = basePath+reviewImageRelativePath;
+        String imageId = addImage(path, multipartFile);
+        return imageId;
     }
 
     @Override
-    public void addReviewImages(List<ImageDto> imageDtoList, Review review) {
-        for (ImageDto imageDto : imageDtoList) {
-            String fileId = addImage(imageDto);
-            review.addImageId(fileId);
-        }
-        reviewRepository.save(review);
+    public String addProfileImage(MultipartFile multipartFile) {
+        String path = basePath+profileImageRelativePath;
+        String imageId = addImage(path, multipartFile);
+        return imageId;
     }
 
     @Override
-    public ImageResponseDto loadImage(String imageId) {
-        try {
-            return ImageResponseDto.builder()
-                    .imageFile(imageHandler.load(basePath+testImageRelativePath, imageId))
-                    .imageId(imageId)
-                    .build();
-        } catch (Exception e) {
-            System.out.println("loadeImage error");
-            return null;
-        }
+    public ImageResponseDto loadReviewImage(String imageId) {
+        String path = basePath+reviewImageRelativePath;
+        System.out.println(path);
+        Resource imageFile = loadImage(path, imageId);
+        return ImageResponseDto.builder()
+                .imageFile(imageFile)
+                .imageId(imageId)
+                .build();
     }
+
+
+    @Override
+    public ImageResponseDto loadProfileImage(String imageId) {
+        String path = basePath+profileImageRelativePath;
+        Resource imageFile = loadImage(path, imageId);
+        return ImageResponseDto.builder()
+                .imageFile(imageFile)
+                .imageId(imageId)
+                .build();
+    }
+
+
+
+
+
+    @Transactional
+    private String addImage(String path, MultipartFile multipartFile) {
+        String imageId = imageHandler.save(path, multipartFile);
+        return imageId;
+    }
+
+    private Resource loadImage(String path, String imageId) {
+        Resource imageFile = imageHandler.load(path, imageId);
+        return imageFile;
+    }
+
 
 }

@@ -5,23 +5,20 @@ import cafeLogProject.cafeLog.domains.image.dto.ImageResponseDto;
 import cafeLogProject.cafeLog.domains.review.domain.Review;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 public interface ImageService {
-    // 리뷰 이미지 저장
     @Transactional
-    void addReviewImages(List<ImageDto> imageDtoList, Review review);
+    String addReviewImage(MultipartFile multipartFile);
 
-    
-    // 이미지 파일 저장, UUID 리턴
     @Transactional
-    String addImage(ImageDto imageDto);
-//    @Transactional
-//    boolean addImages(List<ImageDto> imageDtoList) throws IOException
+    String addProfileImage(MultipartFile multipartFile);
 
-    ImageResponseDto loadImage(String ImageId);
+    ImageResponseDto loadReviewImage(String imageId);
+    ImageResponseDto loadProfileImage(String imageId);
 
 }

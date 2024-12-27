@@ -33,10 +33,10 @@ public class ReviewServiceImpl implements ReviewService {
 ////            //! 카페가 존재하지 않는 경우 카페 저장하는 로직 추가
 //
 //        }
-
-        Optional<Cafe> cafeOptional = cafeRepository.findById(registReviewRequest.getCafeId());
+        Long cafeId = registReviewRequest.getCafeId();
+        Optional<Cafe> cafeOptional = cafeRepository.findById(cafeId);
         if (cafeOptional.isEmpty()) {
-            throw new ReviewNotFoundException(ErrorCode.REVIEW_NOT_FOUND_ERROR);
+            throw new ReviewNotFoundException(Long.toString(cafeId), ErrorCode.REVIEW_NOT_FOUND_ERROR);
         };
         Cafe cafe = cafeOptional.get();
         try {
@@ -49,7 +49,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Review findReviewById(long reviewId) {
         Optional<Review> reviewOptional = reviewRepository.findById(reviewId);
-        if (reviewOptional.isEmpty()) throw new ReviewNotFoundException(ErrorCode.REVIEW_NOT_FOUND_ERROR);
+        if (reviewOptional.isEmpty()) throw new ReviewNotFoundException(Long.toString(reviewId), ErrorCode.REVIEW_NOT_FOUND_ERROR);
         return reviewOptional.get();
     }
 
