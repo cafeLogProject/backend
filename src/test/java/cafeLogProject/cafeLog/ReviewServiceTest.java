@@ -1,16 +1,20 @@
 package cafeLogProject.cafeLog;
 
-import cafeLogProject.cafeLog.dto.*;
-import cafeLogProject.cafeLog.entity.Cafe;
-import cafeLogProject.cafeLog.entity.Review;
-import cafeLogProject.cafeLog.entity.User;
-import cafeLogProject.cafeLog.entity.enums.Tag;
-import cafeLogProject.cafeLog.repository.CafeRepository;
-import cafeLogProject.cafeLog.repository.ReviewRepository;
-import cafeLogProject.cafeLog.repository.UserRepository;
-import cafeLogProject.cafeLog.service.Impl.CafeServiceImpl;
-import cafeLogProject.cafeLog.service.Impl.ReviewServiceImpl;
-import cafeLogProject.cafeLog.service.Impl.UserServiceImpl;
+import cafeLogProject.cafeLog.domains.cafe.dto.RegistCafeRequest;
+import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
+import cafeLogProject.cafeLog.domains.review.domain.Review;
+import cafeLogProject.cafeLog.domains.review.dto.TagCategory;
+import cafeLogProject.cafeLog.domains.review.dto.TagDto;
+import cafeLogProject.cafeLog.domains.user.domain.User;
+import cafeLogProject.cafeLog.domains.review.domain.enums.Tag;
+import cafeLogProject.cafeLog.domains.cafe.repository.CafeRepository;
+import cafeLogProject.cafeLog.domains.review.dto.RegistReviewRequest;
+import cafeLogProject.cafeLog.domains.review.repository.ReviewRepository;
+import cafeLogProject.cafeLog.domains.user.repository.UserRepository;
+import cafeLogProject.cafeLog.domains.cafe.service.CafeServiceImpl;
+import cafeLogProject.cafeLog.domains.review.service.ReviewServiceImpl;
+import cafeLogProject.cafeLog.domains.user.dto.RegistUserRequest;
+import cafeLogProject.cafeLog.domains.user.service.UserServiceImpl;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,6 +54,12 @@ public class ReviewServiceTest {
     }
 
     @Test
+    @DisplayName("리뷰 찾지못함 에러 출력")
+    public void reviewNotFoundExceptionTest() {
+        reviewService.findReviewById(1);
+    }
+
+    @Test
     @DisplayName("리뷰 저장")
     public void saveReview() throws Exception {
         //Given
@@ -73,7 +83,7 @@ public class ReviewServiceTest {
                 .visitDate(LocalDate.now())
                 .images(images)
                 .cafeId(cafe1.getId())
-                .cafeName(cafe1.getCafename())
+                .cafeName(cafe1.getCafeName())
                 .tags(tags)
                 .build();
         //When
@@ -85,11 +95,14 @@ public class ReviewServiceTest {
 
     public Cafe saveCafe() throws Exception {
         //Given
+        List<Long> locationXY = new ArrayList<>();
+        locationXY.add((long)13412341);
+        locationXY.add((long)56875687);
         RegistCafeRequest registCafeRequest1 =
                 RegistCafeRequest.builder()
-                        .cafename("카페1")
-                        .location("성동구")
-                        .avgStar(5.0)
+                        .cafeName("카페1")
+                        .locationStr("성동구")
+                        .locationXY(locationXY)
                         .isClosedDown(false)
                         .build();
         //When
@@ -101,7 +114,7 @@ public class ReviewServiceTest {
     public User saveUser() throws Exception {
         //Given
         RegistUserRequest registUserRequest = RegistUserRequest.builder()
-                .username("유저A")
+                .userName("유저A")
                 .profileImage("이미지A")
                 .nickname("닉네임A")
                 .introduce("소개A")

@@ -5,6 +5,7 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+
   jpa:
     hibernate:
       ddl-auto: create
@@ -19,4 +20,5 @@ logging.level:
 
 path:
   base: {본인 컴퓨터 프로젝트 파일 경로 (ex: C:/경로/경로/backend)}
+    
 

@@ -1,9 +1,9 @@
 package cafeLogProject.cafeLog;
 
-import cafeLogProject.cafeLog.dto.RegistUserRequest;
-import cafeLogProject.cafeLog.entity.User;
-import cafeLogProject.cafeLog.repository.UserRepository;
-import cafeLogProject.cafeLog.service.Impl.UserServiceImpl;
+import cafeLogProject.cafeLog.domains.user.dto.RegistUserRequest;
+import cafeLogProject.cafeLog.domains.user.domain.User;
+import cafeLogProject.cafeLog.domains.user.repository.UserRepository;
+import cafeLogProject.cafeLog.domains.user.service.UserServiceImpl;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,7 +38,7 @@ public class UserServiceTest {
     public void saveUser() throws Exception {
        //Given
         RegistUserRequest registUserRequest = RegistUserRequest.builder()
-                .username("유저A")
+                .userName("유저A")
                 .profileImage("이미지A")
                 .nickname("닉네임A")
                 .introduce("소개A")
@@ -50,6 +50,7 @@ public class UserServiceTest {
         //Then
         System.out.println(user.getEmail());
         Assertions.assertEquals(registUserRequest.getEmail(), userService.findUserById(user.getId()).getEmail());
+//        return user;
     }
 
 }

@@ -1,14 +1,17 @@
 package cafeLogProject.cafeLog;
 
-import cafeLogProject.cafeLog.dto.RegistCafeRequest;
-import cafeLogProject.cafeLog.entity.Cafe;
-import cafeLogProject.cafeLog.repository.CafeRepository;
-import cafeLogProject.cafeLog.service.Impl.CafeServiceImpl;
+import cafeLogProject.cafeLog.domains.cafe.dto.RegistCafeRequest;
+import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
+import cafeLogProject.cafeLog.domains.cafe.repository.CafeRepository;
+import cafeLogProject.cafeLog.domains.cafe.service.CafeServiceImpl;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @SpringBootTest
@@ -35,17 +38,20 @@ public class CafeServiceTest {
     @DisplayName("카페 저장")
     public void saveCafe() throws Exception {
         //Given
+        List<Long> locationXY = new ArrayList<>();
+        locationXY.add((long)13412341);
+        locationXY.add((long)56875687);
         RegistCafeRequest registCafeRequest1 =
                 RegistCafeRequest.builder()
-                        .cafename("카페1")
-                        .location("성동구")
-                        .avgStar(5.0)
+                        .cafeName("카페1")
+                        .locationStr("성동구")
+                        .locationXY(locationXY)
                         .isClosedDown(false)
                     .build();
         //When
         Cafe cafe = cafeService.addCafe(registCafeRequest1);
         //Then
         System.out.println(cafe.getId());
-        Assertions.assertEquals(registCafeRequest1.getCafename(), cafeService.findCafeById(cafe.getId()).getCafename());
+        Assertions.assertEquals(registCafeRequest1.getCafeName(), cafeService.findCafeById(cafe.getId()).getCafeName());
     }
 }
