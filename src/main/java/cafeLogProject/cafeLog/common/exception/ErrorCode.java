@@ -17,7 +17,9 @@ public enum ErrorCode {
 
     IMAGE_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "이미지를 찾을 수 없습니다."),
     IMAGE_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류에 의해 이미지를 저장하지 못했습니다."),
-    IMAGE_LOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류에 의해 이미지를 불러오지 못했습니다.");
+    IMAGE_LOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류에 의해 이미지를 불러오지 못했습니다."),
+    IMAGE_INVALID_ERROR(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "이미지 파일 형식이 아닙니다."),
+    IMAGE_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류에 의해 이미지를 삭제하지 못했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

@@ -1,10 +1,9 @@
 package cafeLogProject.cafeLog.domains.image.service;
 
-import cafeLogProject.cafeLog.domains.image.dto.ImageDto;
-import cafeLogProject.cafeLog.domains.image.dto.ImageResponseDto;
-import cafeLogProject.cafeLog.domains.image.infra.ImageHandler;
-import cafeLogProject.cafeLog.domains.review.domain.Review;
-import cafeLogProject.cafeLog.domains.review.repository.ReviewRepository;
+import cafeLogProject.cafeLog.common.exception.ErrorCode;
+import cafeLogProject.cafeLog.domains.image.exception.ImageLoadException;
+import cafeLogProject.cafeLog.domains.image.util.ImageCompressor;
+import cafeLogProject.cafeLog.domains.image.util.ImageHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -12,8 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.List;
+import java.io.File;
 
 @Service
 @RequiredArgsConstructor
@@ -24,59 +22,68 @@ public class ImageServiceImpl implements ImageService {
     private String reviewImageRelativePath = "/src/main/resources/static/imgs/review/";
     private String profileImageRelativePath = "/src/main/resources/static/imgs/profile/";
 
-    private final ReviewRepository reviewRepository;
-    private final ImageHandler imageHandler;
-
     @Override
     public String addReviewImage(MultipartFile multipartFile) {
         String path = basePath+reviewImageRelativePath;
-        String imageId = addImage(path, multipartFile);
+        File imageFile = addImage(path, multipartFile);
+        String imageFileId = ImageHandler.findImageIdByFile(imageFile);
+        File compressedFile = ImageCompressor.convertToWebpWithLossless(path, imageFileId, imageFile);
+        String imageId = ImageHandler.findImageIdByFile(compressedFile);
         return imageId;
     }
 
     @Override
     public String addProfileImage(MultipartFile multipartFile) {
         String path = basePath+profileImageRelativePath;
-        String imageId = addImage(path, multipartFile);
+        File imageFile = addImage(path, multipartFile);
+        String imageFileId = ImageHandler.findImageIdByFile(imageFile);
+        File compressedFile = ImageCompressor.convertToWebpWithLossless(path, imageFileId, imageFile);
+        String imageId = ImageHandler.findImageIdByFile(compressedFile);
         return imageId;
     }
 
     @Override
-    public ImageResponseDto loadReviewImage(String imageId) {
+    public Resource loadReviewImage(String imageId) {
         String path = basePath+reviewImageRelativePath;
-        System.out.println(path);
         Resource imageFile = loadImage(path, imageId);
-        return ImageResponseDto.builder()
-                .imageFile(imageFile)
-                .imageId(imageId)
-                .build();
+        return imageFile;
     }
 
 
     @Override
-    public ImageResponseDto loadProfileImage(String imageId) {
+    public Resource loadProfileImage(String imageId) {
         String path = basePath+profileImageRelativePath;
         Resource imageFile = loadImage(path, imageId);
-        return ImageResponseDto.builder()
-                .imageFile(imageFile)
-                .imageId(imageId)
-                .build();
+        return imageFile;
     }
 
+    @Override
+    public void deleteReviewImage(String imageId) {
+        String path = basePath+reviewImageRelativePath;
+        ImageHandler.delete(path, imageId);
+    }
 
-
-
+    @Override
+    public void deleteProfileImage(String imageId) {
+        String path = basePath+profileImageRelativePath;
+        ImageHandler.delete(path, imageId);
+    }
 
     @Transactional
-    private String addImage(String path, MultipartFile multipartFile) {
-        String imageId = imageHandler.save(path, multipartFile);
-        return imageId;
+    private File addImage(String path, MultipartFile file) {
+        ImageHandler.isImageFile(file);
+
+        return ImageHandler.save(path, file);
     }
 
     private Resource loadImage(String path, String imageId) {
-        Resource imageFile = imageHandler.load(path, imageId);
+        Resource imageFile = ImageHandler.load(path, imageId);
         return imageFile;
     }
+
+
+
+
 
 
 }

@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorResponse> MethodArgumentNotValidException(MethodArgumentNotValidException e) {
         String message = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
-        if (message.equals(null)) {
+        if (message.equals("")) {
             message = "필수 입력 항목이 누락되었습니다.";
         }
         log.error(message);

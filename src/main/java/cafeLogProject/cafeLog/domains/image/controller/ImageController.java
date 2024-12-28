@@ -7,6 +7,7 @@ import cafeLogProject.cafeLog.domains.image.service.ImageService;
 import cafeLogProject.cafeLog.domains.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ImageController {
     private final ImageService imageService;
-    private final ReviewService reviewService;
 
     @PostMapping("/")
     public ResponseEntity<?> registReviewImage(@RequestPart(value="file") MultipartFile image) {
@@ -27,13 +27,19 @@ public class ImageController {
         return ResponseEntity.ok().body(imageId);
     }
 
-    @GetMapping("/")
-    public ResponseEntity<?> loadReviewImage(@RequestParam(value="imageIds") String imageId) {
-        Resource resource = imageService.loadReviewImage(imageId).getImageFile();
+    @GetMapping("/{imageId}")
+    public ResponseEntity<?> loadReviewImage(@PathVariable(value="imageId") String imageId) {
+        Resource resource = imageService.loadReviewImage(imageId);
         String contentType = "image/jpeg";
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
                 .body(resource);
+    }
+
+    @DeleteMapping("/{imageId}")
+    public ResponseEntity<?> deleteReviewImage(@PathVariable(value="imageId") String imageId) {
+        imageService.deleteReviewImage(imageId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

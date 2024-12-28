@@ -2,10 +2,14 @@ spring:
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/cafedb
     username: root
-    password: ${DB_PASSWORD}
+    password: 1234
+#    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-
-
+  #이미지 용량 제한 설정
+  servlet:
+    multipart:
+      max-file-size: 4MB
+      max-request-size: 4MB
   jpa:
     hibernate:
       ddl-auto: create
@@ -17,8 +21,11 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
   org.hibernate.orm.jdbc.bind: trace
+  
+
 
 path:
-  base: {본인 컴퓨터 프로젝트 파일 경로 (ex: C:/경로/경로/backend)}
+  base: C:/spring_study/backend
+#  base: {본인 컴퓨터 프로젝트 파일 경로 (ex: C:/경로/경로/backend)}
 
 
