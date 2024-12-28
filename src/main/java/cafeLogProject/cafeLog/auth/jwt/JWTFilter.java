@@ -1,13 +1,13 @@
 package cafeLogProject.cafeLog.auth.jwt;
 
 import cafeLogProject.cafeLog.auth.exception.TokenExpiredException;
-import cafeLogProject.cafeLog.auth.exception.TokenInvalidException;
+import cafeLogProject.cafeLog.auth.exception.TokenNotFoundException;
 import cafeLogProject.cafeLog.auth.exception.TokenNullException;
+import cafeLogProject.cafeLog.auth.jwt.token.JWTTokenService;
 import cafeLogProject.cafeLog.auth.oauth2.CustomOAuth2User;
-import io.jsonwebtoken.ExpiredJwtException;
+import cafeLogProject.cafeLog.exception.UnexpectedServerException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +18,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import static cafeLogProject.cafeLog.auth.common.CookieUtil.createCookie;
+import static cafeLogProject.cafeLog.auth.common.CookieUtil.extractToken;
 import static cafeLogProject.cafeLog.exception.ErrorCode.*;
 
 @Slf4j
@@ -27,50 +29,37 @@ public class JWTFilter extends OncePerRequestFilter {
     private final JWTUtil jwtUtil;
     private final JWTTokenService tokenService;
 
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-
-        String path = request.getRequestURI();
-
         // 로그인 페이지 요청은 JWT 검증을 건너뛰도록 변경
-        if (path.equals("/login")) {
+        if (request.getRequestURI().equals("/api/auth/login") || request.getRequestURI().equals("/login")) {
             chain.doFilter(request, response);
             return;
         }
 
-        String accessToken = extractAccessToken(request, "access");
-        String refreshToken = extractAccessToken(request, "refresh");
+        String accessToken = extractToken(request, "access");
+        String refreshToken = extractToken(request, "refresh");
 
-        validateRefreshToken(refreshToken, response);
+        validateRefreshToken(refreshToken);
 
         checkNullOrEmpty(accessToken);
 
-        JWTUserDTO userDTO = validateAndExtractUserInfo(accessToken, refreshToken, response);
+        JWTUserDTO userDTO = extractUserInfo(accessToken, refreshToken, response);
 
         authenticateUser(userDTO);
 
         chain.doFilter(request, response);
     }
 
-    /**
-     * 쿠키에서 AccessToken 추출
-     */
-    private String extractAccessToken(HttpServletRequest request, String tokenType) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(tokenType)){
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null;
-    }
 
-    private void validateRefreshToken(String refreshToken, HttpServletResponse response) throws IOException {
+    /**
+     * RefreshToken 이 유효한지 확인
+     */
+    private void validateRefreshToken(String refreshToken) {
+
         if (refreshToken == null || jwtUtil.isExpired(refreshToken)) {
             log.warn("Refresh token is expired");
-            response.sendRedirect("/login"); // 로그인 페이지로 리다이렉트
             throw new TokenExpiredException(TOKEN_EXPIRED_ERROR); // 예외를 던져서 흐름을 중단
         }
     }
@@ -79,6 +68,7 @@ public class JWTFilter extends OncePerRequestFilter {
      *  AccessToken 이 null 이거나 값이 비어있는지 확인
      */
     private void checkNullOrEmpty(String accessToken) {
+
         if (accessToken == null || accessToken.isEmpty()) {
             log.debug("token null");
             throw new TokenNullException(TOKEN_NULL_ERROR);
@@ -86,38 +76,54 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     /**
-     * AccessToken 이 만료되었는지, 유효한지 확인
-     * 만료되었다면 AccessToken, RefreshToken 재발급
-     * 
-     * 위에 검증과 재발급 후에 JWTUserDTO 반환
+     *  JWTUserDTO 반환  --> access 토큰이 만료되었다면 재발급 후 반환
      */
-    private JWTUserDTO validateAndExtractUserInfo(String accessToken, String refreshToken, HttpServletResponse response) {
-        try {
-            jwtUtil.isExpired(accessToken);
-            String tokenType = jwtUtil.getTokenType(accessToken);
+    private JWTUserDTO extractUserInfo(String accessToken, String refreshToken, HttpServletResponse response) {
 
-            if (!"access".equals(tokenType)) {
-                log.warn("Invalid access token type");
-                throw new TokenInvalidException(TOKEN_INVALID_ERROR);
-            }
+        try {
+            validateAccessToken(accessToken);
 
             return tokenService.extractUserInfoFromToken(accessToken);
+        } catch (TokenExpiredException e) {
 
-        } catch (ExpiredJwtException e) {
-            log.warn("Token expired, attempting to reissue");
-
-            JWTUserDTO userInfo = tokenService.extractUserInfoFromToken(refreshToken);
-
-            String newAccessToken = tokenService.reissue(refreshToken);
-            String newRefreshToken = tokenService.createNewRefresh(userInfo.getUserId(), userInfo.getUsername(), userInfo.getUserRole());
-
-            response.addCookie(createCookie("access", newAccessToken));
-            response.addCookie(createCookie("refresh", newRefreshToken));
-
-            return userInfo;
+            return reissueToken(refreshToken, response);
         } catch (Exception e) {
-            log.error("Invalid token: {}", e.getMessage());
-            throw new TokenInvalidException(TOKEN_INVALID_ERROR);
+
+            log.error("Unexpected error: {}", e.getMessage());
+            throw new UnexpectedServerException(UNEXPECTED_ERROR);
+        }
+    }
+
+    /**
+     * 토큰 재발급 후에 JWTUserDTO 반환
+     */
+    private JWTUserDTO reissueToken(String refreshToken, HttpServletResponse response) {
+
+        log.debug("Token expired, attempting to reissue");
+
+        String reissuedUsername = tokenService.reissue(refreshToken);
+        String newAccessToken = tokenService.getAccessTokenByUsername(reissuedUsername);
+        String newRefreshToken = tokenService.getRefreshTokenByUsername(reissuedUsername);
+
+        if (newAccessToken == null || newRefreshToken == null) {
+            log.error("Failed to find new token, user: {}", reissuedUsername);
+            throw new TokenNotFoundException(TOKEN_NOT_FOUND_ERROR);
+        }
+
+        response.addCookie(createCookie("access", newAccessToken));
+        response.addCookie(createCookie("refresh", newRefreshToken));
+
+        return tokenService.extractUserInfoFromToken(newAccessToken);
+    }
+
+    /**
+     * access 토큰 검사
+     */
+    private void validateAccessToken(String accessToken) {
+
+        if (accessToken == null || jwtUtil.isExpired(accessToken)) {
+            log.debug("Access token is expired, try reissue ...");
+            throw new TokenExpiredException(TOKEN_EXPIRED_ERROR);
         }
     }
 
@@ -125,21 +131,11 @@ public class JWTFilter extends OncePerRequestFilter {
      * 생성한 UserDTO -> CustomOAuth2User -> 권한 인증 토큰 발급 -> 권한 인증
      */
     private static void authenticateUser(JWTUserDTO userDTO) {
+
         CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDTO);
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(authToken);
-    }
-
-    private Cookie createCookie(String key, String value) {
-
-        Cookie cookie = new Cookie(key, value);
-
-        cookie.setMaxAge(60 * 60 * 24);
-//        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        return cookie;
     }
 }

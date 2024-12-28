@@ -1,20 +1,18 @@
 package cafeLogProject.cafeLog.auth.jwt;
 
-import cafeLogProject.cafeLog.auth.exception.UserNotAuthenticatedException;
+import cafeLogProject.cafeLog.auth.jwt.token.JWTTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static cafeLogProject.cafeLog.exception.ErrorCode.USER_NOT_AUTH_ERROR;
+import static cafeLogProject.cafeLog.auth.common.CookieUtil.*;
+import static cafeLogProject.cafeLog.auth.common.CookieUtil.removeCookie;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,32 +23,20 @@ public class JWTLogoutFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        if (request.getRequestURI().equals("/logout")) {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication == null) {
-                log.warn("Unauthorized logout attempt.");
-                throw new UserNotAuthenticatedException(USER_NOT_AUTH_ERROR);
-            }
 
-            String username = authentication.getName();
+        String requestURI = request.getRequestURI();
+        if (!requestURI.matches("^\\/logout$")) {
 
-            tokenService.logout(username);
-
-            removeCookie(response, "access");
-            removeCookie(response, "refresh");
-
-            log.info("User logout : {}", username);
-            response.setStatus(HttpServletResponse.SC_OK);
+            chain.doFilter(request, response);
             return;
         }
 
-        chain.doFilter(request, response);
-    }
-
-    private void removeCookie(HttpServletResponse response, String cookieName) {
-        Cookie cookie = new Cookie(cookieName, null);
-        cookie.setMaxAge(0); // 쿠키 삭제를 위해 만료 시간을 0으로 설정
-        cookie.setPath("/"); // 쿠키 경로 설정
-        response.addCookie(cookie);
+        String refresh = extractToken(request, "refresh");
+        JWTUserDTO userDTO = tokenService.extractUserInfoFromToken(refresh);
+        tokenService.deleteTokenByUsername(userDTO.getUsername());
+        log.info("{} : 로그아웃", userDTO.getUsername());
+        removeCookie(response, "access");
+        removeCookie(response, "refresh");
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 }

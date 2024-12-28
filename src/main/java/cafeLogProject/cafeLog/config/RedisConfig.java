@@ -1,7 +1,7 @@
 package cafeLogProject.cafeLog.config;
 
-import cafeLogProject.cafeLog.auth.jwt.AccessToken;
-import cafeLogProject.cafeLog.auth.jwt.RefreshToken;
+import cafeLogProject.cafeLog.auth.jwt.token.AccessToken;
+import cafeLogProject.cafeLog.auth.jwt.token.RefreshToken;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -16,15 +16,18 @@ public class RedisConfig {
 
     @Bean
     public RedisTemplate<String, RefreshToken> redisTemplateRefresh(RedisConnectionFactory redisConnectionFactory) {
+
         return createRedisTemplate(redisConnectionFactory, RefreshToken.class);
     }
 
     @Bean
     public RedisTemplate<String, AccessToken> redisTemplateAccess(RedisConnectionFactory redisConnectionFactory) {
+
         return createRedisTemplate(redisConnectionFactory, AccessToken.class);
     }
 
     private <T> RedisTemplate<String, T> createRedisTemplate(RedisConnectionFactory redisConnectionFactory, Class<T> clazz) {
+
         RedisTemplate<String, T> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
 

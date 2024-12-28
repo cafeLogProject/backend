@@ -2,12 +2,14 @@ package cafeLogProject.cafeLog.config;
 
 
 import cafeLogProject.cafeLog.auth.jwt.*;
+import cafeLogProject.cafeLog.auth.jwt.token.JWTTokenService;
 import cafeLogProject.cafeLog.auth.oauth2.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,6 +25,12 @@ public class SecurityConfig {
     private final JWTLoginHandler loginHandler;
     private final JWTUtil jwtUtil;
     private final JWTTokenService tokenService;
+    private final String[] whiteList = {
+            "/api/auth/login",
+            "/api/auth/check"
+    };
+
+
 
     @Bean
     public JWTFilter jwtFilter() {
@@ -52,7 +60,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/login").permitAll()
+                        .requestMatchers("/login").permitAll()
                         .requestMatchers("/api/**", "/logout").authenticated()
                         .anyRequest().denyAll());
 
@@ -61,5 +69,10 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring().requestMatchers(whiteList);
     }
 }

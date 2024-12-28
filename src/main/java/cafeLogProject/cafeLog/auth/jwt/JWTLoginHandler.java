@@ -1,9 +1,9 @@
 package cafeLogProject.cafeLog.auth.jwt;
 
+import cafeLogProject.cafeLog.auth.jwt.token.JWTTokenService;
 import cafeLogProject.cafeLog.entity.enums.UserRole;
 import cafeLogProject.cafeLog.service.UserService;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +13,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+
+import static cafeLogProject.cafeLog.auth.common.CookieUtil.createCookie;
 
 @Component
 @RequiredArgsConstructor
@@ -30,6 +32,7 @@ public class JWTLoginHandler implements AuthenticationSuccessHandler {
         Long userId = userDTO.getUserId();
         UserRole role = userDTO.getUserRole();
 
+        tokenService.deleteTokenByUsername(username);
 
         String access = tokenService.createNewAccess(userId, username, role);
         String refresh = tokenService.createNewRefresh(userId, username, role);
@@ -41,17 +44,9 @@ public class JWTLoginHandler implements AuthenticationSuccessHandler {
         response.setStatus(HttpStatus.OK.value());
         response.addCookie(createCookie("access", access));
         response.addCookie(createCookie("refresh", refresh));
+
+//        response.sendRedirect("/api/auth/check");
     }
 
-    private Cookie createCookie(String key, String value) {
-
-        Cookie cookie = new Cookie(key, value);
-
-        cookie.setMaxAge(60 * 60 * 24);
-//        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        return cookie;
-    }
 
 }

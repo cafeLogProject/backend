@@ -13,16 +13,18 @@ public class CustomOAuth2User implements OAuth2User {
 
     private final OAuth2UserDTO oAuth2UserDTO;
     private Map<String, Object> attributes;
-    private final JWTUserDTO jwtUserDTO;
+
     public CustomOAuth2User(OAuth2UserDTO user, Map<String, Object> attributes) {
         this.oAuth2UserDTO = user;
         this.attributes = attributes;
-        this.jwtUserDTO = null;
     }
 
+
     public CustomOAuth2User(JWTUserDTO jwtUserDTO) {
-        this.jwtUserDTO = jwtUserDTO;
-        this.oAuth2UserDTO = null;
+        OAuth2UserDTO oAuth2UserDTO = new OAuth2UserDTO();
+        oAuth2UserDTO.setUsername(jwtUserDTO.getUsername());
+        oAuth2UserDTO.setRole(jwtUserDTO.getUserRole());
+        this.oAuth2UserDTO = oAuth2UserDTO;
     }
 
     @Override

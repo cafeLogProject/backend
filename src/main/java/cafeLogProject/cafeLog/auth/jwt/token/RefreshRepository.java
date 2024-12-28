@@ -1,4 +1,4 @@
-package cafeLogProject.cafeLog.auth.jwt;
+package cafeLogProject.cafeLog.auth.jwt.token;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -12,19 +12,15 @@ public class RefreshRepository {
         this.redisTemplate = redisTemplate;
     }
 
-    public Boolean existsByUsername(String username) {
-        return redisTemplate.opsForValue().get(username) != null;
-    }
-
     public void deleteByUsername(String username) {
-        redisTemplate.delete(username);
+        redisTemplate.delete("refresh:" + username);
     }
 
     public void save(RefreshToken refreshToken) {
-        redisTemplate.opsForValue().set(refreshToken.getUsername(), refreshToken);
+        redisTemplate.opsForValue().set("refresh:" + refreshToken.getUsername(), refreshToken);
     }
 
     public RefreshToken findByUsername(String username) {
-        return redisTemplate.opsForValue().get(username);
+        return redisTemplate.opsForValue().get("refresh:" + username);
     }
 }

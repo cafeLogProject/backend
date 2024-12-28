@@ -1,13 +1,15 @@
 package cafeLogProject.cafeLog.service;
 
 import cafeLogProject.cafeLog.auth.jwt.JWTUserDTO;
-import cafeLogProject.cafeLog.exception.ErrorCode;
+import cafeLogProject.cafeLog.auth.oauth2.OAuth2UserDTO;
 import cafeLogProject.cafeLog.exception.UserNotFoundException;
 import cafeLogProject.cafeLog.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static cafeLogProject.cafeLog.exception.ErrorCode.*;
 
 @Service
 @Slf4j
@@ -23,7 +25,7 @@ public class UserService {
                 .map(user -> new JWTUserDTO(user.getId(), user.getUsername(), user.getRole()))
                 .orElseThrow(() -> {
                     log.error("User not found: {}", username); // 로깅 추가
-                    return new UserNotFoundException(ErrorCode.USER_NOT_FOUND_ERROR);
+                    return new UserNotFoundException(USER_NOT_FOUND_ERROR);
                 });
     }
 }

@@ -11,6 +11,8 @@ import cafeLogProject.cafeLog.auth.oauth2.provider.OAuth2UserResponse;
 import cafeLogProject.cafeLog.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -33,9 +35,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        OAuth2UserResponse oAuth2UserResponse = null;
-
-        oAuth2UserResponse = getOAuth2UserResponse(registrationId, oAuth2User);
+        OAuth2UserResponse oAuth2UserResponse = getOAuth2UserResponse(registrationId, oAuth2User);;
 
         OAuth2UserDTO user = createOAuth2UserDTO(oAuth2UserResponse);
 
@@ -48,6 +48,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
      * 구글,페이스북,네이버 중에 어떤 소셜로 로그인하는지 체크하고 소셜 별 유저정보를 반환
      */
     private OAuth2UserResponse getOAuth2UserResponse(String registrationId, OAuth2User oAuth2User) {
+
         switch (registrationId) {
             case "google" -> {return new GoogleUser(oAuth2User.getAttributes());}
             case "facebook" -> {return new FacebookUser(oAuth2User.getAttributes());}
@@ -63,6 +64,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
      * 소셜에서 받은 유저 정보로 OAuth2UserDTO 생성
      */
     private OAuth2UserDTO createOAuth2UserDTO(OAuth2UserResponse oAuth2UserResponse) {
+
         String username = oAuth2UserResponse.getProvider() + "_" + oAuth2UserResponse.getProviderId();
         String email = oAuth2UserResponse.getEmail();
         String provider = oAuth2UserResponse.getProvider();
@@ -74,6 +76,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
      * 소셜 로그인 하려는 user 가 userDB에 없을 때 -> 새로 생성 || 에러 발생
      */
     private void registerOrLogin(OAuth2UserDTO user) {
+
         User existingUser = userRepository.findByUsername(user.getUsername())
                 .orElseGet(() -> {
                     try {
@@ -91,6 +94,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     }
                 });
 
-        log.info("기존 사용자 로그인, username={}", existingUser.getUsername());
+        log.info("사용자 로그인, username={}", existingUser.getUsername());
     }
 }
