@@ -1,5 +1,6 @@
-package cafeLogProject.cafeLog.domains.user.service;
+package cafeLogProject.cafeLog.api.service.Impl;
 
+import cafeLogProject.cafeLog.api.service.UserService;
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import cafeLogProject.cafeLog.domains.user.dto.RegistUserRequest;

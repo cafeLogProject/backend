@@ -1,4 +1,4 @@
-package cafeLogProject.cafeLog.domains.image.service;
+package cafeLogProject.cafeLog.api.service;
 
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;

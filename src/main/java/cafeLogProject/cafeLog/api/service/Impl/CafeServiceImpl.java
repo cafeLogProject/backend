@@ -1,5 +1,6 @@
-package cafeLogProject.cafeLog.domains.cafe.service;
+package cafeLogProject.cafeLog.api.service.Impl;
 
+import cafeLogProject.cafeLog.api.service.CafeService;
 import cafeLogProject.cafeLog.domains.cafe.dto.RegistCafeRequest;
 import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
 import cafeLogProject.cafeLog.domains.cafe.exception.CafeNotFoundException;

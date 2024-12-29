@@ -1,10 +1,7 @@
-package cafeLogProject.cafeLog.domains.image.controller;
+package cafeLogProject.cafeLog.api.controller;
 
 
-import cafeLogProject.cafeLog.domains.image.dto.ImageDto;
-import cafeLogProject.cafeLog.domains.review.domain.Review;
-import cafeLogProject.cafeLog.domains.image.service.ImageService;
-import cafeLogProject.cafeLog.domains.review.service.ReviewService;
+import cafeLogProject.cafeLog.api.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -12,8 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/images")

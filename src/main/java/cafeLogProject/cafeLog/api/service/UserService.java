@@ -1,4 +1,4 @@
-package cafeLogProject.cafeLog.domains.user.service;
+package cafeLogProject.cafeLog.api.service;
 
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import cafeLogProject.cafeLog.domains.user.dto.RegistUserRequest;

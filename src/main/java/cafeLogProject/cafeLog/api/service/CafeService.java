@@ -1,4 +1,4 @@
-package cafeLogProject.cafeLog.domains.cafe.service;
+package cafeLogProject.cafeLog.api.service;
 
 import cafeLogProject.cafeLog.domains.cafe.dto.RegistCafeRequest;
 import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;

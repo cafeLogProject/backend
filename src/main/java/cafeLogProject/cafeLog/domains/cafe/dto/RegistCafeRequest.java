@@ -4,7 +4,6 @@ package cafeLogProject.cafeLog.domains.cafe.dto;
 import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

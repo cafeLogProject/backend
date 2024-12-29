@@ -1,4 +1,4 @@
-package cafeLogProject.cafeLog.domains.user.controller;
+package cafeLogProject.cafeLog.api.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

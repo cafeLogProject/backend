@@ -1,7 +1,7 @@
-package cafeLogProject.cafeLog.domains.review.controller;
+package cafeLogProject.cafeLog.api.controller;
 
 import cafeLogProject.cafeLog.domains.review.dto.RegistReviewRequest;
-import cafeLogProject.cafeLog.domains.review.service.ReviewService;
+import cafeLogProject.cafeLog.api.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

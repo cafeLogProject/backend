@@ -1,7 +1,6 @@
-package cafeLogProject.cafeLog.domains.image.service;
+package cafeLogProject.cafeLog.api.service.Impl;
 
-import cafeLogProject.cafeLog.common.exception.ErrorCode;
-import cafeLogProject.cafeLog.domains.image.exception.ImageLoadException;
+import cafeLogProject.cafeLog.api.service.ImageService;
 import cafeLogProject.cafeLog.domains.image.util.ImageCompressor;
 import cafeLogProject.cafeLog.domains.image.util.ImageHandler;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package cafeLogProject.cafeLog.domains.review.service;
+package cafeLogProject.cafeLog.api.service;
 
 import cafeLogProject.cafeLog.domains.review.domain.Review;
 import cafeLogProject.cafeLog.domains.review.dto.RegistReviewRequest;

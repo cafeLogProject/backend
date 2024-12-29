@@ -51,6 +51,4 @@ public class GlobalExceptionHandler {
                 .status(e.getErrorCode().getHttpStatus())
                 .body(new ApiErrorResponse(e));
     }
-
-
 }

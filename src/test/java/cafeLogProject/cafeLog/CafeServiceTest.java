@@ -3,7 +3,7 @@ package cafeLogProject.cafeLog;
 import cafeLogProject.cafeLog.domains.cafe.dto.RegistCafeRequest;
 import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
 import cafeLogProject.cafeLog.domains.cafe.repository.CafeRepository;
-import cafeLogProject.cafeLog.domains.cafe.service.CafeServiceImpl;
+import cafeLogProject.cafeLog.api.service.Impl.CafeServiceImpl;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +18,6 @@ import java.util.List;
 @TestPropertySource("classpath:application-test.properties")
 @Transactional
 public class CafeServiceTest {
-
     @Autowired
     CafeRepository cafeRepository;
     @Autowired

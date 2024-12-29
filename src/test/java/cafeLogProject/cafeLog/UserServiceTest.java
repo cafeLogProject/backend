@@ -3,7 +3,7 @@ package cafeLogProject.cafeLog;
 import cafeLogProject.cafeLog.domains.user.dto.RegistUserRequest;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import cafeLogProject.cafeLog.domains.user.repository.UserRepository;
-import cafeLogProject.cafeLog.domains.user.service.UserServiceImpl;
+import cafeLogProject.cafeLog.api.service.Impl.UserServiceImpl;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

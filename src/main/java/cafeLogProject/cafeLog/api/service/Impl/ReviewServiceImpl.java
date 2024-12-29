@@ -1,5 +1,6 @@
-package cafeLogProject.cafeLog.domains.review.service;
+package cafeLogProject.cafeLog.api.service.Impl;
 
+import cafeLogProject.cafeLog.api.service.ReviewService;
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.domains.review.domain.Review;
 import cafeLogProject.cafeLog.domains.review.dto.RegistReviewRequest;
