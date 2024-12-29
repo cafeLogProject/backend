@@ -26,7 +26,7 @@ public class User extends BaseEntity {
     @Column(name = "user_id")
     private Long id;
 
-    private String userName;
+    private String username;
 
     private String profileImage;
 

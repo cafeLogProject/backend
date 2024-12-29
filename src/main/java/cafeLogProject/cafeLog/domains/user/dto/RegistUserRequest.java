@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class RegistUserRequest {
-    private String userName;
+    private String username;
 
     private String profileImage;
 
@@ -29,8 +29,8 @@ public class RegistUserRequest {
     private UserRole role = UserRole.ROLE_USER;
 
     @Builder
-    public RegistUserRequest (String userName, String profileImage, String nickname, String introduce, String email, String provider, UserRole role) {
-        this.userName = userName;
+    public RegistUserRequest (String username, String profileImage, String nickname, String introduce, String email, String provider, UserRole role) {
+        this.username = username;
         this.profileImage = profileImage;
         this.nickname = nickname;
         this.introduce = introduce;
@@ -42,7 +42,7 @@ public class RegistUserRequest {
     public User toEntity() {
         LocalDateTime createdAt = LocalDateTime.now();
         return User.builder()
-                .userName(userName)
+                .username(username)
                 .profileImage(profileImage)
                 .nickname(nickname)
                 .introduce(introduce)

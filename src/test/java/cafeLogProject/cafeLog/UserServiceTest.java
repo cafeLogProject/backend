@@ -38,7 +38,7 @@ public class UserServiceTest {
     public void saveUser() throws Exception {
        //Given
         RegistUserRequest registUserRequest = RegistUserRequest.builder()
-                .userName("유저A")
+                .username("유저A")
                 .profileImage("이미지A")
                 .nickname("닉네임A")
                 .introduce("소개A")
