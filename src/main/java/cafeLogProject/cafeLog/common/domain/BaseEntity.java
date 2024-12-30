@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
  * 생성시간과 수정시간을 알려주기 위한 BaseEntity 클래스
  */
 @Getter
-@SuperBuilder
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {

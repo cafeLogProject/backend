@@ -42,7 +42,6 @@ public class RegistReviewRequest {
     }
 
     public Review toEntity(User user, Cafe cafe) {
-        LocalDateTime createdAt = LocalDateTime.now();
         return Review.builder()
                 .content(content)
                 .rating(rating)
@@ -51,7 +50,6 @@ public class RegistReviewRequest {
                 .tags(tags.getAllIds())
                 .cafe(cafe)
                 .user(user)
-                .createdAt(createdAt)
                 .build();
     }
 }

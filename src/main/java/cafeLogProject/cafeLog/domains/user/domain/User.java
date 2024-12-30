@@ -1,12 +1,14 @@
 package cafeLogProject.cafeLog.domains.user.domain;
 
 import cafeLogProject.cafeLog.common.domain.BaseEntity;
-import cafeLogProject.cafeLog.domains.review.domain.enums.UserRole;
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
 
-import static cafeLogProject.cafeLog.domains.review.domain.enums.UserRole.ROLE_USER;
+import static cafeLogProject.cafeLog.domains.user.domain.UserRole.ROLE_USER;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 
 /***
  * username = 사용자 이름, oauth2로만 로그인하기 때문에 중복을 피하기 위해 provider + "_" + providerID 와 같은 형식. -> ex) google_h3os13dh12712f9ajf
@@ -17,8 +19,7 @@ import static cafeLogProject.cafeLog.domains.review.domain.enums.UserRole.ROLE_U
 @Entity
 @Getter
 @Table(name = "user_tb")
-//@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
 
     @Id
@@ -40,5 +41,13 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private UserRole role = ROLE_USER;
+
+    @Builder
+    public User(String username, String email, String provider) {
+        this.username = username;
+        this.email = email;
+        this.provider = provider;
+        this.role = ROLE_USER;
+    }
 
 }

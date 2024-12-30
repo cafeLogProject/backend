@@ -2,7 +2,7 @@ package cafeLogProject.cafeLog.domains.review.domain;
 
 import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
 import cafeLogProject.cafeLog.common.domain.BaseEntity;
-import cafeLogProject.cafeLog.domains.review.domain.enums.Tag;
+import cafeLogProject.cafeLog.domains.review.dto.TagCategory;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,8 +15,7 @@ import java.util.List;
 @Entity
 @Getter
 @Table(name = "review_tb")
-//@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review extends BaseEntity {
 
     @Id
@@ -51,6 +50,17 @@ public class Review extends BaseEntity {
     public void addImageId(String id) {
         if (images.contains(id)) return;
         images.add(id);
+    }
+
+    @Builder
+    public Review(String content, int rating, LocalDate visitDate, List<String> images, List<Integer> tags, Cafe cafe, User user){
+        this.content = content;
+        this.rating = rating;
+        this.visitDate = visitDate;
+        this.images = images;
+        this.tags = tags;
+        this.cafe = cafe;
+        this.user = user;
     }
 
 }

@@ -1,4 +1,4 @@
-package cafeLogProject.cafeLog.domains.review.domain.enums;
+package cafeLogProject.cafeLog.domains.review.domain;
 
 import lombok.Getter;
 
