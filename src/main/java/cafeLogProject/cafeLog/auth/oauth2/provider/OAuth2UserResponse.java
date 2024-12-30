@@ -1,8 +1,0 @@
-package cafeLogProject.cafeLog.auth.oauth2.provider;
-
-public interface OAuth2UserResponse {
-
-    String getProvider();
-    String getProviderId();
-    String getEmail();
-}

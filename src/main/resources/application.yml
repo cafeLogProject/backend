@@ -1,10 +1,15 @@
 spring:
-
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/cafedb
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+  #이미지 용량 제한 설정
+  servlet:
+    multipart:
+      max-file-size: 4MB
+      max-request-size: 4MB
 
   redis:
     host: localhost
@@ -60,3 +65,8 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
   org.hibernate.orm.jdbc.bind: trace
+
+path:
+  base: ${PROJECT_PATH}
+
+
