@@ -58,9 +58,9 @@ public class ReviewServiceTest {
 //        System.out.println("saveCafe()");
 //        User userA = saveUser();
 //        System.out.println("saveUser()");
-//        List<String> images = new ArrayList<>();
-//        images.add("이미지url1");
-//        images.add("이미지url2");
+//        List<String> imageIds = new ArrayList<>();
+//        imageIds.add("이미지url1");
+//        imageIds.add("이미지url2");
 //        List<TagDto> menuTags = new ArrayList<>();
 //        List<TagDto> interiorTags = new ArrayList<>();
 //        menuTags.add(new TagDto(Tag.MENU_SELF_ROASTING.getNum(), Tag.MENU_SELF_ROASTING.getDescription()));
@@ -72,7 +72,7 @@ public class ReviewServiceTest {
 //                .content("내용A")
 //                .rating(4)
 //                .visitDate(LocalDate.now())
-//                .images(images)
+//                .imageIds(imageIds)
 //                .cafeId(cafe1.getId())
 //                .cafeName(cafe1.getCafeName())
 //                .tags(tags)

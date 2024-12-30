@@ -1,6 +1,10 @@
 package cafeLogProject.cafeLog.domains.review.domain;
 
+import cafeLogProject.cafeLog.common.exception.ErrorCode;
+import cafeLogProject.cafeLog.common.exception.UnexpectedServerException;
 import lombok.Getter;
+
+import static cafeLogProject.cafeLog.common.exception.ErrorCode.UNEXPECTED_ERROR;
 
 @Getter
 public enum Tag {
@@ -32,4 +36,14 @@ public enum Tag {
         this.num = num;
         this.description = description;
     }
+
+    public static Tag findByNum(int num) {
+        for (Tag tag : Tag.values()) {
+            if (tag.getNum() == num) {
+                return tag;
+            }
+        }
+        throw new UnexpectedServerException("해당 번호의 태그를 찾을 수 없습니다.", UNEXPECTED_ERROR);
+    }
+
 }

@@ -22,7 +22,10 @@ public enum ErrorCode {
     UNEXPECTED_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
 
     REVIEW_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
+    REVIEW_INVALID_SORT_ERROR(HttpStatus.BAD_REQUEST, "알 수 없는 정렬 방식입니다."),
     REVIEW_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류에 의해 리뷰를 저장하지 못했습니다."),
+    REVIEW_UPDATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류에 의해 리뷰를 저장하지 못했습니다."),
+    REVIEW_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류에 의해 리뷰를 삭제하지 못했습니다."),
 
     CAFE_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "카페를 찾을 수 없습니다."),
     CAFE_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류에 의해 카페를 저장하지 못했습니다."),
