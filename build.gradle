@@ -42,12 +42,39 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'	//유효성 검사 관련
-	implementation "com.sksamuel.scrimage:scrimage-core:4.0.32"		// 이미지 압축 관련 라이브러리
-	implementation "com.sksamuel.scrimage:scrimage-webp:4.0.32"		// 이미지 압축 관련 라이브러리
-	testImplementation 'com.h2database:h2'	//테스트 코드 실행시 h2 사용
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// 이미지 압축 관련 라이브러리
+	implementation "com.sksamuel.scrimage:scrimage-core:4.0.32"
+	implementation "com.sksamuel.scrimage:scrimage-webp:4.0.32"
+
+	// 테스트 코드 실행시 h2 사용
+	testImplementation 'com.h2database:h2'
+
+	// queryDSL 관련 라이브러리
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+//// querydsl QClass 수동 생성
+//def generatedDir = file("build/generated/querydsl")
+//tasks.withType(JavaCompile) {
+//	options.generatedSourceOutputDirectory = generatedDir
+//}
+//sourceSets {
+//	main {
+//		java {
+//			srcDir generatedDir
+//		}
+//	}
+//}
+//clean {
+//	delete generatedDir
+//}

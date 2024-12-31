@@ -19,25 +19,22 @@ public class RegistReviewRequest {
     private String content;
     @NotBlank(message = "별점은 필수 입력 값입니다.")
     @Pattern(regexp="^[0-5]$", message="숫자만 입력할 수 있습니다.")
-    private int rating;
+    private Integer rating;
     @NotBlank(message = "방문날짜는 필수 입력 값입니다.")
     private LocalDate visitDate;
-    private List<String> images = new ArrayList<>();
+    private List<String> imageIds = new ArrayList<>();
     private TagCategory tags;
     @NotBlank(message = "카페ID는 필수 입력 값입니다.")
     private Long cafeId;        //필수
-    @NotBlank(message = "카페명은 필수 입력 값입니다.")
-    private String cafeName;
 
     @Builder
-    public RegistReviewRequest(String content, int rating, LocalDate visitDate, List<String> images, TagCategory tags, Long cafeId, String cafeName) {
+    public RegistReviewRequest(String content, Integer rating, LocalDate visitDate, List<String> imageIds, TagCategory tags, Long cafeId) {
         this.content = content;
         this.rating = rating;
         this.visitDate = visitDate;
-        this.images = images;
+        this.imageIds = imageIds;
         this.tags = tags;
         this.cafeId = cafeId;
-        this.cafeName = cafeName;
     }
 
     public Review toEntity(User user, Cafe cafe) {
@@ -45,8 +42,8 @@ public class RegistReviewRequest {
                 .content(content)
                 .rating(rating)
                 .visitDate(visitDate)
-                .images(images)
-                .tags(tags.getAllIds())
+                .imageIds(imageIds)
+                .tagIds(tags.getAllIds())
                 .cafe(cafe)
                 .user(user)
                 .build();

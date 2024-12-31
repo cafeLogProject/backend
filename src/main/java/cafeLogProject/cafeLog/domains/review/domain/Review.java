@@ -30,35 +30,37 @@ public class Review extends BaseEntity {
     @ElementCollection
     @CollectionTable(name = "review_images", joinColumns = @JoinColumn(name = "review_id"))
     @Column(name = "image_url")
-    private List<String> images = new ArrayList<>();
+    private List<String> imageIds = new ArrayList<>();
 
     @ElementCollection(targetClass = Tag.class)
     @CollectionTable(name = "review_tags", joinColumns = @JoinColumn(name = "review_id"))
     @Column(name = "tag")
-    private List<Integer> tags = new ArrayList<>();
+    private List<Integer> tagIds = new ArrayList<>();
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cafe_id", nullable = false)
     private Cafe cafe;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public void addImageId(String id) {
-        if (images.contains(id)) return;
-        images.add(id);
+    public void addImageId(String ImageId) {
+        if (imageIds.contains(ImageId)) return;
+        imageIds.add(ImageId);
     }
 
     @Builder
-    public Review(String content, int rating, LocalDate visitDate, List<String> images, List<Integer> tags, Cafe cafe, User user){
+    public Review(String content, int rating, LocalDate visitDate, List<String> imageIds, List<Integer> tagIds, Cafe cafe, User user){
         this.content = content;
         this.rating = rating;
         this.visitDate = visitDate;
-        this.images = images;
-        this.tags = tags;
+        this.imageIds = imageIds;
+        this.tagIds = tagIds;
         this.cafe = cafe;
         this.user = user;
     }
+
+
 
 }
