@@ -2,11 +2,9 @@ package cafeLogProject.cafeLog.domains.review.domain;
 
 import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
 import cafeLogProject.cafeLog.common.domain.BaseEntity;
-import cafeLogProject.cafeLog.domains.review.dto.TagCategory;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

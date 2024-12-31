@@ -33,7 +33,8 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         // 로그인 페이지 요청은 JWT 검증을 건너뛰도록 변경
-        if (request.getRequestURI().equals("/api/auth/login") || request.getRequestURI().equals("/login")) {
+        String requestURI = request.getRequestURI();
+        if (requestURI.equals("/api/auth/login") || requestURI.equals("/login") || requestURI.equals("/api/auth/check")) {
             chain.doFilter(request, response);
             return;
         }
@@ -104,6 +105,8 @@ public class JWTFilter extends OncePerRequestFilter {
         String reissuedUsername = tokenService.reissue(refreshToken);
         String newAccessToken = tokenService.getAccessTokenByUsername(reissuedUsername);
         String newRefreshToken = tokenService.getRefreshTokenByUsername(reissuedUsername);
+
+        log.debug("New RefreshToken : {}", newRefreshToken);
 
         if (newAccessToken == null || newRefreshToken == null) {
             log.error("Failed to find new token, user: {}", reissuedUsername);

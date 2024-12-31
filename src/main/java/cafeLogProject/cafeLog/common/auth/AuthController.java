@@ -1,13 +1,14 @@
 package cafeLogProject.cafeLog.common.auth;
 
+import cafeLogProject.cafeLog.common.auth.jwt.JWTUtil;
 import cafeLogProject.cafeLog.common.auth.jwt.token.JWTTokenService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
+import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.extractToken;
 import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.removeCookie;
 
 @Slf4j
@@ -24,6 +26,7 @@ import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.removeCookie;
 public class AuthController {
 
     private final JWTTokenService tokenService;
+    private final JWTUtil jwtUtil;
 
     @GetMapping("/login")
     public ResponseEntity<Map<String, String>> loginPage(HttpServletResponse response) {
@@ -39,19 +42,25 @@ public class AuthController {
         return ResponseEntity.ok(loginLink);
     }
 
-    @GetMapping("/testing")
-    public String testing() {
+    @GetMapping("/success")
+    public String testing(@AuthenticationPrincipal CustomOAuth2User user) {
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        log.info("시큐리티 컨텍스트 홀더 테스트 : {}", username);
-        return username;
+        return "로그인 성공 : " + user.getName();
     }
 
     @GetMapping("/check")
-    public ResponseEntity<ExpiredCheckDTO> expiredCheck(@AuthenticationPrincipal CustomOAuth2User user) {
+    public ResponseEntity<ExpiredCheckDTO> expiredCheck(HttpServletRequest request) {
+        String accessToken = extractToken(request, "access"); // 엑세스 토큰 추출
+        if (accessToken == null || jwtUtil.isExpired(accessToken)) {
+            // 엑세스 토큰이 없거나 만료된 경우
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED)
+                    .body(new ExpiredCheckDTO(true, false)); // 만료 상태 반환
+        }
 
-        return ResponseEntity.ok(tokenService.checkTokenIsExpired(user.getName()));
+        // 유효한 토큰인 경우, 사용자 정보를 가져오기
+        String username = jwtUtil.getUsername(accessToken);
+        ExpiredCheckDTO checkResult = tokenService.checkTokenIsExpired(username);
+        return ResponseEntity.ok(tokenService.checkTokenIsExpired(username));
     }
 
 

@@ -1,10 +1,9 @@
 package cafeLogProject.cafeLog.domains.image.util;
 
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
-import cafeLogProject.cafeLog.domains.image.exception.*;
+import cafeLogProject.cafeLog.common.exception.image.*;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
