@@ -1,7 +1,6 @@
 package cafeLogProject.cafeLog.domains.review.repository;
 
 import cafeLogProject.cafeLog.domains.review.domain.Review;
-import cafeLogProject.cafeLog.domains.review.dto.ShowReviewResponse;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;

@@ -1,7 +1,7 @@
 package cafeLogProject.cafeLog.domains.image.util;
 
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
-import cafeLogProject.cafeLog.domains.image.exception.ImageSaveException;
+import cafeLogProject.cafeLog.common.exception.image.ImageSaveException;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.webp.WebpWriter;
 

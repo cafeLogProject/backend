@@ -1,7 +1,7 @@
 package cafeLogProject.cafeLog.common.auth.jwt;
 
 import cafeLogProject.cafeLog.common.auth.jwt.token.JWTTokenService;
-import cafeLogProject.cafeLog.api.service.UserService;
+import cafeLogProject.cafeLog.api.user.service.UserService;
 import cafeLogProject.cafeLog.domains.user.domain.UserRole;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,7 +45,7 @@ public class JWTLoginHandler implements AuthenticationSuccessHandler {
         response.addCookie(createCookie("access", access));
         response.addCookie(createCookie("refresh", refresh));
 
-//        response.sendRedirect("/api/auth/check");
+        response.sendRedirect("/api/auth/success");
     }
 
 

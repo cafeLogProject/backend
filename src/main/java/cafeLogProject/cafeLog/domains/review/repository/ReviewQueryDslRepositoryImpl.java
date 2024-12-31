@@ -1,8 +1,6 @@
 package cafeLogProject.cafeLog.domains.review.repository;
 
 import cafeLogProject.cafeLog.domains.review.domain.Review;
-import cafeLogProject.cafeLog.domains.review.dto.RegistReviewRequest;
-import cafeLogProject.cafeLog.domains.review.dto.ShowReviewResponse;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 

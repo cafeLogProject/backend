@@ -9,6 +9,5 @@ import java.util.Optional;
 
 public interface CafeRepository extends JpaRepository<Cafe, Long> {
     Optional<Cafe> findById(Long cafeId);
-    Cafe save(Cafe cafe);
     boolean existsByCafeNameAndLocationXY(String cafeName, List<Long> locationXY);
 }
