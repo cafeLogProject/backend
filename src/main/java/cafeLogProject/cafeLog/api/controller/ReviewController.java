@@ -34,7 +34,7 @@ public class ReviewController {
                                              @RequestParam(required = false, defaultValue = "NEW", value="sort") String sortMethod,
                                              @RequestParam(required = false, defaultValue = "10", value="limit") Integer limit,
                                              @RequestParam(required = false, defaultValue = "3000-01-01", value="timestamp") LocalDateTime timestamp){
-        List<ShowReviewResponse> reviews = reviewService.findReviewListByBeforeCreatedAt(sortMethod, limit, timestamp);
+        List<ShowReviewResponse> reviews = reviewService.findReviews(sortMethod, limit, timestamp);
         return ResponseEntity.ok().body(reviews);
     }
 //    @GetMapping("/")

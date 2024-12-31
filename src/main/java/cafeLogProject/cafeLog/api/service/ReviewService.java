@@ -22,6 +22,6 @@ public interface ReviewService {
     @Transactional
     void deleteReview(long reviewId);
     Review findReviewById(long reviewId);
-    List<ShowReviewResponse> findReviewListByBeforeCreatedAt(String sortMethod, Integer pageSize, LocalDateTime timestamp);
+    List<ShowReviewResponse> findReviews(String sortMethod, Integer pageSize, LocalDateTime timestamp);
 
 }

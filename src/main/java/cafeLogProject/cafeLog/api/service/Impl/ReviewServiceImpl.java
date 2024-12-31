@@ -90,32 +90,30 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<ShowReviewResponse> findReviewListByBeforeCreatedAt(String sortMethod, Integer limit, LocalDateTime timestamp) {
+    public List<ShowReviewResponse> findReviews(String sortMethod, Integer limit, LocalDateTime timestamp) {
         try {
-            Page<Review> reviewPaginated;
+            List<Review> reviews;
             if (sortMethod == "NEW") {
-                reviewPaginated = findReviewsByBeforeCreatedAt(limit, timestamp);
+                reviews = findReviewsByBeforeCreatedAt(timestamp);
             } else {
                 throw new ReviewInvalidSortError(ErrorCode.REVIEW_INVALID_SORT_ERROR);
             }
-            List<Review> reviewList = reviewPaginated.getContent();
             List<ShowReviewResponse> showReviewResponses = new ArrayList<>();
-            for (Review review : reviewList) {
+            for (Review review : reviews) {
                 ShowReviewResponse showReviewResponse = new ShowReviewResponse(review);
                 showReviewResponses.add(showReviewResponse);
             }
             return showReviewResponses;
         } catch (Exception e) {
-            throw new UnexpectedServerException("findReviewListByBeforeCreatedAt 에러", ErrorCode.UNEXPECTED_ERROR);
+            throw new UnexpectedServerException("findReviews 에러", ErrorCode.UNEXPECTED_ERROR);
         }
     }
 
-    private Page<Review> findReviewsByBeforeCreatedAt(Integer pageSize, LocalDateTime timestamp) {
+    private List<Review> findReviewsByBeforeCreatedAt(LocalDateTime timestamp) {
         try{
-            Pageable pageable = PageRequest.of(0, pageSize);    //몇번째 페이지, 페이지 당 요소 개수
-            Page<Review> paginated = reviewRepository.findReviewsByBeforeCreatedAt(timestamp, pageable);
-            if (paginated.isEmpty()) throw new ReviewNotFoundException(ErrorCode.REVIEW_NOT_FOUND_ERROR);
-            return paginated;
+            List<Review> reviews = reviewRepository.findReviewsByBeforeCreatedAt(timestamp);
+            if (reviews.isEmpty()) throw new ReviewNotFoundException(ErrorCode.REVIEW_NOT_FOUND_ERROR);
+            return reviews;
         } catch (Exception e) {
             throw new UnexpectedServerException("findReviewsByBeforeCreatedAt 에러", ErrorCode.UNEXPECTED_ERROR);
         }

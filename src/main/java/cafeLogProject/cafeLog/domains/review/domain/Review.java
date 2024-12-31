@@ -39,11 +39,11 @@ public class Review extends BaseEntity {
     @Column(name = "tag")
     private List<Integer> tagIds = new ArrayList<>();
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cafe_id", nullable = false)
     private Cafe cafe;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
