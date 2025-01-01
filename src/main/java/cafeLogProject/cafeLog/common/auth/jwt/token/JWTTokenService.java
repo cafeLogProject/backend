@@ -127,12 +127,8 @@ public class JWTTokenService {
         );
     }
 
-    public ExpiredCheckDTO checkTokenIsExpired(String username) {
+    public ExpiredCheckDTO checkTokenIsExpired(String accessToken, String refreshToken) {
 
-        log.info("토큰서비스 유저네임 테스트 : {}", username);
-        String access = accessRepository.findByUsername(username).getAccess();
-        String refresh = refreshRepository.findByUsername(username).getRefresh();
-
-        return new ExpiredCheckDTO(jwtUtil.isExpired(access), jwtUtil.isExpired(refresh));
+        return new ExpiredCheckDTO(jwtUtil.isExpired(accessToken), jwtUtil.isExpired(refreshToken));
     }
 }

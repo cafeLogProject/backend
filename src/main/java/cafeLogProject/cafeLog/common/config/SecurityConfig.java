@@ -36,9 +36,10 @@ public class SecurityConfig {
     private final JWTLoginHandler loginHandler;
     private final JWTUtil jwtUtil;
     private final JWTTokenService tokenService;
-    private final String[] whiteList = {
+    public static final String[] whiteList = {
             "/api/auth/login",
-            "/api/auth/check"
+            "/api/auth/check",
+            "/login"
     };
 
 
@@ -87,7 +88,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers(whiteList).permitAll()
                         .requestMatchers("/api/**", "/logout").authenticated()
                         .anyRequest().denyAll());
 
@@ -97,10 +98,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().requestMatchers(whiteList);
-    }
-
 }
