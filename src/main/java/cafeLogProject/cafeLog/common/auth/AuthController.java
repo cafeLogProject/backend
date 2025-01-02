@@ -51,16 +51,10 @@ public class AuthController {
     @GetMapping("/check")
     public ResponseEntity<ExpiredCheckDTO> expiredCheck(HttpServletRequest request) {
         String accessToken = extractToken(request, "access"); // 엑세스 토큰 추출
-        if (accessToken == null || jwtUtil.isExpired(accessToken)) {
-            // 엑세스 토큰이 없거나 만료된 경우
-            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED)
-                    .body(new ExpiredCheckDTO(true, false)); // 만료 상태 반환
-        }
+        String refreshToken = extractToken(request, "refresh");
 
-        // 유효한 토큰인 경우, 사용자 정보를 가져오기
-        String username = jwtUtil.getUsername(accessToken);
-        ExpiredCheckDTO checkResult = tokenService.checkTokenIsExpired(username);
-        return ResponseEntity.ok(tokenService.checkTokenIsExpired(username));
+        return ResponseEntity.ok(tokenService.checkTokenIsExpired(accessToken, refreshToken));
+
     }
 
 
