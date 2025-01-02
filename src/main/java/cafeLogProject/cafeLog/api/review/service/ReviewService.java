@@ -37,15 +37,10 @@ public class ReviewService {
     private final ImageService imageService;
     @Transactional
     //카페 저장하는 로직 추가 필요
-    public void addReview(long userId, RegistReviewRequest registReviewRequest) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) throw new UserNotFoundException(ErrorCode.USER_NOT_FOUND_ERROR);
-        User user = userOptional.get();
-
-//        if (cafeRepository.existsByCafeNameAndLocationXY()) {
-////            //! 카페가 존재하지 않는 경우 카페 저장하는 로직 추가
-//
-//        }
+    public void addReview(String username, RegistReviewRequest registReviewRequest) {
+        User user = userRepository.findByUsername(username).orElseThrow(() ->{
+            throw new UserNotFoundException(username, ErrorCode.USER_NOT_FOUND_ERROR);
+        });
         Long cafeId = registReviewRequest.getCafeId();
         Optional<Cafe> cafeOptional = cafeRepository.findById(cafeId);
         if (cafeOptional.isEmpty()) {
