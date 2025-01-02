@@ -4,10 +4,13 @@ import cafeLogProject.cafeLog.api.review.dto.RegistReviewRequest;
 import cafeLogProject.cafeLog.api.review.dto.ShowReviewResponse;
 import cafeLogProject.cafeLog.api.review.dto.UpdateReviewRequest;
 import cafeLogProject.cafeLog.api.review.service.ReviewService;
+import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -48,9 +51,9 @@ public class ReviewController {
 
     // 권한 검사 필요
     @PostMapping("/")
-    public ResponseEntity<?> registReview(@RequestBody @Valid RegistReviewRequest registReviewRequest) {
-        long userId = 1;        //임시값
-        reviewService.addReview(userId, registReviewRequest);
+    public ResponseEntity<?> registReview(@RequestBody @Valid RegistReviewRequest registReviewRequest,
+                                          @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
+        reviewService.addReview(oAuth2User.getName(), registReviewRequest);
         return ResponseEntity.ok().body(null);
     }
 
