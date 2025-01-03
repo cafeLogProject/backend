@@ -8,12 +8,11 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 class CafeLogApplicationTests {
 
-	private cafeLogProject.cafeLog.api.image.service.imageService imageService;
 
-	@Test
-	void contextLoads() {
-		System.out.println("안녕");
-	}
+//	@Test
+//	void contextLoads() {
+//		System.out.println("안녕");
+//	}
 
 }
 

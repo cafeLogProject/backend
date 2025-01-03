@@ -36,7 +36,6 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ImageService imageService;
     @Transactional
-    //카페 저장하는 로직 추가 필요
     public void addReview(String username, RegistReviewRequest registReviewRequest) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->{
             throw new UserNotFoundException(username, ErrorCode.USER_NOT_FOUND_ERROR);

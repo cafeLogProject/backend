@@ -63,18 +63,14 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-//// querydsl QClass 수동 생성
-//def generatedDir = file("build/generated/querydsl")
-//tasks.withType(JavaCompile) {
-//	options.generatedSourceOutputDirectory = generatedDir
-//}
-//sourceSets {
-//	main {
-//		java {
-//			srcDir generatedDir
-//		}
-//	}
-//}
-//clean {
-//	delete generatedDir
-//}
+// querydsl QClass 수동 생성
+def generated = 'src/main/generated'
+tasks.withType(JavaCompile) {
+	options.getGeneratedSourceOutputDirectory().set(file(generated))
+}
+sourceSets {
+	main.java.srcDirs += [ generated ]
+}
+clean {
+	delete file(generated)
+}
