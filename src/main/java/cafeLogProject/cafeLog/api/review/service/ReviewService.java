@@ -36,7 +36,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ImageService imageService;
     @Transactional
-    public void addReviewgit (String username, RegistReviewRequest registReviewRequest) {
+    public void addReview (String username, RegistReviewRequest registReviewRequest) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->{
             throw new UserNotFoundException(username, ErrorCode.USER_NOT_FOUND_ERROR);
         });
