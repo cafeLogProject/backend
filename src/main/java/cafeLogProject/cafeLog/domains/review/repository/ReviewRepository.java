@@ -17,9 +17,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewQue
     Optional<Review> findById(Long reviewId);
 
     // 특정 시간 이전의 데이터 조회
-//    @Query("SELECT r FROM Review r WHERE r.createdAt < :dateTime")
-//    List<Review> findReviewsByBeforeCreatedAt(@Param("dateTime") LocalDateTime localDateTime);
+    List<Review> findReviewsByBeforeCreatedAt(@Param("dateTime") LocalDateTime createdAt);
 
     // 특정 태그가 포함된 데이터 조회
-    //
+    List<Review> findByTagIdsContaining(@Param("tags") List<Integer> tagIds);
 }
