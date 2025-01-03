@@ -17,9 +17,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.createCookie;
 import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.extractToken;
+import static cafeLogProject.cafeLog.common.config.SecurityConfig.whiteList;
 import static cafeLogProject.cafeLog.common.exception.ErrorCode.*;
 
 @Slf4j
@@ -32,9 +34,9 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        // 로그인 페이지 요청은 JWT 검증을 건너뛰도록 변경
-        String requestURI = request.getRequestURI();
-        if (requestURI.equals("/api/auth/login") || requestURI.equals("/login") || requestURI.equals("/api/auth/check")) {
+
+        // 화이트리스트에 있는 경로는 필터를 건너뛰기
+        if (Arrays.asList(whiteList).contains(request.getRequestURI())) {
             chain.doFilter(request, response);
             return;
         }

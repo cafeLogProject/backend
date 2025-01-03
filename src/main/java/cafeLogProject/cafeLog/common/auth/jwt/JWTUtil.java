@@ -59,7 +59,12 @@ public class JWTUtil {
      * JWT 토큰의 만료여부 체크
      */
     public Boolean isExpired(String token) {
-        return parseClaims(token).getExpiration().before(new Date());
+        try {
+            return parseClaims(token).getExpiration().before(new Date());
+        } catch (Exception e) {
+            log.warn("Token is invalid or expired: {}", e.getMessage());
+            return true;
+        }
     }
 
     /**
