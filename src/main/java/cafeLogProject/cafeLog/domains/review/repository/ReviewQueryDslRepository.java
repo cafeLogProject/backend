@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ReviewQueryDslRepository {
+    List<Review> findByTagIdsContainingAndBeforeCreatedAt(List<Integer> tagIds, LocalDateTime createdAt);
     List<Review> findReviewsByBeforeCreatedAt(@Param("dateTime") LocalDateTime createdAt);
     List<Review> findByTagIdsContaining(@Param("tags") List<Integer> tagIds);
-
 }

@@ -1,5 +1,8 @@
 package cafeLogProject.cafeLog.api.review.dto;
 
+import cafeLogProject.cafeLog.common.exception.ErrorCode;
+import cafeLogProject.cafeLog.common.exception.UnexpectedServerException;
+import cafeLogProject.cafeLog.domains.image.domain.ReviewImage;
 import cafeLogProject.cafeLog.domains.review.domain.Review;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
@@ -29,18 +32,18 @@ public class UpdateReviewRequest {
         this.tags = tags;
     }
 
-    public Review toEntity(Review review) {
+    public Review toEntity(Review review, List<ReviewImage> images) {
         this.content = !(this.content).equals("") ? this.content : review.getContent();
         this.rating = this.rating != null ? this.rating : review.getRating();
         this.visitDate = this.visitDate != null ? this.visitDate : review.getVisitDate();
-        this.imageIds = !(this.imageIds).isEmpty() ? this.imageIds : review.getImageIds();
         List<Integer> tagIds = this.tags != null ? this.tags.getAllIds() : review.getTagIds();
 
         return Review.builder()
+                .id(review.getId())
                 .content(content)
                 .rating(rating)
                 .visitDate(visitDate)
-                .imageIds(imageIds)
+                .images(images)
                 .tagIds(tagIds)
                 .cafe(review.getCafe())
                 .user(review.getUser())
