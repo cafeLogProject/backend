@@ -111,10 +111,17 @@ public class ImageService {
     }
 
     public ReviewImage findReviewImageByReviewImageIdStr(String reviewImageIdStr) {
-        UUID imageUuid = UUID.fromString(reviewImageIdStr);
-        Optional<ReviewImage> reviewImageOptional = reviewImageRepository.findById(imageUuid);
-        if (reviewImageOptional.isEmpty()) return null;
-        return reviewImageOptional.get();
+        UUID imageUuid;
+        try {
+            imageUuid = UUID.fromString(reviewImageIdStr);
+        } catch (Exception e) {
+            // uuid 형식이 아닌경우
+            throw new ImageNotFoundException(ErrorCode.IMAGE_NOT_FOUND_ERROR);
+        }
+            Optional<ReviewImage> reviewImageOptional = reviewImageRepository.findById(imageUuid);
+            if (reviewImageOptional.isEmpty()) return null;
+            return reviewImageOptional.get();
+
     }
 
     public List<String> findAllReviewImageId() {

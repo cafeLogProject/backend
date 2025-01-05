@@ -65,7 +65,7 @@ public class ImageHandler {
 
     public static String findImageIdByFile(File file) {
         String fileName = file.getName();
-        if (fileName.equals("")) throw new ImageLoadException(ErrorCode.IMAGE_LOAD_ERROR);
+        if (fileName.equals("")) throw new ImageLoadException(fileName, ErrorCode.IMAGE_LOAD_ERROR);
         return fileName;
     }
 

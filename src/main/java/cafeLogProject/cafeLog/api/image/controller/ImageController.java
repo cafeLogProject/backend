@@ -35,6 +35,7 @@ public class ImageController {
                 .body(resource);
     }
 
+    // 회원 인증 필요
     @DeleteMapping("/review/{imageId}")
     public ResponseEntity<?> deleteReviewImage(@PathVariable(value="imageId") String imageId) {
         imageService.deleteReviewImage(imageId);

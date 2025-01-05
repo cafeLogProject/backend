@@ -2,11 +2,13 @@ package cafeLogProject.cafeLog.api.review.dto;
 
 import cafeLogProject.cafeLog.domains.review.domain.Review;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class ShowReviewResponse {
     private Long reviewId;
     private String content;

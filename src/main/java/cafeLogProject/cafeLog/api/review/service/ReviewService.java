@@ -1,15 +1,13 @@
 package cafeLogProject.cafeLog.api.review.service;
 
 import cafeLogProject.cafeLog.api.image.service.ImageService;
-import cafeLogProject.cafeLog.api.review.dto.ShowReviewResponse;
-import cafeLogProject.cafeLog.api.review.dto.TagCategory;
-import cafeLogProject.cafeLog.api.review.dto.UpdateReviewRequest;
+import cafeLogProject.cafeLog.api.review.dto.*;
+import cafeLogProject.cafeLog.common.auth.exception.UserNotAuthenticatedException;
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.UnexpectedServerException;
 import cafeLogProject.cafeLog.common.exception.cafe.CafeNotFoundException;
 import cafeLogProject.cafeLog.domains.image.domain.ReviewImage;
 import cafeLogProject.cafeLog.domains.review.domain.Review;
-import cafeLogProject.cafeLog.api.review.dto.RegistReviewRequest;
 import cafeLogProject.cafeLog.common.exception.review.ReviewNotFoundException;
 import cafeLogProject.cafeLog.common.exception.review.ReviewSaveException;
 import cafeLogProject.cafeLog.domains.review.exception.ReviewDeleteException;
@@ -22,6 +20,7 @@ import cafeLogProject.cafeLog.domains.user.repository.UserRepository;
 import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
 import cafeLogProject.cafeLog.domains.cafe.repository.CafeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,9 +29,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static cafeLogProject.cafeLog.domains.review.domain.Tag.isTagValid;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class ReviewService {
     private final UserRepository userRepository;
     private final CafeRepository cafeRepository;
@@ -47,6 +49,12 @@ public class ReviewService {
         Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(() -> {
             throw new CafeNotFoundException(Long.toString(cafeId), ErrorCode.CAFE_NOT_FOUND_ERROR);
         });
+
+        // 유효한 태그인지 검사
+        TagCategory tagCategory = registReviewRequest.getTags();
+        tagCategory.isValid();
+
+        // 이미지 관련
         List<String> imageIdsStr = registReviewRequest.getImageIds();
         List<ReviewImage> images = new ArrayList<>();
         for (String imageIdStr : imageIdsStr) {
@@ -54,50 +62,74 @@ public class ReviewService {
             ReviewImage reviewImage = imageService.findReviewImageByReviewImageIdStr(imageIdStr);
             if (reviewImage == null) throw new ReviewNotFoundException(imageIdStr, ErrorCode.IMAGE_NOT_FOUND_ERROR);
         }
+        Review newReview;
         try {
-            Review newReview = reviewRepository.save(registReviewRequest.toEntity(user, cafe, images));
-            // 이미지 엔티티에 리뷰 필드 저장
-            for (String imageIdStr : imageIdsStr) {
-                imageService.addReviewInReviewImage(imageIdStr, newReview.getId());
-            }
+            newReview = reviewRepository.save(registReviewRequest.toEntity(user, cafe, images));
         } catch (Exception e) {
             throw new ReviewSaveException(ErrorCode.REVIEW_SAVE_ERROR);
         }
+        // 이미지 엔티티에 리뷰 필드 저장
+        for (String imageIdStr : imageIdsStr) {
+            imageService.addReviewInReviewImage(imageIdStr, newReview.getId());
+        }
     }
 
-    // 프론트에서 사진 저장/삭제 요청을 보내고 완료 답변을 받은 뒤에 리뷰 저장/삭제/수정 요청을 보내도록 요구하기
-    // 만약 사진 저장/삭제 요청을 보내지 않거나 서버에서 아직 해당 이미지 처리중인데 리뷰 저장/삭제/수정 요청을 보낼 경우 사진 처리가 끝나지 않았다는 에러 답변 보내도록 함.
 
     @Transactional
-    public void updateReview(long reviewId, UpdateReviewRequest updateReviewRequest) {
+    public void updateReview(String username, long reviewId, UpdateReviewRequest updateReviewRequest) {
         Review oldReview = findReviewById(reviewId);
-
-        List<String> imageIdsStr = updateReviewRequest.getImageIds();
-        List<ReviewImage> images = new ArrayList<>();
-        for (String imageIdStr : imageIdsStr) {
-            // 이미지파일 저장되어있는지 확인, 저장되어있지 않은 경우 실패 답변 전송
-            ReviewImage reviewImage = imageService.findReviewImageByReviewImageIdStr(imageIdStr);
-            if (reviewImage == null) throw new ReviewNotFoundException(imageIdStr, ErrorCode.IMAGE_NOT_FOUND_ERROR);
+        // 해당 리뷰가 본인의 리뷰가 맞는지 확인
+        if (!oldReview.getUser().getUsername().equals(username)) {
+            throw new UserNotAuthenticatedException(ErrorCode.USER_NOT_AUTH_ERROR);
         }
 
-        try {
+        // 유효한 태그인지 검사
+        TagCategory tagCategory = updateReviewRequest.getTags();
+        tagCategory.isValid();
+
+        // 이미지 관련
+        List<String> imageIdsStr = updateReviewRequest.getImageIds();
+        if (imageIdsStr == null) {
+            // 이미지 변경사항 없는 경우
+            try {
+                Review updateReview = updateReviewRequest.toEntity(oldReview);
+                reviewRepository.save(updateReview);
+            } catch (Exception e) {
+                throw new ReviewUpdateException(ErrorCode.REVIEW_UPDATE_ERROR);
+            }
+        } else {
+            // 이미지 변경사항 있는 경우
+            List<ReviewImage> images = new ArrayList<>();
+            for (String imageIdStr : imageIdsStr) {
+                // 이미지파일 저장되어있는지 확인, 저장되어있지 않은 경우 실패 답변 전송
+                ReviewImage reviewImage = imageService.findReviewImageByReviewImageIdStr(imageIdStr);
+                if (reviewImage == null) throw new ReviewNotFoundException(imageIdStr, ErrorCode.IMAGE_NOT_FOUND_ERROR);
+                images.add(reviewImage);
+            }
             // 새로 저장한 이미지가 있는 경우 그 이미지 엔티티에 리뷰 필드 저장
             for (String imageIdStr : imageIdsStr) {
                 imageService.addReviewInReviewImage(imageIdStr, oldReview.getId());
             }
-
-            Review updatedReview = updateReviewRequest.toEntity(oldReview, images);
-            reviewRepository.save(updatedReview);
-        } catch (Exception e) {
-            throw new ReviewUpdateException(ErrorCode.REVIEW_UPDATE_ERROR);
+            try {
+                Review updatedReview = updateReviewRequest.toEntity(oldReview, images);
+                reviewRepository.save(updatedReview);
+            } catch (Exception e) {
+                throw new ReviewUpdateException(ErrorCode.REVIEW_UPDATE_ERROR);
+            }
         }
+
     }
 
     @Transactional
-    public void deleteReview(long reviewId) {
+    public void deleteReview(String username, long reviewId) {
+        Review review = findReviewById(reviewId);
+        // 해당 리뷰가 본인의 리뷰가 맞는지 확인
+        if (!review.getUser().getId().equals(username)) {
+            throw new UserNotAuthenticatedException(ErrorCode.USER_NOT_AUTH_ERROR);
+        }
+
         try{
             // 해당 리뷰의 모든 이미지 삭제
-            Review review = findReviewById(reviewId);
             List<ReviewImage> images = review.getImages();
             for (ReviewImage image : images) {
                 imageService.deleteReviewImage(image.getId().toString());
@@ -116,13 +148,13 @@ public class ReviewService {
     }
 
     public List<ShowReviewResponse> findReviews(String sortMethod, Integer limit, LocalDateTime timestamp, TagCategory tags) {
+        List<Review> reviews;
+        if (sortMethod == "NEW") {
+            reviews = findReviewsByBeforeCreatedAt(timestamp);
+        } else {
+            throw new ReviewInvalidSortError(ErrorCode.REVIEW_INVALID_SORT_ERROR);
+        }
         try {
-            List<Review> reviews;
-            if (sortMethod == "NEW") {
-                reviews = findReviewsByBeforeCreatedAt(timestamp);
-            } else {
-                throw new ReviewInvalidSortError(ErrorCode.REVIEW_INVALID_SORT_ERROR);
-            }
             List<ShowReviewResponse> showReviewResponses = new ArrayList<>();
             for (Review review : reviews) {
                 ShowReviewResponse showReviewResponse = new ShowReviewResponse(review);
@@ -132,6 +164,17 @@ public class ReviewService {
         } catch (Exception e) {
             throw new UnexpectedServerException("findReviews 에러", ErrorCode.UNEXPECTED_ERROR);
         }
+    }
+
+    // 테스트용
+    public List<ShowReviewResponse> findAllReviews(){
+        List<Review> reviews = reviewRepository.findAll();
+        List<ShowReviewResponse> showReviewResponses = new ArrayList<>();
+        for (Review review : reviews) {
+            ShowReviewResponse showReviewResponse = new ShowReviewResponse(review);
+            showReviewResponses.add(showReviewResponse);
+        }
+        return showReviewResponses;
     }
 
     private List<Review> findReviewsByBeforeCreatedAt(LocalDateTime timestamp) {

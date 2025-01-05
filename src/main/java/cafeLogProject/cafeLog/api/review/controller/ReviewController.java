@@ -52,28 +52,31 @@ public class ReviewController {
 //    }
 
 
-    // 권한 검사 필요
     @PostMapping("/")
-//    public ResponseEntity<?> registReview(@RequestBody @Valid RegistReviewRequest registReviewRequest,
-    public ResponseEntity<?> registReview(@RequestBody RegistReviewRequest registReviewRequest,
+    public ResponseEntity<?> registReview(@RequestBody @Valid RegistReviewRequest registReviewRequest,
                                           @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
         reviewService.addReview(oAuth2User.getName(), registReviewRequest);
         return ResponseEntity.ok().body(null);
     }
 
-    // 권한 검사 필요
     @PatchMapping("/{reviewId}")
     public ResponseEntity<?> updateReview(@PathVariable(value="reviewId") Long reviewId,
-                                          @RequestBody UpdateReviewRequest updateReviewRequest) {
-        long userId = 1;
-        reviewService.updateReview(reviewId, updateReviewRequest);
+                                          @RequestBody @Valid UpdateReviewRequest updateReviewRequest,
+                                          @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
+        reviewService.updateReview(oAuth2User.getName(), reviewId, updateReviewRequest);
         return ResponseEntity.ok().body(null);
     }
 
-    // 권한 검사 필요
     @DeleteMapping("/{reviewId}")
-    public ResponseEntity<?> deleteReview(@PathVariable(value="reviewId") Long reviewId) {
-        reviewService.deleteReview(reviewId);
+    public ResponseEntity<?> deleteReview(@PathVariable(value="reviewId") Long reviewId,
+                                          @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
+        reviewService.deleteReview(oAuth2User.getName(), reviewId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    @GetMapping("/test")
+    public ResponseEntity<?> showReview() {
+        return ResponseEntity.ok().body(reviewService.findAllReviews());
+    }
+
 }

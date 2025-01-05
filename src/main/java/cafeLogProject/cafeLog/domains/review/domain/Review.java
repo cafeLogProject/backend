@@ -34,7 +34,7 @@ public class Review extends BaseEntity {
     @OneToMany(mappedBy = "review")
     private List<ReviewImage> images = new ArrayList<>();
 
-    @ElementCollection(targetClass = Tag.class)
+    @ElementCollection
     @CollectionTable(name = "review_tags", joinColumns = @JoinColumn(name = "review_id"))
     @Column(name = "tag")
     private List<Integer> tagIds = new ArrayList<>();
@@ -68,6 +68,7 @@ public class Review extends BaseEntity {
 
     @Builder
     public Review(Long id, String content, int rating, LocalDate visitDate, List<ReviewImage> images, List<Integer> tagIds, Cafe cafe, User user){
+        this.id = id;
         this.content = content;
         this.rating = rating;
         this.visitDate = visitDate;
