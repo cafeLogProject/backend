@@ -6,12 +6,12 @@ import cafeLogProject.cafeLog.common.auth.exception.UserNotAuthenticatedExceptio
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.UnexpectedServerException;
 import cafeLogProject.cafeLog.common.exception.cafe.CafeNotFoundException;
+import cafeLogProject.cafeLog.common.exception.review.ReviewInvalidSortError;
 import cafeLogProject.cafeLog.domains.image.domain.ReviewImage;
 import cafeLogProject.cafeLog.domains.review.domain.Review;
 import cafeLogProject.cafeLog.common.exception.review.ReviewNotFoundException;
 import cafeLogProject.cafeLog.common.exception.review.ReviewSaveException;
 import cafeLogProject.cafeLog.domains.review.exception.ReviewDeleteException;
-import cafeLogProject.cafeLog.domains.review.exception.ReviewInvalidSortError;
 import cafeLogProject.cafeLog.domains.review.exception.ReviewUpdateException;
 import cafeLogProject.cafeLog.domains.review.repository.ReviewRepository;
 import cafeLogProject.cafeLog.domains.user.domain.User;
@@ -147,11 +147,23 @@ public class ReviewService {
         });
     }
 
-    public List<ShowReviewResponse> findReviews(String sortMethod, Integer limit, LocalDateTime timestamp, TagCategory tags) {
-        List<Review> reviews;
-        if (sortMethod == "NEW") {
-            reviews = findReviewsByBeforeCreatedAt(timestamp);
-        } else {
+    public List<ShowReviewResponse> findReviews(String sortMethod, Integer limit, LocalDateTime timestamp, List<Integer> tags, Integer currentRating) {
+        List<Review> reviews = new ArrayList<>();
+        if (sortMethod.equals("NEW")) {
+            if (tags == null || tags.isEmpty()) {
+                reviews = findBeforeDateTime(timestamp);
+            } else {
+                reviews = findByTagsAndDateTimeOrderByDateTime(tags, timestamp);
+            }
+        } else if (sortMethod.equals("HIGH_RATING")){
+            if (tags == null || tags.isEmpty()) {
+                reviews = findBeforeDateTimeOrderByRatingAndDateTime(timestamp, currentRating);
+            } else {
+                if (currentRating == null) throw new ReviewInvalidSortError("rating 값은 필수입니다.", ErrorCode.REVIEW_INVALID_SORT_ERROR);
+                reviews = findByTagsAndDateTimeOrderByRatingAndDateTime(tags, timestamp, currentRating);
+            }
+        }
+        else {
             throw new ReviewInvalidSortError(ErrorCode.REVIEW_INVALID_SORT_ERROR);
         }
         try {
@@ -177,21 +189,42 @@ public class ReviewService {
         return showReviewResponses;
     }
 
-    private List<Review> findReviewsByBeforeCreatedAt(LocalDateTime timestamp) {
+    private List<Review> findByTagsAndDateTimeOrderByRatingAndDateTime(List<Integer> tagIds, LocalDateTime timestamp, int currentRating) {
         try{
-            List<Review> reviews = reviewRepository.findReviewsByBeforeCreatedAt(timestamp);
+            List<Review> reviews = reviewRepository.findByTagsAndDateTimeOrderByRatingAndDateTime(tagIds, timestamp, currentRating);
             return reviews;
         } catch (Exception e) {
-            throw new UnexpectedServerException("findReviewsByBeforeCreatedAt 에러", ErrorCode.UNEXPECTED_ERROR);
+            throw new UnexpectedServerException("findByTagsAndDateTimeOrderByRatingAndDateTime 에러", ErrorCode.UNEXPECTED_ERROR);
         }
     }
 
-    private List<Review> findByTagIdsContaining(List<Integer> tagIds){
+    private List<Review> findByTagsAndDateTimeOrderByDateTime(List<Integer> tagIds, LocalDateTime createdAt) {
         try{
-            List<Review> reviews = reviewRepository.findByTagIdsContaining(tagIds);
+            List<Review> reviews = reviewRepository.findByTagsAndDateTimeOrderByDateTime(tagIds, createdAt);
             return reviews;
         } catch (Exception e) {
-            throw new UnexpectedServerException("findByTagIdsContaining 에러", ErrorCode.UNEXPECTED_ERROR);
+            throw new UnexpectedServerException("findByTagsAndDateTimeOrderByDateTime 에러", ErrorCode.UNEXPECTED_ERROR);
         }
     }
+
+    private List<Review> findBeforeDateTimeOrderByRatingAndDateTime(LocalDateTime timestamp, int currentRating) {
+        try{
+            List<Review> reviews = reviewRepository.findBeforeDateTimeOrderByRatingAndDateTime(timestamp, currentRating);
+            return reviews;
+        } catch (Exception e) {
+            throw new UnexpectedServerException("findBeforeDateTimeOrderByRatingAndDateTime 에러", ErrorCode.UNEXPECTED_ERROR);
+        }
+    }
+
+    private List<Review> findBeforeDateTime(LocalDateTime timestamp) {
+        try{
+            List<Review> reviews = reviewRepository.findBeforeDateTime(timestamp);
+            return reviews;
+        } catch (Exception e) {
+            throw new UnexpectedServerException("findBeforeDateTime 에러", ErrorCode.UNEXPECTED_ERROR);
+        }
+    }
+
+
+
 }

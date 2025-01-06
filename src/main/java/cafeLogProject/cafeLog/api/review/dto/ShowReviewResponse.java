@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,9 +19,10 @@ public class ShowReviewResponse {
     private TagCategory tags;
     private Long cafeId;
     private Long userId;
+    private LocalDateTime createdAt;
 
     @Builder
-    public ShowReviewResponse(Long reviewId, String content, Integer rating, LocalDate visitDate, List<String> imageIds, TagCategory tags, Long cafeId, Long userId) {
+    public ShowReviewResponse(Long reviewId, String content, Integer rating, LocalDate visitDate, List<String> imageIds, TagCategory tags, Long cafeId, Long userId, LocalDateTime createdAt) {
         this.reviewId = reviewId;
         this.content = content;
         this.rating = rating;
@@ -29,6 +31,7 @@ public class ShowReviewResponse {
         this.tags = tags;
         this.cafeId = cafeId;
         this.userId = userId;
+        this.createdAt = createdAt;
     }
 
     public ShowReviewResponse(Review review){
@@ -40,5 +43,6 @@ public class ShowReviewResponse {
         this.tags = new TagCategory(review.getTagIds());
         this.cafeId = review.getCafe().getId();
         this.userId = review.getUser().getId();
+        this.createdAt = review.getCreatedAt();
     }
 }

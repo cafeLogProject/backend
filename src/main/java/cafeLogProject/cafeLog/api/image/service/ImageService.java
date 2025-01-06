@@ -118,9 +118,9 @@ public class ImageService {
             // uuid 형식이 아닌경우
             throw new ImageNotFoundException(ErrorCode.IMAGE_NOT_FOUND_ERROR);
         }
-            Optional<ReviewImage> reviewImageOptional = reviewImageRepository.findById(imageUuid);
-            if (reviewImageOptional.isEmpty()) return null;
-            return reviewImageOptional.get();
+        Optional<ReviewImage> reviewImageOptional = reviewImageRepository.findById(imageUuid);
+        if (reviewImageOptional.isEmpty()) return null;
+        return reviewImageOptional.get();
 
     }
 

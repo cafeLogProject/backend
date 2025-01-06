@@ -25,31 +25,23 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("/{reviewId}")
-    public ResponseEntity<?> showReview(@PathVariable(value="reviewId") Long reviewId) {
+    public ResponseEntity<?> findReview(@PathVariable(value="reviewId") Long reviewId) {
         ShowReviewResponse showReviewResponse = new ShowReviewResponse(reviewService.findReviewById(reviewId));
         return ResponseEntity.ok().body(showReviewResponse);
     }
 
-    // sort 종류 : "NEW",
-    @GetMapping("/cafe/")
-    public ResponseEntity<?> showReviews(@PathVariable(value="cafeId") Long cafeId,
-                                         @RequestParam(required = false, defaultValue = "NEW", value="sort") String sortMethod,
+    // sort 종류 : "NEW", "HIGH_RATING"
+    // 최근순 완료 / 별점 높은 순, 낮은 순 개발 필요
+    @GetMapping("/list")
+    public ResponseEntity<?> showReviews(@RequestParam(required = false, defaultValue = "NEW", value="sort") String sortMethod,
                                          @RequestParam(required = false, defaultValue = "10", value="limit") Integer limit,
-                                         @RequestParam(required = false, defaultValue = "3000-01-01", value="timestamp") LocalDateTime timestamp,
-                                         @RequestParam(required = false, value="tags") TagCategory tags){
-        List<ShowReviewResponse> reviews = reviewService.findReviews(sortMethod, limit, timestamp, tags);
+                                         @RequestParam(required = false, defaultValue = "3000-01-01T00:00:00", value="timestamp") LocalDateTime timestamp,
+                                         @RequestParam(required = false, value="tags") List<Integer> tags,
+                                         @RequestParam(required = false, value="rating") Integer rating){
+        List<ShowReviewResponse> reviews = reviewService.findReviews(sortMethod, limit, timestamp, tags, rating);
         return ResponseEntity.ok().body(reviews);
     }
-//    @GetMapping("/")
-//    public ResponseEntity<?> showReviews(@RequestParam(required = false, defaultValue = "NEW", value="sort") String sortMethod,
-//                                         @RequestParam(required = false, defaultValue = "10", value="limit") Integer limit,
-//                                         @RequestParam(required = false, defaultValue = "3000-01-01", value="timestamp") LocalDateTime timestamp,
-//                                         @RequestParam(required = false, defaultValue = "0", value="rating") Integer rating,
-//                                         @RequestParam(required = false, defaultValue = "[]", value="tags") List<Integer> tags) {
-////        List<ShowReviewResponse> reviews =
-////        return ResponseEntity.ok().body(reviews);
-//
-//    }
+
 
 
     @PostMapping("/")
