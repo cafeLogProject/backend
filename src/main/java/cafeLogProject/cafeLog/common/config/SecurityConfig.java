@@ -43,7 +43,6 @@ public class SecurityConfig {
     };
 
 
-
     @Bean
     public JWTFilter jwtFilter() {
         return new JWTFilter(jwtUtil, tokenService);
@@ -51,51 +50,61 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-        //cors 설정
-//        http
-//                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-//                    @Override
-//                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-//                        CorsConfiguration configuration = new CorsConfiguration();
-//
-//                        configuration.setAllowedOrigins(Collections.singletonList("*"));
-//                        configuration.setAllowedMethods(Collections.singletonList("*"));
-//                        configuration.setAllowCredentials(true);
-//                        configuration.setMaxAge(3600L);
-//
-//                        return configuration;
-//                    }
-//                }));
-
         http
-                .csrf(AbstractHttpConfigurer::disable);
-
-        http
-                .formLogin(AbstractHttpConfigurer::disable);
-
-        http
-                .oauth2Login((auth) -> auth
-                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
-                                .userService(oAuth2UserService))
-                        .successHandler(loginHandler));
-
-        http
-                .addFilterAfter(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
-
-        http
-                .addFilterBefore(new JWTLogoutFilter(tokenService), LogoutFilter.class);
-
-        http
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers(whiteList).permitAll()
-                        .requestMatchers("/api/**", "/logout").authenticated()
-                        .anyRequest().denyAll());
-
-        http
-                .sessionManagement((auth) -> auth
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers(whiteList).permitAll()
+                            .anyRequest().authenticated();
+                })
+                .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(endpoint ->
+                                endpoint.baseUri("/oauth2/authorization"))
+                        .redirectionEndpoint(endpoint ->
+                                endpoint.baseUri("/login/oauth2/code/*"))
+                        .userInfoEndpoint(endpoint ->
+                                endpoint.userService(oAuth2UserService))
+                        .successHandler(loginHandler)
+                );
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOrigins(Arrays.asList(
+                "https://localhost:5173",
+                "https://localhost",
+                "https://packetbreeze.com"
+        ));
+        config.setAllowedMethods(Arrays.asList(
+                "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"
+        ));
+        config.setAllowedHeaders(Arrays.asList(
+                "Authorization",
+                "Content-Type",
+                "X-Requested-With",
+                "Accept",
+                "Origin",
+                "Access-Control-Request-Method",
+                "Access-Control-Request-Headers"
+        ));
+        config.setExposedHeaders(Arrays.asList(
+                "Access-Control-Allow-Origin",
+                "Access-Control-Allow-Credentials",
+                "Authorization"
+        ));
+
+        config.setAllowCredentials(true);
+        config.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
     }
 }

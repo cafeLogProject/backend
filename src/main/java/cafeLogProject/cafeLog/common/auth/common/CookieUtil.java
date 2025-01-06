@@ -3,6 +3,7 @@ package cafeLogProject.cafeLog.common.auth.common;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseCookie;
 
 public class CookieUtil {
 
@@ -18,6 +19,16 @@ public class CookieUtil {
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         return cookie;
+    }
+
+    public static ResponseCookie createResponseCookie(String key, String value) {
+        return ResponseCookie.from(key, value)
+                .maxAge(60 * 60 * 24)
+                .secure(true)
+                .sameSite("None")  // ResponseCookie 클래스는 SameSite 설정을 지원
+                .path("/")
+                .httpOnly(true)
+                .build();
     }
 
     /***
@@ -39,7 +50,7 @@ public class CookieUtil {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(tokenType)){
+                if (cookie.getName().equals(tokenType)) {
                     return cookie.getValue();
                 }
             }

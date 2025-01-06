@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -19,8 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.createCookie;
-import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.extractToken;
+import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.*;
 import static cafeLogProject.cafeLog.common.config.SecurityConfig.whiteList;
 import static cafeLogProject.cafeLog.common.exception.ErrorCode.*;
 
@@ -101,13 +101,10 @@ public class JWTFilter extends OncePerRequestFilter {
      * 토큰 재발급 후에 JWTUserDTO 반환
      */
     private JWTUserDTO reissueToken(String refreshToken, HttpServletResponse response) {
-
         log.debug("Token expired, attempting to reissue");
-
         String reissuedUsername = tokenService.reissue(refreshToken);
         String newAccessToken = tokenService.getAccessTokenByUsername(reissuedUsername);
         String newRefreshToken = tokenService.getRefreshTokenByUsername(reissuedUsername);
-
         log.debug("New RefreshToken : {}", newRefreshToken);
 
         if (newAccessToken == null || newRefreshToken == null) {
@@ -115,8 +112,12 @@ public class JWTFilter extends OncePerRequestFilter {
             throw new TokenNotFoundException(TOKEN_NOT_FOUND_ERROR);
         }
 
-        response.addCookie(createCookie("access", newAccessToken));
-        response.addCookie(createCookie("refresh", newRefreshToken));
+        // ResponseCookie로 변환하고 헤더에 추가
+        ResponseCookie accessTokenCookie = createResponseCookie("access", newAccessToken);
+        ResponseCookie refreshTokenCookie = createResponseCookie("refresh", newRefreshToken);
+
+        response.addHeader("Set-Cookie", accessTokenCookie.toString());
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
         return tokenService.extractUserInfoFromToken(newAccessToken);
     }

@@ -10,15 +10,22 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 @EnableRedisRepositories
 public class RedisConfig {
 
+    @Value("${spring.data.redis.host}")
+    private String redisHost;
+
+    @Value("${spring.data.redis.port}")
+    private int redisPort;
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         // Redis 호스트와 포트를 설정
-        return new LettuceConnectionFactory("redis", 6379);
+        return new LettuceConnectionFactory(redisHost, redisPort);
     }
 
 
