@@ -17,4 +17,4 @@ RUN ./gradlew clean build -x test
 ENV JAR_NAME=cafeLog-0.0.1-SNAPSHOT.jar
 RUN mv /app/build/libs/${JAR_NAME} /app/app.jar
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["./gradlew", "bootRun"]
