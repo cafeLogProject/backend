@@ -2,7 +2,6 @@ spring:
   devtools:
     restart:
       enabled: true
-
   datasource:
     url: jdbc:mysql://mysql:3306/cafedb
     username: root

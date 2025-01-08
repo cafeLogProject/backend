@@ -1,7 +1,6 @@
 package cafeLogProject.cafeLog.common.auth.oauth2;
 
 import cafeLogProject.cafeLog.common.auth.jwt.JWTUserDTO;
-import cafeLogProject.cafeLog.domains.user.repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -42,5 +41,4 @@ public class CustomOAuth2User implements OAuth2User {
     public String getName() {
         return oAuth2UserDTO.getUsername();
     }
-
 }

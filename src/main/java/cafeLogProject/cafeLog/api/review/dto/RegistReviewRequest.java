@@ -2,12 +2,11 @@ package cafeLogProject.cafeLog.api.review.dto;
 
 
 import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
-import cafeLogProject.cafeLog.domains.review.domain.Review;
+import cafeLogProject.cafeLog.domains.image.domain.ReviewImage;
 import cafeLogProject.cafeLog.domains.user.domain.User;
+import cafeLogProject.cafeLog.domains.review.domain.Review;
 import jakarta.validation.constraints.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ import java.util.List;
 @NoArgsConstructor
 public class RegistReviewRequest {
     private String content;
-
     @NotNull(message = "별점은 필수 입력 값입니다.")
     @Min(value = 1, message = "별점은 1 이상이어야 합니다.")
     @Max(value = 5, message = "별점은 5 이하여야 합니다.")
