@@ -35,39 +35,37 @@ public class UpdateReviewRequest {
         this.tags = tags;
     }
     
+    // 이미지 필드 존재하는 경우 주석 풀기
     // 이미지 변경사항 있는 경우
-    public Review toEntity(Review review, List<ReviewImage> images) {
-        this.content = !(this.content).equals("") ? this.content : review.getContent();
-        this.rating = this.rating != null ? this.rating : review.getRating();
-        this.visitDate = this.visitDate != null ? this.visitDate : review.getVisitDate();
-        List<Integer> tagIds = this.tags != null ? this.tags.findAllIds() : review.getTagIds();
+//    public Review toEntity(Review review, List<ReviewImage> images) {
+//        this.content = !(this.content).equals("") ? this.content : review.getContent();
+//        this.rating = this.rating != null ? this.rating : review.getRating();
+//        this.visitDate = this.visitDate != null ? this.visitDate : review.getVisitDate();
+//        List<Integer> tagIds = this.tags != null ? this.tags.findAllIds() : review.getTagIds();
+//
+//        return Review.builder()
+//                .id(review.getId())
+//                .content(content)
+//                .rating(rating)
+//                .visitDate(visitDate)
+//                .images(images)
+//                .tagIds(tagIds)
+//                .cafe(review.getCafe())
+//                .user(review.getUser())
+//                .build();
+//    }
 
-        return Review.builder()
-                .id(review.getId())
-                .content(content)
-                .rating(rating)
-                .visitDate(visitDate)
-                .images(images)
-                .tagIds(tagIds)
-                .cafe(review.getCafe())
-                .user(review.getUser())
-                .build();
-    }
-
-    // 이미지 변경사항 없는 경우
     public Review toEntity(Review review) {
         this.content = !(this.content).equals("") ? this.content : review.getContent();
         this.rating = this.rating != null ? this.rating : review.getRating();
         this.visitDate = this.visitDate != null ? this.visitDate : review.getVisitDate();
         List<Integer> tagIds = this.tags != null ? this.tags.findAllIds() : review.getTagIds();
-        
-        List<ReviewImage> oldImages = review.getImages();
+
         return Review.builder()
                 .id(review.getId())
                 .content(content)
                 .rating(rating)
                 .visitDate(visitDate)
-                .images(oldImages)
                 .tagIds(tagIds)
                 .cafe(review.getCafe())
                 .user(review.getUser())

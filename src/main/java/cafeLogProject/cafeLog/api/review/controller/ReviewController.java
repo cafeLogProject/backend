@@ -26,8 +26,16 @@ public class ReviewController {
 
     @GetMapping("/{reviewId}")
     public ResponseEntity<?> findReview(@PathVariable(value="reviewId") Long reviewId) {
-        ShowReviewResponse showReviewResponse = new ShowReviewResponse(reviewService.findReviewById(reviewId));
+        ShowReviewResponse showReviewResponse = reviewService.findReview(reviewId);
         return ResponseEntity.ok().body(showReviewResponse);
+    }
+
+    @GetMapping("/cafe/{cafeId}")
+    public ResponseEntity<?> showCafeReviews(@PathVariable(value="cafeId") Long cafeId,
+                                             @RequestParam(required = false, defaultValue = "10", value="limit") Integer limit,
+                                             @RequestParam(required = false, defaultValue = "3000-01-01T00:00:00", value="timestamp") LocalDateTime timestamp) {
+        List<ShowReviewResponse> reviews = reviewService.findCafeReviews(cafeId, limit, timestamp);
+        return ResponseEntity.ok().body(reviews);
     }
 
     // sort 종류 : "NEW", "HIGH_RATING"

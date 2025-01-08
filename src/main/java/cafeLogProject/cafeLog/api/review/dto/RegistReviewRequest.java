@@ -38,12 +38,11 @@ public class RegistReviewRequest {
         this.cafeId = cafeId;
     }
 
-    public Review toEntity(User user, Cafe cafe, List<ReviewImage> images) {
+    public Review toEntity(User user, Cafe cafe) {
         return Review.builder()
                 .content(content)
                 .rating(rating)
                 .visitDate(visitDate)
-                .images(images)
                 .tagIds(tags.findAllIds())
                 .cafe(cafe)
                 .user(user)

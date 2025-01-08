@@ -42,7 +42,7 @@ public class ImageHandler {
         try {
             Resource resource = new UrlResource("file:" + basePath + imageId);
             if (!resource.exists() || !resource.isReadable()) {
-                throw new ImageLoadException(imageId, ErrorCode.IMAGE_LOAD_ERROR);
+                throw new ImageNotFoundException(imageId, ErrorCode.REVIEW_NOT_FOUND_ERROR);
             }
             return resource;
         } catch (Exception e) {
