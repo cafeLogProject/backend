@@ -88,6 +88,7 @@ public class ImageService {
         List<ReviewImage> images = reviewImageRepository.findAllByReview(review);
         for (ReviewImage image : images) {
             deleteCompressedImage(path, image.getId().toString());
+            if (image != null) reviewImageRepository.delete(image);
         }
     }
 

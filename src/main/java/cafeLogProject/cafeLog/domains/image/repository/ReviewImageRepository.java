@@ -9,4 +9,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ReviewImageRepository extends JpaRepository<ReviewImage, UUID> {
+    List<ReviewImage> findAllByReview(Review review);
 }
