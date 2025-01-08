@@ -18,6 +18,7 @@ import java.util.List;
 public class RegistReviewRequest {
     private String content;
     @NotBlank(message = "별점은 필수 입력 값입니다.")
+
     @Pattern(regexp="^[0-5]$", message="숫자만 입력할 수 있습니다.")
     private Integer rating;
     @NotBlank(message = "방문날짜는 필수 입력 값입니다.")

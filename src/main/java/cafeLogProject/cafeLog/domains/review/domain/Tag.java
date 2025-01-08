@@ -1,6 +1,5 @@
 package cafeLogProject.cafeLog.domains.review.domain;
 
-import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.UnexpectedServerException;
 import lombok.Getter;
 

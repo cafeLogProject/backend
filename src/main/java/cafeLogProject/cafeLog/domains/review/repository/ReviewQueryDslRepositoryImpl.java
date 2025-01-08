@@ -26,7 +26,7 @@ public class ReviewQueryDslRepositoryImpl implements ReviewQueryDslRepository{
     @Override
     public List<Review> findByTagIdsContaining(List<Integer> tagIds) {
 //    @Query("SELECT r FROM Review r JOIN r.tags t WHERE t IN :tags GROUP BY r HAVING COUNT(t) = :tagSize")
-        QReview review = QReview.review;
+//        QReview review = QReview.review;
 //        return queryFactory
 //                .selectFrom(review)
 //                .join(review.tagIds, tagId)
