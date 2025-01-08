@@ -1,13 +1,8 @@
 package cafeLogProject.cafeLog.domains.review.domain;
 
 import cafeLogProject.cafeLog.api.review.dto.TagDto;
-import cafeLogProject.cafeLog.common.exception.ErrorCode;
-import cafeLogProject.cafeLog.common.exception.UnexpectedServerException;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-
-import static cafeLogProject.cafeLog.common.exception.ErrorCode.UNEXPECTED_ERROR;
 
 @Getter
 public enum Tag {

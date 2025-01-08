@@ -4,6 +4,7 @@ import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,6 +27,7 @@ public class Favorite {
     @JoinColumn(name = "cafe_id", nullable = false)
     private Cafe cafe;
 
+    @Builder
     public Favorite(User user, Cafe cafe) {
         this.user = user;
         this.cafe = cafe;

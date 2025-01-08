@@ -44,7 +44,6 @@ public class JWTLoginHandler implements AuthenticationSuccessHandler {
         response.setStatus(HttpStatus.OK.value());
         response.addCookie(createCookie("access", access));
         response.addCookie(createCookie("refresh", refresh));
+
     }
-
-
 }

@@ -28,7 +28,8 @@ public enum ErrorCode {
     REVIEW_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류에 의해 리뷰를 삭제하지 못했습니다."),
 
     CAFE_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "카페를 찾을 수 없습니다."),
-    CAFE_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류에 의해 카페를 저장하지 못했습니다."),
+    CAFE_CATEGORY_ERROR(HttpStatus.BAD_REQUEST, "카테고리가 카페가 아닙니다."),
+    CAFE_API_PARSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "네이버 API 응답 중 오류가 발생했습니다."),
 
     IMAGE_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "이미지를 찾을 수 없습니다."),
     IMAGE_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류에 의해 이미지를 저장하지 못했습니다."),

@@ -18,6 +18,7 @@ import java.util.UUID;
 @Table(name = "review_image_tb")
 @NoArgsConstructor
 public class ReviewImage {
+
     @Id
 //    @UuidGenerator        // 저장시에 생성됨 (엔티티 생성 -> uuid 사용한 이미지 파일 저장 -> 엔티티 저장 순대로 처리하기 위해 주석처리함)
     @Column(name = "review_image_id", columnDefinition = "BINARY(16)")      // binary(255)대신 binary(16)로 저장하여 JPA 사용시 오류방지를 위함

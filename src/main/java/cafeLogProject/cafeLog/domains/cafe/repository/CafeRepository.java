@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface CafeRepository extends JpaRepository<Cafe, Long> {
-    Optional<Cafe> findById(Long cafeId);
-    boolean existsByCafeNameAndLocationXY(String cafeName, List<Long> locationXY);
+public interface CafeRepository extends JpaRepository<Cafe, Long>, CafeRepositoryCustom{
+
+    Optional<Cafe> findByCafeNameAndMapxAndMapy(String cafeName, String mapx, String mapy);
+
 }

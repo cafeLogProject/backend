@@ -49,6 +49,8 @@ dependencies {
 	implementation "com.sksamuel.scrimage:scrimage-core:4.0.32"
 	implementation "com.sksamuel.scrimage:scrimage-webp:4.0.32"
 
+	implementation 'org.springframework.boot:spring-boot-devtools'
+
 	// 테스트 코드 실행시 h2 사용
 	testImplementation 'com.h2database:h2'
 

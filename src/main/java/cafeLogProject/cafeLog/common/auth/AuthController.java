@@ -3,12 +3,14 @@ package cafeLogProject.cafeLog.common.auth;
 import cafeLogProject.cafeLog.common.auth.jwt.JWTUtil;
 import cafeLogProject.cafeLog.common.auth.jwt.token.JWTTokenService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
+import cafeLogProject.cafeLog.domains.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +28,6 @@ import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.removeCookie;
 public class AuthController {
 
     private final JWTTokenService tokenService;
-    private final JWTUtil jwtUtil;
 
     @GetMapping("/login")
     public ResponseEntity<Map<String, String>> loginPage(HttpServletResponse response) {
@@ -56,6 +57,5 @@ public class AuthController {
         return ResponseEntity.ok(tokenService.checkTokenIsExpired(accessToken, refreshToken));
 
     }
-
 
 }

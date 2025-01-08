@@ -4,10 +4,7 @@ import cafeLogProject.cafeLog.api.review.dto.QShowReviewResponse;
 import cafeLogProject.cafeLog.api.review.dto.ShowReviewResponse;
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.review.ReviewInvalidSortError;
-
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.list;
-
+import cafeLogProject.cafeLog.domains.review.domain.QReview;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -18,10 +15,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static cafeLogProject.cafeLog.domains.image.domain.QReviewImage.reviewImage;
 import static cafeLogProject.cafeLog.domains.review.domain.QReview.review;
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
 
 
 @RequiredArgsConstructor
