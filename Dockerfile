@@ -19,3 +19,4 @@ RUN mv /app/build/libs/${JAR_NAME} /app/app.jar
 
 #ENTRYPOINT ["java", "-jar", "-Dspring.devtools.restart.enabled=true", "/app/app.jar"]
 ENTRYPOINT ["./gradlew", "bootRun"]
+

@@ -8,14 +8,23 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cafeLogProject.cafeLog.domains.review.domain.Tag.isTagValid;
+
+
 @Data
 @NoArgsConstructor
 public class TagCategory {
     private List<TagDto> menu = new ArrayList<>();
     private List<TagDto> interior = new ArrayList<>();
 
-    @Builder
-    public TagCategory (List<TagDto> menu, List<TagDto> interior) {
+    public void isValid() {
+        //유효한 태그인지 검사
+        for (TagDto m : this.menu) {
+            isTagValid(m);
+        }
+        for (TagDto i : this.interior) {
+            isTagValid(i);
+        }
         this.menu = menu;
         this.interior = interior;
     }
@@ -26,14 +35,14 @@ public class TagCategory {
             Tag tag = Tag.findByNum(tagId);
             TagDto tagDto = new TagDto(tag.getNum(), tag.getDescription());
             if (tagId < 100) {
-                menu.add(tagDto);
+                if (!menu.contains(tagDto)) menu.add(tagDto);
             } else {
-                interior.add(tagDto);
+                if (!interior.contains(tagDto)) interior.add(tagDto);
             }
         }
     }
 
-    public List<Integer> getAllIds() {
+    public List<Integer> findAllIds() {
         List<Integer> ids = new ArrayList<>();
         if (!menu.isEmpty()) {
             menu.forEach(tag -> ids.add(tag.getId()));

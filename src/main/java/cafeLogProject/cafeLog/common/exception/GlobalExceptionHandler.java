@@ -36,7 +36,9 @@ public class GlobalExceptionHandler {
         String message;
         if (e.getCause() instanceof MismatchedInputException mismatchedInputException) {
             message = mismatchedInputException.getPath().get(0).getFieldName() + " 필드의 값이 잘못되었습니다.";
-        } else {
+        } else if(!e.getMessage().isEmpty()) {
+            message = e.getMessage();
+        } else{
             message = "잘못된 필드의 값입니다.";
         }
         log.error(message);

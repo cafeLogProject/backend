@@ -1,9 +1,8 @@
 package cafeLogProject.cafeLog.domains.review.domain;
 
-import cafeLogProject.cafeLog.common.exception.UnexpectedServerException;
+import cafeLogProject.cafeLog.api.review.dto.TagDto;
 import lombok.Getter;
-
-import static cafeLogProject.cafeLog.common.exception.ErrorCode.UNEXPECTED_ERROR;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 @Getter
 public enum Tag {
@@ -36,13 +35,18 @@ public enum Tag {
         this.description = description;
     }
 
+
+    public static void isTagValid(TagDto tag) {
+        findByNum(tag.getId());
+    }
+
     public static Tag findByNum(int num) {
         for (Tag tag : Tag.values()) {
             if (tag.getNum() == num) {
                 return tag;
             }
         }
-        throw new UnexpectedServerException("해당 번호의 태그를 찾을 수 없습니다.", UNEXPECTED_ERROR);
+        throw new HttpMessageNotReadableException("존재하지 않는 tagid입니다.");
     }
 
 }
