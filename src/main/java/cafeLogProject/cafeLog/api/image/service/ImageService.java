@@ -45,7 +45,7 @@ public class ImageService {
         String newImageUuidStr = newReviewImage.getId().toString();
         String path = basePath+reviewImageRelativePath;
         File imageFile = addImage(path, newImageUuidStr, multipartFile);
-        File compressedFile = ImageCompressor.convertToWebpWithLossless(path, newImageUuidStr, imageFile);  //이미지 압축
+        ImageCompressor.convertToWebpWithLossless(path, newImageUuidStr, imageFile);  //이미지 압축
         reviewImageRepository.save(newReviewImage);
         return newImageUuidStr;
     }
@@ -76,20 +76,19 @@ public class ImageService {
 
     @Transactional
     public void deleteReviewImage(String imageIdStr) {
-        log.warn("동작1");
         String path = basePath+reviewImageRelativePath;
         deleteCompressedImage(path, imageIdStr);
-        log.warn("동작2");
-        ReviewImage reviewImage = findReviewImageByReviewImageIdStr(imageIdStr);
-        log.warn("동작3");
-        if (reviewImage == null) return;
-        Review review = reviewImage.getReview();
-        if (review == null) return;
-        log.warn("동작4");
-        review.removeImage(reviewImage);
-        log.warn("동작5");
-        reviewImageRepository.delete(reviewImage);
-        log.warn("동작6");
+        ReviewImage reviewImage = findByReviewImageIdStr(imageIdStr);
+        if (reviewImage != null) reviewImageRepository.delete(reviewImage);
+    }
+
+    // 특정 리뷰의 모든 리뷰 이미지 삭제
+    public void deleteAllReviewImageInReview(Review review){
+        String path = basePath+reviewImageRelativePath;
+        List<ReviewImage> images = reviewImageRepository.findAllByReview(review);
+        for (ReviewImage image : images) {
+            deleteCompressedImage(path, image.getId().toString());
+        }
     }
 
 //    @Transactional
@@ -101,7 +100,7 @@ public class ImageService {
     // 리뷰 등록시 사진 엔티티 리뷰id 필드에 값 추가하는 기능
     @Transactional
     public void addReviewInReviewImage(String imageIdStr, Long reviewId){
-        ReviewImage reviewImage = findReviewImageByReviewImageIdStr(imageIdStr);
+        ReviewImage reviewImage = findByReviewImageIdStr(imageIdStr);
         if (reviewImage == null) throw new ReviewNotFoundException(reviewId.toString(), ErrorCode.IMAGE_NOT_FOUND_ERROR);
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> {
             throw new ReviewNotFoundException(reviewId.toString(), ErrorCode.IMAGE_NOT_FOUND_ERROR);
@@ -110,9 +109,10 @@ public class ImageService {
         reviewImage.connectReview(review);
     }
 
-    public ReviewImage findReviewImageByReviewImageIdStr(String reviewImageIdStr) {
+    public ReviewImage findByReviewImageIdStr(String reviewImageIdStr) {
         UUID imageUuid;
         try {
+            // UUID자료형으로 형변경
             imageUuid = UUID.fromString(reviewImageIdStr);
         } catch (Exception e) {
             // uuid 형식이 아닌경우
@@ -124,10 +124,14 @@ public class ImageService {
 
     }
 
+    // 테스트 확인용
     public List<String> findAllReviewImageId() {
         List<ReviewImage> reviewImages = reviewImageRepository.findAll();
         List<String> reviewImageIds = new ArrayList<>();
         for (ReviewImage reviewImage : reviewImages) {
+//            if (reviewImage.getReview() != null){
+//                reviewImageIds.add(reviewImage.getReview().getId().toString());
+//            }
             reviewImageIds.add(reviewImage.getId().toString());
         }
         return reviewImageIds;

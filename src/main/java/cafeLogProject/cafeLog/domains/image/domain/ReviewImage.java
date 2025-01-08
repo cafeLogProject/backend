@@ -1,5 +1,8 @@
 package cafeLogProject.cafeLog.domains.image.domain;
 
+import cafeLogProject.cafeLog.common.exception.ErrorCode;
+import cafeLogProject.cafeLog.common.exception.image.ImageInvalidException;
+import cafeLogProject.cafeLog.common.exception.image.ImageNotFoundException;
 import cafeLogProject.cafeLog.domains.review.domain.Review;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -35,4 +38,5 @@ public class ReviewImage {
     public ReviewImage(UUID id){
         this.id = id;
     }
+
 }
