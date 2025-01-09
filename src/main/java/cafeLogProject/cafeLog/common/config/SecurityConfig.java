@@ -59,6 +59,7 @@ public class SecurityConfig {
                     auth.requestMatchers(whiteList).permitAll()
                             .anyRequest().authenticated();
                 })
+                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)  // JWT 필터 추가
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(endpoint ->
                                 endpoint.baseUri("/oauth2/authorization"))
@@ -68,7 +69,6 @@ public class SecurityConfig {
                                 endpoint.userService(oAuth2UserService))
                         .successHandler(loginHandler)
                 );
-
         return http.build();
     }
 
