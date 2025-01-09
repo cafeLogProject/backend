@@ -1,4 +1,4 @@
-package cafeLogProject.cafeLog.domains.review.exception;
+package cafeLogProject.cafeLog.common.exception.review;
 
 import cafeLogProject.cafeLog.common.exception.CafeAppException;
 import cafeLogProject.cafeLog.common.exception.ErrorCode;

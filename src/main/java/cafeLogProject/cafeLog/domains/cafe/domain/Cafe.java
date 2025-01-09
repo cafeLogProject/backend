@@ -3,11 +3,10 @@ package cafeLogProject.cafeLog.domains.cafe.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "cafe_db")
+@Table(name = "cafe_db", uniqueConstraints = @UniqueConstraint(columnNames = {"cafe_name", "mapx", "mapy"}))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Cafe {
 
@@ -16,19 +15,22 @@ public class Cafe {
     @Column(name = "cafe_id")
     private Long id;
 
+    @Column(name = "cafe_name")
     private String cafeName;
-    private List<Long> locationXY;
     private boolean isClosedDown = false;
-
-    private String locationStr;
-    private String etcLink;
+    private String mapx;
+    private String mapy;
+    private String address;
+    private String roadAddress;
+    private String link;
 
     @Builder
-    public Cafe(String cafeName, String locationStr, List<Long> locationXY, boolean isClosedDown, String etcLink) {
+    public Cafe(String cafeName, String address, String roadAddress, String mapx, String mapy, String link) {
         this.cafeName = cafeName;
-        this.locationStr = locationStr;
-        this.locationXY = locationXY;
-        this.isClosedDown = isClosedDown;
-        this.etcLink = etcLink;
+        this.address = address;
+        this.roadAddress = roadAddress;
+        this.mapx = mapx;
+        this.mapy = mapy;
+        this.link = link;
     }
 }

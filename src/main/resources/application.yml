@@ -1,4 +1,8 @@
 spring:
+  devtools:
+    restart:
+      enabled: true
+
   datasource:
     url: jdbc:mysql://${SPRING_MYSQL_HOST}:3306/cafedb
     username: root
@@ -13,7 +17,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true
@@ -76,6 +80,6 @@ logging.level:
   org.hibernate.orm.jdbc.bind: trace
 
 path:
-  base: ${PROJECT_PATH}
+  base: ${PROJECT_PATH}   #로컬 컴퓨터의 프로젝트 파일 경로 (ex C:\경로\경로\backend)
 
 
