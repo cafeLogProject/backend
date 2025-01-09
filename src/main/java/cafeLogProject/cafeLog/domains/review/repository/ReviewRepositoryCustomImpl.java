@@ -67,6 +67,10 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
                 );
     }
 
+    // 최적화 필요 : 한 리뷰 당 태그 조회 쿼리 한번 더 나가는 문제
+                // qeuryDsl는 @JoinColumn 적용 자동으로 안해줌
+                    // -> 자동으로 join되지 않아 수동으로 join해줘야 함
+                        // but Collection은 Q클래스가 생성되지 않음
     @Override
     public List<ShowReviewResponse> search(String sortMethod, List<Integer> tagIds, Integer currentRating, LocalDateTime createdAt, Pageable pageable) {
         OrderSpecifier[] orderSpecifiers = createOrderSpecifier(sortMethod);

@@ -123,15 +123,17 @@ public class ReviewService {
             throw new ReviewNotFoundException(Long.toString(reviewId), ErrorCode.REVIEW_NOT_FOUND_ERROR);
         });
         // 해당 리뷰가 본인의 리뷰가 맞는지 확인
-        if (!review.getUser().getId().equals(username)) {
+        if (!review.getUser().getUsername().equals(username)) {
             throw new UserNotAuthenticatedException(ErrorCode.USER_NOT_AUTH_ERROR);
         }
 
         try{
             // 해당 리뷰의 모든 이미지 삭제
             imageService.deleteAllReviewImageInReview(review);
+            log.error("이미지 삭제 완료");
 
             reviewRepository.delete(review);
+            log.error("리뷰 삭제 완료");
         } catch (Exception e) {
             throw new ReviewDeleteException(ErrorCode.REVIEW_DELETE_ERROR);
         }
