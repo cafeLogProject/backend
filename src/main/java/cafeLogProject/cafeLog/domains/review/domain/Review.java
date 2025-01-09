@@ -41,25 +41,6 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-//    public void addImageIfNotIncluded(ReviewImage image) {
-//        if (images.contains(image)) return;
-//        images.add(image);
-//    }
-
-//    public void removeImage(ReviewImage image) {
-//        if (images.contains(image)) {
-//            images.remove(image);
-//        }
-//    }
-
-//    public List<String> getImageIds(){
-//        List<String> imageIds = new ArrayList<>();
-//        for (ReviewImage image : images) {
-//            imageIds.add(image.getId().toString());
-//        }
-//        return imageIds;
-//    }
-
     @Builder
     public Review(Long id, String content, int rating, LocalDate visitDate, List<Integer> tagIds, Cafe cafe, User user){
         this.id = id;

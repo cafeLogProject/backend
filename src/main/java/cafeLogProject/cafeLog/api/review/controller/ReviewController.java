@@ -2,17 +2,15 @@ package cafeLogProject.cafeLog.api.review.controller;
 
 import cafeLogProject.cafeLog.api.review.dto.RegistReviewRequest;
 import cafeLogProject.cafeLog.api.review.dto.ShowReviewResponse;
-import cafeLogProject.cafeLog.api.review.dto.TagCategory;
 import cafeLogProject.cafeLog.api.review.dto.UpdateReviewRequest;
+import cafeLogProject.cafeLog.api.review.test.ReviewSaveService;
 import cafeLogProject.cafeLog.api.review.service.ReviewService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -23,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReviewController {
     private final ReviewService reviewService;
+    private final ReviewSaveService reviewSaveService;
 
     @GetMapping("/{reviewId}")
     public ResponseEntity<?> findReview(@PathVariable(value="reviewId") Long reviewId) {

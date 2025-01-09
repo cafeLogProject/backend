@@ -1,26 +1,27 @@
 package cafeLogProject.cafeLog.api.review.service;
 
 import cafeLogProject.cafeLog.api.image.service.ImageService;
-import cafeLogProject.cafeLog.api.review.dto.*;
+import cafeLogProject.cafeLog.api.review.dto.RegistReviewRequest;
+import cafeLogProject.cafeLog.api.review.dto.ShowReviewResponse;
+import cafeLogProject.cafeLog.api.review.dto.TagCategory;
+import cafeLogProject.cafeLog.api.review.dto.UpdateReviewRequest;
 import cafeLogProject.cafeLog.common.auth.exception.UserNotAuthenticatedException;
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.UnexpectedServerException;
 import cafeLogProject.cafeLog.common.exception.cafe.CafeNotFoundException;
-import cafeLogProject.cafeLog.common.exception.image.ImageInvalidException;
-import cafeLogProject.cafeLog.common.exception.review.ReviewInvalidSortError;
+import cafeLogProject.cafeLog.common.exception.review.ReviewNotFoundException;
+import cafeLogProject.cafeLog.common.exception.review.ReviewSaveException;
+import cafeLogProject.cafeLog.common.exception.user.UserNotFoundException;
+import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
+import cafeLogProject.cafeLog.domains.cafe.repository.CafeRepository;
 import cafeLogProject.cafeLog.domains.image.domain.ReviewImage;
 import cafeLogProject.cafeLog.domains.image.repository.ReviewImageRepository;
 import cafeLogProject.cafeLog.domains.review.domain.Review;
-import cafeLogProject.cafeLog.common.exception.review.ReviewNotFoundException;
-import cafeLogProject.cafeLog.common.exception.review.ReviewSaveException;
 import cafeLogProject.cafeLog.domains.review.exception.ReviewDeleteException;
 import cafeLogProject.cafeLog.domains.review.exception.ReviewUpdateException;
 import cafeLogProject.cafeLog.domains.review.repository.ReviewRepository;
 import cafeLogProject.cafeLog.domains.user.domain.User;
-import cafeLogProject.cafeLog.common.exception.user.UserNotFoundException;
 import cafeLogProject.cafeLog.domains.user.repository.UserRepository;
-import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
-import cafeLogProject.cafeLog.domains.cafe.repository.CafeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -31,9 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import static cafeLogProject.cafeLog.domains.review.domain.Tag.isTagValid;
 
 @Service
 @RequiredArgsConstructor
