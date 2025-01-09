@@ -26,6 +26,8 @@ public class BaseEntity {
     @CreatedDate
     private LocalDateTime createdAt;
 
+    //test
+
     @LastModifiedDate
     private LocalDateTime modifiedAt;
 }
