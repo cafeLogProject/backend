@@ -6,6 +6,7 @@ import cafeLogProject.cafeLog.api.review.dto.TagCategory;
 import cafeLogProject.cafeLog.api.review.dto.UpdateReviewRequest;
 import cafeLogProject.cafeLog.api.review.service.ReviewService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
+import cafeLogProject.cafeLog.domains.review.domain.Review;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,8 +50,6 @@ public class ReviewController {
         List<ShowReviewResponse> reviews = reviewService.findReviews(sortMethod, limit, timestamp, tags, rating);
         return ResponseEntity.ok().body(reviews);
     }
-
-
 
     @PostMapping("/")
     public ResponseEntity<?> registReview(@RequestBody RegistReviewRequest registReviewRequest,
