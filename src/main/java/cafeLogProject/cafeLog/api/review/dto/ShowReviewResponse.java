@@ -44,7 +44,7 @@ public class ShowReviewResponse {
         this.rating = review.getRating();
         this.visitDate = review.getVisitDate();
         this.imageIds = imageIds;
-        this.tags = new TagCategory(review.getTagIds());
+        this.tags = new TagCategory(review.getTags().getAllTagIds());
         this.cafeId = review.getCafe().getId();
         this.userId = review.getUser().getId();
         this.createdAt = review.getCreatedAt();

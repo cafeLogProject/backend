@@ -4,8 +4,7 @@ import cafeLogProject.cafeLog.api.review.dto.QShowReviewResponse;
 import cafeLogProject.cafeLog.api.review.dto.ShowReviewResponse;
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.review.ReviewInvalidSortError;
-import cafeLogProject.cafeLog.domains.review.domain.QReview;
-import cafeLogProject.cafeLog.domains.review.domain.Review;
+import cafeLogProject.cafeLog.common.exception.review.TagNotFoundException;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -148,7 +147,47 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
 
     // 한 태그가 포함된 리뷰면 true
     private BooleanExpression isContainsTagId(Integer tagId) {
-        return review.tagIds.contains(tagId);
+        switch (tagId) {
+            case 1:
+                return review.tags.MENU_SELL_BEAN.isTrue();
+            case 2:
+                return review.tags.MENU_SELL_DESSERT.isTrue();
+            case 3:
+                return review.tags.MENU_GOOD_COFFEE.isTrue();
+            case 4:
+                return review.tags.MENU_HAND_DRIP.isTrue();
+            case 5:
+                return review.tags.MENU_SELF_ROASTING.isTrue();
+            case 101:
+                return review.tags.ETC_GOOD_WORK.isTrue();
+            case 102:
+                return review.tags.ETC_GOOD_STUDY.isTrue();
+            case 103:
+                return review.tags.ETC_GOOD_MOOD.isTrue();
+            case 104:
+                return review.tags.ETC_GOOD_DATING.isTrue();
+            case 105:
+                return review.tags.ETC_GOOD_TALKING.isTrue();
+            case 106:
+                return review.tags.ETC_WITH_PAT.isTrue();
+            case 107:
+                return review.tags.ETC_WITH_CHILD.isTrue();
+            case 108:
+                return review.tags.ETC_HAVE_ROOM.isTrue();
+            case 109:
+                return review.tags.ETC_HAVE_OUTSIDE.isTrue();
+            case 110:
+                return review.tags.ETC_COMFORTABLE_SEAT.isTrue();
+            case 111:
+                return review.tags.ETC_CLEAN_TOILET.isTrue();
+            case 112:
+                return review.tags.ETC_SPACIOUS_STORE.isTrue();
+            case 113:
+                return review.tags.ETC_STAFF_KIND.isTrue();
+            default:
+                throw new TagNotFoundException(ErrorCode.TAG_NOT_FOUND_ERROR);
+        }
+
     }
 
 }

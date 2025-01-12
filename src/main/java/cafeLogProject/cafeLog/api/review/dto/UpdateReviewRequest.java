@@ -62,7 +62,7 @@ public class UpdateReviewRequest {
         this.content = this.content != null ? this.content : review.getContent();
         this.rating = this.rating != null ? this.rating : review.getRating();
         this.visitDate = this.visitDate != null ? this.visitDate : review.getVisitDate();
-        List<Integer> tagIds = this.tags != null ? this.tags.findAllIds() : review.getTagIds();
+        List<Integer> tagIds = this.tags != null ? this.tags.findAllIds() : review.getTags().getAllTagIds();
 
         return Review.builder()
                 .id(review.getId())

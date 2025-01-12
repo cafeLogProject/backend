@@ -1,6 +1,7 @@
 package cafeLogProject.cafeLog.domains.review.repository;
 
 import cafeLogProject.cafeLog.api.review.dto.ShowReviewResponse;
+import cafeLogProject.cafeLog.domains.review.domain.Review;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
