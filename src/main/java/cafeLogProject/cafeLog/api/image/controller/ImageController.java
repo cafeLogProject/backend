@@ -1,6 +1,7 @@
 package cafeLogProject.cafeLog.api.image.controller;
 
 
+import cafeLogProject.cafeLog.api.image.dto.RegistReviewImageResponse;
 import cafeLogProject.cafeLog.api.image.service.ImageService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +21,9 @@ public class ImageController {
     private final ImageService imageService;
 
     @PostMapping("/")
-    public ResponseEntity<?> registReviewImage(@RequestPart(value="file") MultipartFile image) {
-        String imageId = imageService.addReviewImage(image);
-        return ResponseEntity.ok().body(imageId);
+    public ResponseEntity<RegistReviewImageResponse> registReviewImage(@RequestPart(value="file") MultipartFile image) {
+        RegistReviewImageResponse registReviewImageResponse = imageService.addReviewImage(image);
+        return ResponseEntity.ok().body(registReviewImageResponse);
     }
 
     @GetMapping("/{imageId}")
