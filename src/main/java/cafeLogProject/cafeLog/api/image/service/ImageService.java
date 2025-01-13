@@ -1,5 +1,6 @@
 package cafeLogProject.cafeLog.api.image.service;
 
+import cafeLogProject.cafeLog.api.image.dto.RegistReviewImageResponse;
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.image.ImageNotFoundException;
 import cafeLogProject.cafeLog.common.exception.review.ReviewNotFoundException;
@@ -39,7 +40,7 @@ public class ImageService {
     private String profileImageRelativePath = "/src/main/resources/static/imgs/profile/";
 
     @Transactional
-    public String addReviewImage(MultipartFile multipartFile) {
+    public RegistReviewImageResponse addReviewImage(MultipartFile multipartFile) {
         UUID newReviewImageId = UUID.randomUUID();
         ReviewImage newReviewImage = new ReviewImage(newReviewImageId);
         String newImageUuidStr = newReviewImage.getId().toString();
@@ -47,7 +48,9 @@ public class ImageService {
         File imageFile = addImage(path, newImageUuidStr, multipartFile);
         ImageCompressor.convertToWebpWithLossless(path, newImageUuidStr, imageFile);  //이미지 압축
         reviewImageRepository.save(newReviewImage);
-        return newImageUuidStr;
+        return RegistReviewImageResponse.builder()
+                .imageId(newImageUuidStr)
+                .build();
     }
 
 //    @Transactional

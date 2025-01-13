@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
+@Slf4j
 public class UpdateReviewRequest {
     private String content;
     @Min(value = 1, message = "별점은 1 이상이어야 합니다.")
@@ -56,7 +58,8 @@ public class UpdateReviewRequest {
 //    }
 
     public Review toEntity(Review review) {
-        this.content = !(this.content).equals("") ? this.content : review.getContent();
+        log.error(content);
+        this.content = this.content != null ? this.content : review.getContent();
         this.rating = this.rating != null ? this.rating : review.getRating();
         this.visitDate = this.visitDate != null ? this.visitDate : review.getVisitDate();
         List<Integer> tagIds = this.tags != null ? this.tags.findAllIds() : review.getTagIds();

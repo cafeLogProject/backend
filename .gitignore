@@ -29,6 +29,7 @@ out/
 !**/src/test/**/out/
 /src/main/generated/
 /src/main/resources/static/imgs/
+/src/main/resources/application.yml
 
 ### NetBeans ###
 /nbproject/private/
