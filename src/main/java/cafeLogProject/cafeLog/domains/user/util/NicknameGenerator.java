@@ -45,7 +45,7 @@ public class NicknameGenerator {
             String menu = menues[random.nextInt(menues.length)];
             int number = random.nextInt(1000, 9999);
             newNickname = adjective + "_" + menu + "_" + number;
-        } while (userRepository.findByNickname(newNickname).isPresent());
+        } while (userRepository.existsByNickname(newNickname));
         return newNickname;
     }
 
