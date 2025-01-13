@@ -46,7 +46,7 @@ public class ReviewService {
     private final ImageService imageService;
     private final ReviewImageRepository reviewImageRepository;
     @Transactional
-    public void addReview (String username, RegistReviewRequest registReviewRequest) {
+    public ShowReviewResponse addReview (String username, RegistReviewRequest registReviewRequest) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->{
             throw new UserNotFoundException(username, ErrorCode.USER_NOT_FOUND_ERROR);
         });
@@ -77,11 +77,13 @@ public class ReviewService {
         for (String imageIdStr : imageIdsStr) {
             imageService.addReviewInReviewImage(imageIdStr, newReview.getId());
         }
+
+        return findReview(newReview.getId());
     }
 
 
     @Transactional
-    public void updateReview(String username, long reviewId, UpdateReviewRequest updateReviewRequest) {
+    public ShowReviewResponse updateReview(String username, long reviewId, UpdateReviewRequest updateReviewRequest) {
         Review oldReview = reviewRepository.findById(reviewId).orElseThrow(() -> {
             throw new ReviewNotFoundException(Long.toString(reviewId), ErrorCode.REVIEW_NOT_FOUND_ERROR);
         });
@@ -110,11 +112,14 @@ public class ReviewService {
             }
         }
 
+        Review updatedReview;
         try {
-            reviewRepository.save(updateReviewRequest.toEntity(oldReview));
+            updatedReview = reviewRepository.save(updateReviewRequest.toEntity(oldReview));
         } catch (Exception e) {
             throw new ReviewUpdateException(ErrorCode.REVIEW_UPDATE_ERROR);
         }
+
+        return findReview(updatedReview.getId());
     }
 
     @Transactional
@@ -139,22 +144,22 @@ public class ReviewService {
         }
     }
 
-    public List<ShowReviewResponse> findCafeReviews(Long cafeId, Integer limit, LocalDateTime timestamp){
-        Pageable pageable = PageRequest.of(0, limit);
+    public List<ShowReviewResponse> findCafeReviews(Long cafeId, ShowCafeReviewRequest request){
+        Pageable pageable = PageRequest.of(0, request.getLimit());
 
         try {
-            return reviewRepository.searchByCafeId(cafeId, timestamp, pageable);
+            return reviewRepository.searchByCafeId(cafeId, request.getTimestamp(), pageable);
         } catch (Exception e) {
             log.error(e.toString());
             throw new UnexpectedServerException("findReviews 에러", ErrorCode.UNEXPECTED_ERROR);
         }
     }
 
-    public List<ShowReviewResponse> findReviews(String sortMethod, Integer limit, LocalDateTime timestamp, List<Integer> tagIds, Integer currentRating) {
-        Pageable pageable = PageRequest.of(0, limit);
+    public List<ShowReviewResponse> findReviews(ShowReviewRequest request) {
+        Pageable pageable = PageRequest.of(0, request.getLimit());
 
         try {
-            return reviewRepository.search(sortMethod, tagIds, currentRating, timestamp, pageable);
+            return reviewRepository.search(request.getSort(), request.getTags(), request.getRating(), request.getTimestamp(), pageable);
         } catch (Exception e) {
             log.error(e.toString());
             throw new UnexpectedServerException("findReviews 에러", ErrorCode.UNEXPECTED_ERROR);

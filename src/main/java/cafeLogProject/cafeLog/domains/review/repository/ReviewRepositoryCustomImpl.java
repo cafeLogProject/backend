@@ -5,6 +5,7 @@ import cafeLogProject.cafeLog.api.review.dto.ShowReviewResponse;
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.review.ReviewInvalidSortError;
 import cafeLogProject.cafeLog.domains.review.domain.QReview;
+import cafeLogProject.cafeLog.domains.review.domain.Review;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -113,7 +114,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
 
     // 엔티티형으로 출력하는 경우
 //    @Override
-//    public List<Review> search(String sortMethod, List<Integer> tagIds, Integer currentRating, LocalDateTime createdAt, Pageable pageable) {
+//    public List<Review> searchEntity(String sortMethod, List<Integer> tagIds, Integer currentRating, LocalDateTime createdAt, Pageable pageable) {
 //    OrderSpecifier[] orderSpecifiers = createOrderSpecifier(sortMethod);
 //        return queryFactory
 //                .selectFrom(review)
@@ -122,8 +123,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
 //                )
 //                .groupBy(review.id)
 //                .orderBy(
-//                        descRating(currentRating),
-//                        descCreatedAt(createdAt)
+//                        orderSpecifiers
 //                )
 //                .offset(pageable.getOffset())
 //                .limit(pageable.getPageSize())
