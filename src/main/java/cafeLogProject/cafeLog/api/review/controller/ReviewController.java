@@ -43,7 +43,7 @@ public class ReviewController {
         return ResponseEntity.ok().body(reviews);
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<ShowReviewResponse> registReview(@RequestBody RegistReviewRequest registReviewRequest,
                                           @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
         ShowReviewResponse review = reviewService.addReview(oAuth2User.getName(), registReviewRequest);
