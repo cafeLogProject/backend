@@ -46,7 +46,7 @@ public class ReviewService {
     private final ImageService imageService;
     private final ReviewImageRepository reviewImageRepository;
     @Transactional
-    public void addReview (String username, RegistReviewRequest registReviewRequest) {
+    public ShowReviewResponse addReview (String username, RegistReviewRequest registReviewRequest) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->{
             throw new UserNotFoundException(username, ErrorCode.USER_NOT_FOUND_ERROR);
         });
@@ -77,11 +77,13 @@ public class ReviewService {
         for (String imageIdStr : imageIdsStr) {
             imageService.addReviewInReviewImage(imageIdStr, newReview.getId());
         }
+
+        return findReview(newReview.getId());
     }
 
 
     @Transactional
-    public void updateReview(String username, long reviewId, UpdateReviewRequest updateReviewRequest) {
+    public ShowReviewResponse updateReview(String username, long reviewId, UpdateReviewRequest updateReviewRequest) {
         Review oldReview = reviewRepository.findById(reviewId).orElseThrow(() -> {
             throw new ReviewNotFoundException(Long.toString(reviewId), ErrorCode.REVIEW_NOT_FOUND_ERROR);
         });
@@ -110,11 +112,14 @@ public class ReviewService {
             }
         }
 
+        Review updatedReview;
         try {
-            reviewRepository.save(updateReviewRequest.toEntity(oldReview));
+            updatedReview = reviewRepository.save(updateReviewRequest.toEntity(oldReview));
         } catch (Exception e) {
             throw new ReviewUpdateException(ErrorCode.REVIEW_UPDATE_ERROR);
         }
+
+        return findReview(updatedReview.getId());
     }
 
     @Transactional

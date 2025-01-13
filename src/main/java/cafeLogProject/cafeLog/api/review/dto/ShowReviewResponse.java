@@ -36,6 +36,7 @@ public class ShowReviewResponse {
         this.createdAt = createdAt;
     }
 
+
     // queryDsl에 사용
     @QueryProjection
     public ShowReviewResponse(Review review, List<UUID> imageIds) {

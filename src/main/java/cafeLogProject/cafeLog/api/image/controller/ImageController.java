@@ -40,7 +40,8 @@ public class ImageController {
     @DeleteMapping("/review/{imageId}")
     public ResponseEntity<?> deleteReviewImage(@PathVariable(value="imageId") String imageId) {
         imageService.deleteReviewImage(imageId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.ok().body(null);
+//        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     // 개발 테스트용
