@@ -1,27 +1,26 @@
 package cafeLogProject.cafeLog.api.review.service;
 
 import cafeLogProject.cafeLog.api.image.service.ImageService;
-import cafeLogProject.cafeLog.api.review.dto.RegistReviewRequest;
-import cafeLogProject.cafeLog.api.review.dto.ShowReviewResponse;
-import cafeLogProject.cafeLog.api.review.dto.TagCategory;
-import cafeLogProject.cafeLog.api.review.dto.UpdateReviewRequest;
+import cafeLogProject.cafeLog.api.review.dto.*;
 import cafeLogProject.cafeLog.common.auth.exception.UserNotAuthenticatedException;
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.UnexpectedServerException;
 import cafeLogProject.cafeLog.common.exception.cafe.CafeNotFoundException;
-import cafeLogProject.cafeLog.common.exception.review.ReviewNotFoundException;
-import cafeLogProject.cafeLog.common.exception.review.ReviewSaveException;
-import cafeLogProject.cafeLog.common.exception.user.UserNotFoundException;
-import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
-import cafeLogProject.cafeLog.domains.cafe.repository.CafeRepository;
+import cafeLogProject.cafeLog.common.exception.image.ImageInvalidException;
+import cafeLogProject.cafeLog.common.exception.review.ReviewInvalidSortError;
 import cafeLogProject.cafeLog.domains.image.domain.ReviewImage;
 import cafeLogProject.cafeLog.domains.image.repository.ReviewImageRepository;
 import cafeLogProject.cafeLog.domains.review.domain.Review;
+import cafeLogProject.cafeLog.common.exception.review.ReviewNotFoundException;
+import cafeLogProject.cafeLog.common.exception.review.ReviewSaveException;
 import cafeLogProject.cafeLog.domains.review.exception.ReviewDeleteException;
 import cafeLogProject.cafeLog.domains.review.exception.ReviewUpdateException;
 import cafeLogProject.cafeLog.domains.review.repository.ReviewRepository;
 import cafeLogProject.cafeLog.domains.user.domain.User;
+import cafeLogProject.cafeLog.common.exception.user.UserNotFoundException;
 import cafeLogProject.cafeLog.domains.user.repository.UserRepository;
+import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
+import cafeLogProject.cafeLog.domains.cafe.repository.CafeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import static cafeLogProject.cafeLog.domains.review.domain.Tag.isTagValid;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +46,7 @@ public class ReviewService {
     private final ImageService imageService;
     private final ReviewImageRepository reviewImageRepository;
     @Transactional
-    public void addReview (String username, RegistReviewRequest registReviewRequest) {
+    public ShowReviewResponse addReview (String username, RegistReviewRequest registReviewRequest) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->{
             throw new UserNotFoundException(username, ErrorCode.USER_NOT_FOUND_ERROR);
         });
@@ -75,11 +77,13 @@ public class ReviewService {
         for (String imageIdStr : imageIdsStr) {
             imageService.addReviewInReviewImage(imageIdStr, newReview.getId());
         }
+
+        return findReview(newReview.getId());
     }
 
 
     @Transactional
-    public void updateReview(String username, long reviewId, UpdateReviewRequest updateReviewRequest) {
+    public ShowReviewResponse updateReview(String username, long reviewId, UpdateReviewRequest updateReviewRequest) {
         Review oldReview = reviewRepository.findById(reviewId).orElseThrow(() -> {
             throw new ReviewNotFoundException(Long.toString(reviewId), ErrorCode.REVIEW_NOT_FOUND_ERROR);
         });
@@ -108,11 +112,14 @@ public class ReviewService {
             }
         }
 
+        Review updatedReview;
         try {
-            reviewRepository.save(updateReviewRequest.toEntity(oldReview));
+            updatedReview = reviewRepository.save(updateReviewRequest.toEntity(oldReview));
         } catch (Exception e) {
             throw new ReviewUpdateException(ErrorCode.REVIEW_UPDATE_ERROR);
         }
+
+        return findReview(updatedReview.getId());
     }
 
     @Transactional
@@ -121,36 +128,38 @@ public class ReviewService {
             throw new ReviewNotFoundException(Long.toString(reviewId), ErrorCode.REVIEW_NOT_FOUND_ERROR);
         });
         // 해당 리뷰가 본인의 리뷰가 맞는지 확인
-        if (!review.getUser().getId().equals(username)) {
+        if (!review.getUser().getUsername().equals(username)) {
             throw new UserNotAuthenticatedException(ErrorCode.USER_NOT_AUTH_ERROR);
         }
 
         try{
             // 해당 리뷰의 모든 이미지 삭제
             imageService.deleteAllReviewImageInReview(review);
+            log.error("이미지 삭제 완료");
 
             reviewRepository.delete(review);
+            log.error("리뷰 삭제 완료");
         } catch (Exception e) {
             throw new ReviewDeleteException(ErrorCode.REVIEW_DELETE_ERROR);
         }
     }
 
-    public List<ShowReviewResponse> findCafeReviews(Long cafeId, Integer limit, LocalDateTime timestamp){
-        Pageable pageable = PageRequest.of(0, limit);
+    public List<ShowReviewResponse> findCafeReviews(Long cafeId, ShowCafeReviewRequest request){
+        Pageable pageable = PageRequest.of(0, request.getLimit());
 
         try {
-            return reviewRepository.searchByCafeId(cafeId, timestamp, pageable);
+            return reviewRepository.searchByCafeId(cafeId, request.getTimestamp(), pageable);
         } catch (Exception e) {
             log.error(e.toString());
             throw new UnexpectedServerException("findReviews 에러", ErrorCode.UNEXPECTED_ERROR);
         }
     }
 
-    public List<ShowReviewResponse> findReviews(String sortMethod, Integer limit, LocalDateTime timestamp, List<Integer> tagIds, Integer currentRating) {
-        Pageable pageable = PageRequest.of(0, limit);
+    public List<ShowReviewResponse> findReviews(ShowReviewRequest request) {
+        Pageable pageable = PageRequest.of(0, request.getLimit());
 
         try {
-            return reviewRepository.search(sortMethod, tagIds, currentRating, timestamp, pageable);
+            return reviewRepository.search(request.getSort(), request.getTags(), request.getRating(), request.getTimestamp(), pageable);
         } catch (Exception e) {
             log.error(e.toString());
             throw new UnexpectedServerException("findReviews 에러", ErrorCode.UNEXPECTED_ERROR);
