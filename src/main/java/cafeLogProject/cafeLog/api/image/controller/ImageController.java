@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ImageController {
     private final ImageService imageService;
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<RegistReviewImageResponse> registReviewImage(@RequestPart(value="file") MultipartFile image) {
         RegistReviewImageResponse registReviewImageResponse = imageService.addReviewImage(image);
         return ResponseEntity.ok().body(registReviewImageResponse);

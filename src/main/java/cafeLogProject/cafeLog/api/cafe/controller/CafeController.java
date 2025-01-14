@@ -24,7 +24,7 @@ public class CafeController {
         return ResponseEntity.ok(cafeInfo);
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<SaveCafeRes> saveCafe(@RequestBody @Valid SaveCafeReq cafeReq) {
 
         Long cafeId = cafeService.saveCafe(cafeReq);
