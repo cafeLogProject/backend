@@ -1,15 +1,18 @@
 package cafeLogProject.cafeLog.api.image.service;
 
+import cafeLogProject.cafeLog.api.image.dto.RegistProfileImageResponse;
 import cafeLogProject.cafeLog.api.image.dto.RegistReviewImageResponse;
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.image.ImageNotFoundException;
 import cafeLogProject.cafeLog.common.exception.review.ReviewNotFoundException;
+import cafeLogProject.cafeLog.common.exception.user.UserNotFoundException;
 import cafeLogProject.cafeLog.domains.image.domain.ReviewImage;
 import cafeLogProject.cafeLog.domains.image.repository.ReviewImageRepository;
 import cafeLogProject.cafeLog.domains.image.util.ImageCompressor;
 import cafeLogProject.cafeLog.domains.image.util.ImageHandler;
 import cafeLogProject.cafeLog.domains.review.domain.Review;
 import cafeLogProject.cafeLog.domains.review.repository.ReviewRepository;
+import cafeLogProject.cafeLog.domains.user.domain.User;
 import cafeLogProject.cafeLog.domains.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +35,7 @@ import java.util.UUID;
 public class ImageService {
     private final ReviewImageRepository reviewImageRepository;
     private final  ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
 
     @Value("${path.base}")
     private String basePath;
@@ -41,8 +45,8 @@ public class ImageService {
 
     @Transactional
     public RegistReviewImageResponse addReviewImage(MultipartFile multipartFile) {
-        UUID newReviewImageId = UUID.randomUUID();
-        ReviewImage newReviewImage = new ReviewImage(newReviewImageId);
+        UUID newImageId = UUID.randomUUID();
+        ReviewImage newReviewImage = new ReviewImage(newImageId);
         String newImageUuidStr = newReviewImage.getId().toString();
         String path = basePath+reviewImageRelativePath;
         File imageFile = addImage(path, newImageUuidStr, multipartFile);
@@ -53,16 +57,22 @@ public class ImageService {
                 .build();
     }
 
-//    @Transactional
-//    //profileImage 엔티티 제작하여 수정 필요
-//    public String addProfileImage(MultipartFile multipartFile) {
-//        String path = basePath+profileImageRelativePath;
-//        File imageFile = addImage(path, multipartFile);
-//        String imageFileId = ImageHandler.findImageIdByFile(imageFile);
-//        File compressedFile = ImageCompressor.convertToWebpWithLossless(path, imageFile);
-//        String imageId = ImageHandler.findImageIdByFile(compressedFile);
-//        return imageId;
-//    }
+    // 프로필 이미지 저장/덮어쓰기
+    @Transactional
+    public RegistProfileImageResponse updateProfileImage(String username, MultipartFile multipartFile) {
+        User user = userRepository.findByUsername(username).orElseThrow(() ->{
+            throw new UserNotFoundException(username, ErrorCode.USER_NOT_FOUND_ERROR);
+        });
+        String path = basePath+profileImageRelativePath;
+        String newImageId = user.getId().toString();
+        File imageFile = addImage(path, newImageId, multipartFile);
+        ImageCompressor.convertToWebpWithLossless(path, newImageId, imageFile);  //이미지 압축
+        if (!user.isImageExist()) user.updateImageExist(true);
+
+        return RegistProfileImageResponse.builder()
+                .imageId(newImageId)
+                .build();
+    }
 
     public Resource loadReviewImage(String imageId) {
         String path = basePath+reviewImageRelativePath;
@@ -70,12 +80,11 @@ public class ImageService {
         return imageFile;
     }
 
-
-//    public Resource loadProfileImage(String imageId) {
-//        String path = basePath+profileImageRelativePath;
-//        Resource imageFile = loadImage(path, imageId);
-//        return imageFile;
-//    }
+    public Resource loadProfileImage(String imageId) {
+        String path = basePath+profileImageRelativePath;
+        Resource imageFile = loadCompressedImage(path, imageId);
+        return imageFile;
+    }
 
     @Transactional
     public void deleteReviewImage(String imageIdStr) {
@@ -95,12 +104,16 @@ public class ImageService {
         }
     }
 
-//    @Transactional
-//    public void deleteProfileImage(String imageId) {
-//        String path = basePath+profileImageRelativePath;
-//        ImageHandler.delete(path, imageId);
-//    }
-    
+    @Transactional
+    public void deleteProfileImage(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() ->{
+            throw new UserNotFoundException(username, ErrorCode.USER_NOT_FOUND_ERROR);
+        });
+        String path = basePath+profileImageRelativePath;
+        deleteCompressedImage(path, user.getId().toString());
+        user.updateImageExist(false);
+    }
+
     // 리뷰 등록시 사진 엔티티 리뷰id 필드에 값 추가하는 기능
     @Transactional
     public void addReviewInReviewImage(String imageIdStr, Long reviewId){

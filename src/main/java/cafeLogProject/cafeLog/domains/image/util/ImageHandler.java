@@ -39,15 +39,16 @@ public class ImageHandler {
     }
 
     public static Resource load(String basePath, String imageId) {
+        Resource resource;
         try {
-            Resource resource = new UrlResource("file:" + basePath + imageId);
-            if (!resource.exists() || !resource.isReadable()) {
-                throw new ImageNotFoundException(imageId, ErrorCode.REVIEW_NOT_FOUND_ERROR);
-            }
-            return resource;
+            resource = new UrlResource("file:" + basePath + imageId);
         } catch (Exception e) {
             throw new ImageLoadException(ErrorCode.IMAGE_LOAD_ERROR);
         }
+        if (!resource.exists() || !resource.isReadable()) {
+            throw new ImageNotFoundException(imageId, ErrorCode.IMAGE_NOT_FOUND_ERROR);
+        }
+        return resource;
     }
 
     public static void delete(String basePath, String imageId) {

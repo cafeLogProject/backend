@@ -29,7 +29,7 @@ public class User extends BaseEntity {
 
     private String username;
 
-    private String profileImage;
+    private boolean isImageExist;
 
     private String nickname;
 
@@ -48,6 +48,10 @@ public class User extends BaseEntity {
         this.email = email;
         this.provider = provider;
         this.role = ROLE_USER;
+    }
+
+    public void updateImageExist(boolean isImageExist) {
+        this.isImageExist = isImageExist;
     }
 
 }
