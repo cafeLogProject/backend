@@ -9,6 +9,7 @@ import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import cafeLogProject.cafeLog.domains.user.domain.UserRole;
 import cafeLogProject.cafeLog.domains.user.repository.UserRepository;
+import cafeLogProject.cafeLog.domains.user.util.NicknameGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -83,6 +84,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                                 .email(user.getEmail())
                                 .provider(user.getProvider())
                                 .build();
+
+                        newUser.setNicknameFirstLogin(new NicknameGenerator(userRepository).generateNickname());
                         userRepository.save(newUser);
                         log.info("새로운 사용자 등록, username={}", user.getUsername());
                         return newUser;
