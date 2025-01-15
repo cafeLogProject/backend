@@ -21,10 +21,12 @@ public class ShowReviewResponse {
     private TagCategory tags;
     private Long cafeId;
     private Long userId;
+    private String nickname;
+    private Boolean isProfileImageExist;
     private LocalDateTime createdAt;
 
     @Builder
-    public ShowReviewResponse(Long reviewId, String content, Integer rating, LocalDate visitDate, List<UUID> imageIds, TagCategory tags, Long cafeId, Long userId, LocalDateTime createdAt) {
+    public ShowReviewResponse(Long reviewId, String content, Integer rating, LocalDate visitDate, List<UUID> imageIds, TagCategory tags, Long cafeId, Long userId, String nickname, Boolean isImageExist, LocalDateTime createdAt) {
         this.reviewId = reviewId;
         this.content = content;
         this.rating = rating;
@@ -33,6 +35,8 @@ public class ShowReviewResponse {
         this.tags = tags;
         this.cafeId = cafeId;
         this.userId = userId;
+        this.nickname = nickname;
+        this.isProfileImageExist = isImageExist;
         this.createdAt = createdAt;
     }
 
@@ -48,6 +52,8 @@ public class ShowReviewResponse {
         this.tags = new TagCategory(review.getTagIds());
         this.cafeId = review.getCafe().getId();
         this.userId = review.getUser().getId();
+        this.nickname = review.getUser().getNickname();
+        this.isProfileImageExist = review.getUser().isImageExist();
         this.createdAt = review.getCreatedAt();
     }
 

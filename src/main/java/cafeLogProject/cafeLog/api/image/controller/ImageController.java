@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ImageController {
     private final ImageService imageService;
 
-    @PostMapping("")
+    @PostMapping("/review")
     public ResponseEntity<RegistReviewImageResponse> registReviewImage(@RequestPart(value="file") MultipartFile image) {
         RegistReviewImageResponse registReviewImageResponse = imageService.addReviewImage(image);
         return ResponseEntity.ok().body(registReviewImageResponse);
@@ -34,7 +34,7 @@ public class ImageController {
         return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping("/{imageId}")
+    @GetMapping("/review/{imageId}")
     public ResponseEntity<?> loadReviewImage(@PathVariable(value="imageId") String imageId) {
         Resource resource = imageService.loadReviewImage(imageId);
         String contentType = "image/jpeg";
