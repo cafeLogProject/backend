@@ -26,17 +26,17 @@ public class RegistReviewRequest {
     @NotNull(message = "방문날짜는 필수 입력 값입니다.")
     private LocalDate visitDate;
     private List<String> imageIds = new ArrayList<>();
-    private TagCategory tags;
+    private List<Integer> tagIds;
     @NotNull(message = "카페ID는 필수 입력 값입니다.")
     private Long cafeId;        //필수
 
     @Builder
-    public RegistReviewRequest(String content, Integer rating, LocalDate visitDate, List<String> imageIds, TagCategory tags, Long cafeId) {
+    public RegistReviewRequest(String content, Integer rating, LocalDate visitDate, List<String> imageIds, List<Integer> tagIds, Long cafeId) {
         this.content = content;
         this.rating = rating;
         this.visitDate = visitDate;
         this.imageIds = imageIds;
-        this.tags = tags;
+        this.tagIds = tagIds;
         this.cafeId = cafeId;
     }
 
@@ -45,7 +45,7 @@ public class RegistReviewRequest {
                 .content(content)
                 .rating(rating)
                 .visitDate(visitDate)
-                .tagIds(tags.findAllIds())
+                .tagIds(tagIds)
                 .cafe(cafe)
                 .user(user)
                 .build();

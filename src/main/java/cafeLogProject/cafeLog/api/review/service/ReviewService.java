@@ -45,6 +45,8 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ImageService imageService;
     private final ReviewImageRepository reviewImageRepository;
+    
+    //유효한 태그인지 검사하는 로직 필요
     @Transactional
     public ShowReviewResponse addReview (String username, RegistReviewRequest registReviewRequest) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->{
@@ -56,8 +58,8 @@ public class ReviewService {
         });
 
         // 유효한 태그인지 검사
-        TagCategory tagCategory = registReviewRequest.getTags();
-        tagCategory.isValid();
+//        TagCategory tagCategory = registReviewRequest.getTags();
+//        tagCategory.isValid();
 
         // 이미지 관련
         List<String> imageIdsStr = registReviewRequest.getImageIds();
@@ -82,6 +84,7 @@ public class ReviewService {
     }
 
 
+    // 유효한 태그인지 검사하는 로직 필요
     @Transactional
     public ShowReviewResponse updateReview(String username, long reviewId, UpdateReviewRequest updateReviewRequest) {
         Review oldReview = reviewRepository.findById(reviewId).orElseThrow(() -> {
@@ -93,8 +96,8 @@ public class ReviewService {
         }
 
         // 유효한 태그인지 검사
-        TagCategory tagCategory = updateReviewRequest.getTags();
-        tagCategory.isValid();
+//        TagCategory tagCategory = updateReviewRequest.getTags();
+//        tagCategory.isValid();
 
         // 이미지 변경사항 있는 경우
         List<String> imageIdsStr = updateReviewRequest.getImageIds();
