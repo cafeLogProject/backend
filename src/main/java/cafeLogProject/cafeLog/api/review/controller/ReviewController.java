@@ -45,15 +45,15 @@ public class ReviewController {
 
     @PostMapping("")
     public ResponseEntity<ShowReviewResponse> registReview(@RequestBody RegistReviewRequest registReviewRequest,
-                                          @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
+                                                           @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
         ShowReviewResponse review = reviewService.addReview(oAuth2User.getName(), registReviewRequest);
         return ResponseEntity.ok().body(review);
     }
 
     @PatchMapping("/{reviewId}")
     public ResponseEntity<ShowReviewResponse> updateReview(@PathVariable(value="reviewId") Long reviewId,
-                                          @RequestBody @Valid UpdateReviewRequest updateReviewRequest,
-                                          @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
+                                                           @RequestBody @Valid UpdateReviewRequest updateReviewRequest,
+                                                           @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
         ShowReviewResponse review = reviewService.updateReview(oAuth2User.getName(), reviewId, updateReviewRequest);
         return ResponseEntity.ok().body(review);
     }
