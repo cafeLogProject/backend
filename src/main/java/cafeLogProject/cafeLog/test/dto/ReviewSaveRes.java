@@ -1,5 +1,6 @@
 package cafeLogProject.cafeLog.test.dto;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,8 +15,20 @@ public class ReviewSaveRes {
     private Long cafeId;
     private Long reviewId;
     private String content;
-    private Integer rating;
+    private int rating;
     private LocalDate visitDate;
     private List<Integer> tagIds;
 
+
+    @Builder
+    public ReviewSaveRes(Long userId, Long cafeId, Long reviewId, String content, int rating, LocalDate visitDate, List<Integer> tagIds) {
+
+        this.userId = userId;
+        this.cafeId = cafeId;
+        this.reviewId = reviewId;
+        this.content = content;
+        this.rating = rating;
+        this.visitDate = visitDate;
+        this.tagIds = tagIds;
+    }
 }

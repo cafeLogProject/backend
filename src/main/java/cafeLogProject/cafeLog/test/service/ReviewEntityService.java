@@ -2,9 +2,7 @@ package cafeLogProject.cafeLog.test.service;
 
 import cafeLogProject.cafeLog.common.exception.cafe.CafeNotFoundException;
 import cafeLogProject.cafeLog.common.exception.user.UserNotFoundException;
-import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
 import cafeLogProject.cafeLog.domains.cafe.repository.CafeRepository;
-import cafeLogProject.cafeLog.domains.user.domain.User;
 import cafeLogProject.cafeLog.domains.user.repository.UserRepository;
 import cafeLogProject.cafeLog.test.domain.ReviewEntity;
 import cafeLogProject.cafeLog.test.domain.TagEntity;
@@ -38,18 +36,45 @@ public class ReviewEntityService {
     @Transactional
     public ReviewSaveRes saveReview(String userName, ReviewSaveReq reviewSaveReq) {
 
-        User user = userRepository.findByUsername(userName).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_ERROR));
-        Cafe cafe = cafeRepository.findById(reviewSaveReq.getCafeId()).orElseThrow(() -> new CafeNotFoundException(CAFE_NOT_FOUND_ERROR));
+        ReviewEntity savedReviewEntity = saveReviewEntity(userName, reviewSaveReq);
+        saveTags(reviewSaveReq, savedReviewEntity);
+
+        return ReviewSaveRes.builder()
+                .userId(savedReviewEntity.getUser().getId())
+                .cafeId(savedReviewEntity.getCafe().getId())
+                .reviewId(savedReviewEntity.getId())
+                .content(savedReviewEntity.getContent())
+                .rating(savedReviewEntity.getRating())
+                .visitDate(savedReviewEntity.getVisitDate())
+                .tagIds(reviewSaveReq.getTagIds())
+                .build();
+
+    }
+
+    public List<ReviewFindRes> findAllReview() {
+
+        return reviewEntityRepository.findAllReview();
+    }
+
+    public List<ReviewFindRes> findAllByTagIds(List<Integer> tags) {
+
+        return reviewEntityRepository.findAllByTagIds(tags);
+    }
+
+    private ReviewEntity saveReviewEntity(String userName, ReviewSaveReq reviewSaveReq) {
 
         ReviewEntity reviewEntity = ReviewEntity.builder()
-                .user(user)
-                .cafe(cafe)
+                .user(userRepository.findByUsername(userName).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_ERROR)))
+                .cafe(cafeRepository.findById(reviewSaveReq.getCafeId()).orElseThrow(() -> new CafeNotFoundException(CAFE_NOT_FOUND_ERROR)))
                 .content(reviewSaveReq.getContent())
                 .rating(reviewSaveReq.getRating())
                 .visitDate(reviewSaveReq.getVisitDate())
                 .build();
 
-        ReviewEntity savedReviewEntity = reviewEntityRepository.save(reviewEntity);
+        return reviewEntityRepository.save(reviewEntity);
+    }
+
+    private void saveTags(ReviewSaveReq reviewSaveReq, ReviewEntity savedReviewEntity) {
 
         List<TagEntity> tagEntityList = new ArrayList<>();
 
@@ -62,26 +87,5 @@ public class ReviewEntityService {
         }
 
         tagEntityRepository.saveAll(tagEntityList);
-
-        ReviewSaveRes reviewSaveRes = new ReviewSaveRes();
-        reviewSaveRes.setUserId(user.getId());
-        reviewSaveRes.setCafeId(cafe.getId());
-        reviewSaveRes.setReviewId(savedReviewEntity.getId());
-        reviewSaveRes.setContent(savedReviewEntity.getContent());
-        reviewSaveRes.setRating(savedReviewEntity.getRating());
-        reviewSaveRes.setVisitDate(savedReviewEntity.getVisitDate());
-        reviewSaveRes.setTagIds(reviewSaveReq.getTagIds());
-
-        return reviewSaveRes;
-    }
-
-    public List<ReviewFindRes> findAllReview() {
-
-        return reviewEntityRepository.findAllReview();
-    }
-
-    public List<ReviewFindRes> findAllByTagIds(List<Integer> tags) {
-
-        return reviewEntityRepository.findAllByTagIds(tags);
     }
 }

@@ -1,7 +1,6 @@
 package cafeLogProject.cafeLog.test.domain;
 
-import cafeLogProject.cafeLog.common.exception.ErrorCode;
-import cafeLogProject.cafeLog.common.exception.review.ReviewSaveException;
+import cafeLogProject.cafeLog.test.exception.TagInvalidException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,6 +9,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static cafeLogProject.cafeLog.common.exception.ErrorCode.TAG_INVALID_ERROR;
 
 @Entity
 @Getter
@@ -32,7 +33,7 @@ public class TagEntity {
     @Builder
     public TagEntity(Integer tagId, ReviewEntity reviewEntity) {
 
-        setTagId(tagId);
+        this.tagId = setTagId(tagId);
         this.reviewEntity = reviewEntity;
     }
 
@@ -40,10 +41,11 @@ public class TagEntity {
             1, 2, 3, 4, 5, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113
     );
 
-    public void setTagId(Integer tagId) {
+    public Integer setTagId(Integer tagId) {
         if (!VALID_TAG_IDS.contains(tagId)) {
-            throw new ReviewSaveException(ErrorCode.REVIEW_SAVE_ERROR);
+            throw new TagInvalidException(TAG_INVALID_ERROR);
         }
-        this.tagId = tagId;
+
+        return tagId;
     }
 }

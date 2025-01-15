@@ -1,10 +1,8 @@
 package cafeLogProject.cafeLog.test.repository;
 
-import cafeLogProject.cafeLog.test.domain.QReviewEntity;
 import cafeLogProject.cafeLog.test.domain.ReviewEntity;
 import cafeLogProject.cafeLog.test.dto.ReviewFindRes;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -15,6 +13,7 @@ import java.util.Map;
 
 import static cafeLogProject.cafeLog.test.domain.QReviewEntity.reviewEntity;
 import static cafeLogProject.cafeLog.test.domain.QTagEntity.tagEntity;
+
 
 @RequiredArgsConstructor
 public class ReviewEntityRepositoryImpl implements ReviewEntityRepositoryCustom{
@@ -30,29 +29,7 @@ public class ReviewEntityRepositoryImpl implements ReviewEntityRepositoryCustom{
                 .leftJoin(tagEntity).on(tagEntity.reviewEntity.id.eq(reviewEntity.id))
                 .fetch();
 
-        Map<Long, ReviewFindRes> reviewMap = new HashMap<>();
-
-        for (Tuple tuple : results) {
-            ReviewEntity review = tuple.get(reviewEntity);
-            Integer tagId = tuple.get(tagEntity.tagId);
-
-            ReviewFindRes reviewFindRes = reviewMap.computeIfAbsent(review.getId(), id -> new ReviewFindRes(
-                    review.getCafe().getId(),
-                    review.getUser().getId(),
-                    review.getId(),
-                    review.getContent(),
-                    review.getRating(),
-                    review.getVisitDate(),
-                    review.getCafe().getAddress(),
-                    new ArrayList<>()
-            ));
-
-            if (tagId != null) {
-                reviewFindRes.getTagIds().add(tagId);
-            }
-        }
-
-        return new ArrayList<>(reviewMap.values());
+        return getReviewWithTagIds(results);
     }
 
     @Override
@@ -67,6 +44,8 @@ public class ReviewEntityRepositoryImpl implements ReviewEntityRepositoryCustom{
                 .from(reviewEntity)
                 .join(tagEntity).on(tagEntity.reviewEntity.id.eq(reviewEntity.id))
                 .where(tagEntity.tagId.in(selectedTagIds))
+                .groupBy(reviewEntity.id)
+                .having(tagEntity.tagId.count().eq((long) selectedTagIds.size()))
                 .fetch();
 
         List<Tuple> results = queryFactory
@@ -76,6 +55,10 @@ public class ReviewEntityRepositoryImpl implements ReviewEntityRepositoryCustom{
                 .where(reviewEntity.id.in(reviewIds))
                 .fetch();
 
+        return getReviewWithTagIds(results);
+    }
+
+    private ArrayList<ReviewFindRes> getReviewWithTagIds(List<Tuple> results) {
         Map<Long, ReviewFindRes> reviewMap = new HashMap<>();
 
         for (Tuple tuple : results) {
