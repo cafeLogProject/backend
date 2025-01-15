@@ -26,15 +26,15 @@ public class UpdateReviewRequest {
     private Integer rating;
     private LocalDate visitDate;
     private List<String> imageIds;
-    private TagCategory tags;
+    private List<Integer> tagIds;
 
     @Builder
-    public UpdateReviewRequest(String content, int rating, LocalDate visitDate, List<String> imageIds, TagCategory tags) {
+    public UpdateReviewRequest(String content, int rating, LocalDate visitDate, List<String> imageIds, List<Integer> tagIds) {
         this.content = content;
         this.rating = rating;
         this.visitDate = visitDate;
         this.imageIds = imageIds;
-        this.tags = tags;
+        this.tagIds = tagIds;
     }
     
     // 이미지 필드 존재하는 경우 주석 풀기
@@ -62,7 +62,7 @@ public class UpdateReviewRequest {
         this.content = this.content != null ? this.content : review.getContent();
         this.rating = this.rating != null ? this.rating : review.getRating();
         this.visitDate = this.visitDate != null ? this.visitDate : review.getVisitDate();
-        List<Integer> tagIds = this.tags != null ? this.tags.findAllIds() : review.getTagIds();
+        List<Integer> tagIds = (this.tagIds != null) ? this.tagIds : review.getTagIds();
 
         return Review.builder()
                 .id(review.getId())
