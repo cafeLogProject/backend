@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ReviewEntityRepository extends JpaRepository<ReviewEntity, Long>, ReviewEntityRepositoryCustom {
 
-
 }

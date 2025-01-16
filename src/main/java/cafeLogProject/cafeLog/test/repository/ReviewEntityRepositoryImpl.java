@@ -44,8 +44,8 @@ public class ReviewEntityRepositoryImpl implements ReviewEntityRepositoryCustom{
                 .from(reviewEntity)
                 .join(tagEntity).on(tagEntity.reviewEntity.id.eq(reviewEntity.id))
                 .where(tagEntity.tagId.in(selectedTagIds))
-                .groupBy(reviewEntity.id)
-                .having(tagEntity.tagId.count().eq((long) selectedTagIds.size()))
+//                .groupBy(reviewEntity.id)
+//                .having(tagEntity.tagId.count().eq((long) selectedTagIds.size()))
                 .fetch();
 
         List<Tuple> results = queryFactory
