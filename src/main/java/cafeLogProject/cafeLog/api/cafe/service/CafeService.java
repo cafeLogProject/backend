@@ -1,6 +1,6 @@
 package cafeLogProject.cafeLog.api.cafe.service;
 
-import cafeLogProject.cafeLog.api.cafe.dto.GetCafeInfoRes;
+import cafeLogProject.cafeLog.api.cafe.dto.CafeInfoRes;
 import cafeLogProject.cafeLog.api.cafe.dto.IsExistCafeRes;
 import cafeLogProject.cafeLog.api.cafe.dto.SaveCafeReq;
 import cafeLogProject.cafeLog.common.exception.cafe.CafeCategoryException;
@@ -23,7 +23,7 @@ import static cafeLogProject.cafeLog.common.exception.ErrorCode.*;
 public class CafeService {
     private final CafeRepository cafeRepository;
 
-    public GetCafeInfoRes getCafeInfo(Long cafeId) {
+    public CafeInfoRes getCafeInfo(Long cafeId) {
 
         return cafeRepository.findCafeWithAverageRating(cafeId)
                 .orElseThrow(() -> new CafeNotFoundException(CAFE_NOT_FOUND_ERROR));

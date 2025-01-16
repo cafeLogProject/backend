@@ -1,7 +1,7 @@
 package cafeLogProject.cafeLog.domains.cafe.repository;
 
-import cafeLogProject.cafeLog.api.cafe.dto.GetCafeInfoRes;
-import cafeLogProject.cafeLog.api.cafe.dto.QGetCafeInfoRes;
+import cafeLogProject.cafeLog.api.cafe.dto.CafeInfoRes;
+import cafeLogProject.cafeLog.api.cafe.dto.QCafeInfoRes;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -16,10 +16,10 @@ public class CafeRepositoryImpl implements CafeRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Optional<GetCafeInfoRes> findCafeWithAverageRating(Long cafeId) {
+    public Optional<CafeInfoRes> findCafeWithAverageRating(Long cafeId) {
 
-        GetCafeInfoRes result = queryFactory
-                .select(new QGetCafeInfoRes(
+        CafeInfoRes result = queryFactory
+                .select(new QCafeInfoRes(
                         cafe.cafeName,
                         cafe.address,
                         cafe.roadAddress,
