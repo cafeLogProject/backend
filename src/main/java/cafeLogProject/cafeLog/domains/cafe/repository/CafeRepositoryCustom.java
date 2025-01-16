@@ -1,10 +1,10 @@
 package cafeLogProject.cafeLog.domains.cafe.repository;
 
-import cafeLogProject.cafeLog.api.cafe.dto.GetCafeInfoRes;
+import cafeLogProject.cafeLog.api.cafe.dto.CafeInfoRes;
 
 import java.util.Optional;
 
 public interface CafeRepositoryCustom {
 
-    Optional<GetCafeInfoRes> findCafeWithAverageRating(Long cafeId);
+    Optional<CafeInfoRes> findCafeWithAverageRating(Long cafeId);
 }

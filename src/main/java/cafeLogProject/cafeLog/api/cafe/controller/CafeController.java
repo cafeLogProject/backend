@@ -1,6 +1,6 @@
 package cafeLogProject.cafeLog.api.cafe.controller;
 
-import cafeLogProject.cafeLog.api.cafe.dto.GetCafeInfoRes;
+import cafeLogProject.cafeLog.api.cafe.dto.CafeInfoRes;
 import cafeLogProject.cafeLog.api.cafe.dto.IsExistCafeRes;
 import cafeLogProject.cafeLog.api.cafe.dto.SaveCafeReq;
 import cafeLogProject.cafeLog.api.cafe.dto.SaveCafeRes;
@@ -18,9 +18,9 @@ public class CafeController {
     private final CafeService cafeService;
 
     @GetMapping("/{cafeId}")
-    public ResponseEntity<GetCafeInfoRes> getCafeInfo(@PathVariable Long cafeId) {
+    public ResponseEntity<CafeInfoRes> getCafeInfo(@PathVariable Long cafeId) {
 
-        GetCafeInfoRes cafeInfo = cafeService.getCafeInfo(cafeId);
+        CafeInfoRes cafeInfo = cafeService.getCafeInfo(cafeId);
         return ResponseEntity.ok(cafeInfo);
     }
 
