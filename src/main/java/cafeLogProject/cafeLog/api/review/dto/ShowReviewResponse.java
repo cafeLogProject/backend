@@ -18,7 +18,7 @@ public class ShowReviewResponse {
     private Integer rating;
     private LocalDate visitDate;
     private List<UUID> imageIds = new ArrayList<>();
-    private TagCategory tags;
+    private List<Integer> tagIds;
     private Long cafeId;
     private Long userId;
     private String nickname;
@@ -26,13 +26,13 @@ public class ShowReviewResponse {
     private LocalDateTime createdAt;
 
     @Builder
-    public ShowReviewResponse(Long reviewId, String content, Integer rating, LocalDate visitDate, List<UUID> imageIds, TagCategory tags, Long cafeId, Long userId, String nickname, Boolean isImageExist, LocalDateTime createdAt) {
+    public ShowReviewResponse(Long reviewId, String content, Integer rating, LocalDate visitDate, List<UUID> imageIds, List<Integer> tagIds, Long cafeId, Long userId, String nickname, Boolean isImageExist, LocalDateTime createdAt) {
         this.reviewId = reviewId;
         this.content = content;
         this.rating = rating;
         this.visitDate = visitDate;
         this.imageIds = imageIds;
-        this.tags = tags;
+        this.tagIds = tagIds;
         this.cafeId = cafeId;
         this.userId = userId;
         this.nickname = nickname;
@@ -49,7 +49,7 @@ public class ShowReviewResponse {
         this.rating = review.getRating();
         this.visitDate = review.getVisitDate();
         this.imageIds = imageIds;
-        this.tags = new TagCategory(review.getTagIds());
+        this.tagIds = review.getTagIds();
         this.cafeId = review.getCafe().getId();
         this.userId = review.getUser().getId();
         this.nickname = review.getUser().getNickname();

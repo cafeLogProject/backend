@@ -54,4 +54,18 @@ public class User extends BaseEntity {
         this.isImageExist = isImageExist;
     }
 
+    public void updateUserNickname(String nickname) {
+
+        if (nickname != null) this.nickname = nickname;
+    }
+
+    public void updateUserIntroduce(String introduce){
+
+        if (introduce != null) this.introduce = introduce;
+    }
+
+    public void setNicknameFirstLogin(String randomNickname) {
+
+        this.nickname = randomNickname;
+    }
 }
