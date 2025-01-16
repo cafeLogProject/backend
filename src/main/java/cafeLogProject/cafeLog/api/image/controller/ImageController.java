@@ -1,6 +1,7 @@
 package cafeLogProject.cafeLog.api.image.controller;
 
 
+import cafeLogProject.cafeLog.api.image.dto.RegistProfileImageResponse;
 import cafeLogProject.cafeLog.api.image.dto.RegistReviewImageResponse;
 import cafeLogProject.cafeLog.api.image.service.ImageService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
@@ -20,15 +21,32 @@ import org.springframework.web.multipart.MultipartFile;
 public class ImageController {
     private final ImageService imageService;
 
-    @PostMapping("")
+    @PostMapping("/review")
     public ResponseEntity<RegistReviewImageResponse> registReviewImage(@RequestPart(value="file") MultipartFile image) {
         RegistReviewImageResponse registReviewImageResponse = imageService.addReviewImage(image);
         return ResponseEntity.ok().body(registReviewImageResponse);
     }
 
-    @GetMapping("/{imageId}")
+    @PostMapping("/profile")
+    public ResponseEntity<RegistProfileImageResponse> registProfileImage(@RequestPart(value="file") MultipartFile image,
+                                                                         @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
+        RegistProfileImageResponse response = imageService.updateProfileImage(oAuth2User.getName(), image);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/review/{imageId}")
     public ResponseEntity<?> loadReviewImage(@PathVariable(value="imageId") String imageId) {
         Resource resource = imageService.loadReviewImage(imageId);
+        String contentType = "image/jpeg";
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(resource);
+    }
+
+    @GetMapping("/profile/{userId}")
+    public ResponseEntity<?> loadProfileImage(@PathVariable(value="userId") String imageId) {
+        Resource resource = imageService.loadProfileImage(imageId);
         String contentType = "image/jpeg";
 
         return ResponseEntity.ok()
@@ -40,6 +58,13 @@ public class ImageController {
     @DeleteMapping("/review/{imageId}")
     public ResponseEntity<?> deleteReviewImage(@PathVariable(value="imageId") String imageId) {
         imageService.deleteReviewImage(imageId);
+        return ResponseEntity.ok().body(null);
+//        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @DeleteMapping("/profile")
+    public ResponseEntity<?> deleteProfileImage(@AuthenticationPrincipal CustomOAuth2User oAuth2User) {
+        imageService.deleteProfileImage(oAuth2User.getName());
         return ResponseEntity.ok().body(null);
 //        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

@@ -21,6 +21,7 @@ import java.util.List;
 
 import static cafeLogProject.cafeLog.domains.image.domain.QReviewImage.reviewImage;
 import static cafeLogProject.cafeLog.domains.review.domain.QReview.review;
+import static cafeLogProject.cafeLog.domains.user.domain.QUser.user;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 
@@ -37,6 +38,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
         return queryFactory
                 .from(review)
                 .leftJoin(reviewImage).on(review.id.eq(reviewImage.review.id))
+                .join(review.user).fetchJoin()
                 .where(review.id.eq(reviewId))
                 .transform(
                         groupBy(review.id).as(
@@ -54,6 +56,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
         return queryFactory
                 .from(review)
                 .leftJoin(reviewImage).on(review.id.eq(reviewImage.review.id))
+                .join(review.user).fetchJoin()
                 .where(review.cafe.id.eq(cafeId), isBeforeCreatedAt(createdAt))
                 .orderBy(review.createdAt.desc())
                 .offset(pageable.getOffset())
@@ -79,6 +82,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
         return queryFactory
                 .from(review)
                 .leftJoin(reviewImage).on(review.id.eq(reviewImage.review.id))
+                .join(review.user).fetchJoin()
                 .where(
                         eqTags(tagIds), isLowerThenRating(currentRating), isBeforeCreatedAt(createdAt)
                 )
