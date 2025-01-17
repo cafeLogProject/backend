@@ -73,6 +73,12 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * 이하 설정 NGINX에서 처리하므로 비활성화
+     * 코드는 보존(NGINX 설정 시 참고)
+     */
+
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
