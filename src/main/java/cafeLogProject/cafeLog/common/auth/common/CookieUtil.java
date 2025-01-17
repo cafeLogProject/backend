@@ -16,20 +16,10 @@ public class CookieUtil {
         Cookie cookie = new Cookie(key, value);
 
         cookie.setMaxAge(60 * 60 * 24);
-        cookie.setSecure(true);
+//        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         return cookie;
-    }
-
-    public static ResponseCookie createResponseCookie(String key, String value) {
-        return ResponseCookie.from(key, value)
-                .maxAge(60 * 60 * 24)
-                .secure(true)
-                .sameSite("None")  // ResponseCookie 클래스는 SameSite 설정을 지원
-                .path("/")
-                .httpOnly(true)
-                .build();
     }
 
     /***
@@ -43,6 +33,25 @@ public class CookieUtil {
         response.addCookie(cookie);
     }
 
+    public static ResponseCookie createResponseCookie(String key, String value) {
+        return ResponseCookie.from(key, value)
+                .maxAge(60 * 60 * 24)
+                .secure(true)
+                .sameSite("None")  // ResponseCookie 클래스는 SameSite 설정을 지원
+                .path("/")
+                .httpOnly(true)
+                .build();
+    }
+
+    public static void removeResponseCookie(HttpServletResponse response, String cookieName) {
+        ResponseCookie cookie = ResponseCookie.from(cookieName)
+                .maxAge(0) // 쿠키 삭제를 위해 만료 시간을 0으로 설정
+                .path("/")
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+    }
+
+
     /***
      * 쿠키에서 AccessToken or RefreshToken 추출
      */
@@ -51,7 +60,7 @@ public class CookieUtil {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(tokenType)){
+                if (cookie.getName().equals(tokenType)) {
                     return cookie.getValue();
                 }
             }
