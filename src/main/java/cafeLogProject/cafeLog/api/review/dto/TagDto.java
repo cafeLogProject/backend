@@ -1,6 +1,5 @@
 package cafeLogProject.cafeLog.api.review.dto;
 
-import cafeLogProject.cafeLog.domains.review.domain.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

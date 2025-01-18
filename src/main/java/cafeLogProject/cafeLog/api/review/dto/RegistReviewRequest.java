@@ -3,6 +3,7 @@ package cafeLogProject.cafeLog.api.review.dto;
 
 import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
 import cafeLogProject.cafeLog.domains.review.domain.Review;
+import cafeLogProject.cafeLog.domains.review.domain.Tag;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
@@ -40,12 +41,13 @@ public class RegistReviewRequest {
         this.cafeId = cafeId;
     }
 
+
+
     public Review toEntity(User user, Cafe cafe) {
         return Review.builder()
                 .content(content)
                 .rating(rating)
                 .visitDate(visitDate)
-                .tagIds(tagIds)
                 .cafe(cafe)
                 .user(user)
                 .build();

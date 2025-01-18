@@ -62,14 +62,12 @@ public class UpdateReviewRequest {
         this.content = this.content != null ? this.content : review.getContent();
         this.rating = this.rating != null ? this.rating : review.getRating();
         this.visitDate = this.visitDate != null ? this.visitDate : review.getVisitDate();
-        List<Integer> tagIds = (this.tagIds != null) ? this.tagIds : review.getTagIds();
 
         return Review.builder()
                 .id(review.getId())
                 .content(content)
                 .rating(rating)
                 .visitDate(visitDate)
-                .tagIds(tagIds)
                 .cafe(review.getCafe())
                 .user(review.getUser())
                 .build();

@@ -27,11 +27,6 @@ public class Review extends BaseEntity {
     private int rating;
 
     private LocalDate visitDate;
-
-    @ElementCollection
-    @CollectionTable(name = "review_tags", joinColumns = @JoinColumn(name = "review_id"))
-    @Column(name = "tag")
-    private List<Integer> tagIds = new ArrayList<>();
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cafe_id", nullable = false)
@@ -42,12 +37,11 @@ public class Review extends BaseEntity {
     private User user;
 
     @Builder
-    public Review(Long id, String content, int rating, LocalDate visitDate, List<Integer> tagIds, Cafe cafe, User user){
+    public Review(Long id, String content, int rating, LocalDate visitDate, Cafe cafe, User user){
         this.id = id;
         this.content = content;
         this.rating = rating;
         this.visitDate = visitDate;
-        this.tagIds = tagIds;
         this.cafe = cafe;
         this.user = user;
     }

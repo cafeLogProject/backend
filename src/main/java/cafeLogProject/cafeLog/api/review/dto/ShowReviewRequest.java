@@ -20,7 +20,7 @@ public class ShowReviewRequest {
 
     LocalDateTime timestamp;
 
-    List<Integer> tags;
+    List<Integer> tagIds;
 
     @Min(value = 1, message = "별점값은 1 이상이어야 합니다.")
     @Max(value = 5, message = "별점값은 5 이하여야 합니다.")
@@ -33,11 +33,11 @@ public class ShowReviewRequest {
     }
 
     @Builder
-    public ShowReviewRequest (String sort, Integer limit, LocalDateTime timestamp, List<Integer> tags, Integer rating) {
+    public ShowReviewRequest (String sort, Integer limit, LocalDateTime timestamp, List<Integer> tagIds, Integer rating) {
         this.sort = sort;
         this.limit = limit;
         this.timestamp = timestamp;
-        this.tags = tags;
+        this.tagIds = tagIds;
         this.rating = rating;
     }
 
