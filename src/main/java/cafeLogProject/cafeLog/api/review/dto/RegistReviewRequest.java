@@ -3,6 +3,7 @@ package cafeLogProject.cafeLog.api.review.dto;
 
 import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
 import cafeLogProject.cafeLog.domains.review.domain.Review;
+import cafeLogProject.cafeLog.domains.review.domain.Tag;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
@@ -26,6 +27,7 @@ public class RegistReviewRequest {
     @NotNull(message = "방문날짜는 필수 입력 값입니다.")
     private LocalDate visitDate;
     private List<String> imageIds = new ArrayList<>();
+    @Size(max = 5, message = "최대 태그 개수는 5입니다.")
     private List<Integer> tagIds;
     @NotNull(message = "카페ID는 필수 입력 값입니다.")
     private Long cafeId;        //필수
@@ -40,12 +42,13 @@ public class RegistReviewRequest {
         this.cafeId = cafeId;
     }
 
+
+
     public Review toEntity(User user, Cafe cafe) {
         return Review.builder()
                 .content(content)
                 .rating(rating)
                 .visitDate(visitDate)
-                .tagIds(tagIds)
                 .cafe(cafe)
                 .user(user)
                 .build();

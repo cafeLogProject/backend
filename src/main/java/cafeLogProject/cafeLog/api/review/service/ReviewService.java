@@ -6,16 +6,16 @@ import cafeLogProject.cafeLog.common.auth.exception.UserNotAuthenticatedExceptio
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.UnexpectedServerException;
 import cafeLogProject.cafeLog.common.exception.cafe.CafeNotFoundException;
-import cafeLogProject.cafeLog.common.exception.image.ImageInvalidException;
-import cafeLogProject.cafeLog.common.exception.review.ReviewInvalidSortError;
 import cafeLogProject.cafeLog.domains.image.domain.ReviewImage;
 import cafeLogProject.cafeLog.domains.image.repository.ReviewImageRepository;
 import cafeLogProject.cafeLog.domains.review.domain.Review;
 import cafeLogProject.cafeLog.common.exception.review.ReviewNotFoundException;
 import cafeLogProject.cafeLog.common.exception.review.ReviewSaveException;
+import cafeLogProject.cafeLog.domains.review.domain.Tag;
 import cafeLogProject.cafeLog.domains.review.exception.ReviewDeleteException;
 import cafeLogProject.cafeLog.domains.review.exception.ReviewUpdateException;
 import cafeLogProject.cafeLog.domains.review.repository.ReviewRepository;
+import cafeLogProject.cafeLog.domains.review.repository.TagRepository;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import cafeLogProject.cafeLog.common.exception.user.UserNotFoundException;
 import cafeLogProject.cafeLog.domains.user.repository.UserRepository;
@@ -28,12 +28,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import static cafeLogProject.cafeLog.domains.review.domain.Tag.isTagValid;
 
 @Service
 @RequiredArgsConstructor
@@ -44,9 +40,8 @@ public class ReviewService {
     private final CafeRepository cafeRepository;
     private final ReviewRepository reviewRepository;
     private final ImageService imageService;
-    private final ReviewImageRepository reviewImageRepository;
-    
-    //유효한 태그인지 검사하는 로직 필요
+    private final TagRepository tagRepository;
+
     @Transactional
     public ShowReviewResponse addReview (String username, RegistReviewRequest registReviewRequest) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->{
@@ -56,10 +51,6 @@ public class ReviewService {
         Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(() -> {
             throw new CafeNotFoundException(Long.toString(cafeId), ErrorCode.CAFE_NOT_FOUND_ERROR);
         });
-
-        // 유효한 태그인지 검사
-//        TagCategory tagCategory = registReviewRequest.getTags();
-//        tagCategory.isValid();
 
         // 이미지 관련
         List<String> imageIdsStr = registReviewRequest.getImageIds();
@@ -72,6 +63,7 @@ public class ReviewService {
         Review newReview;
         try {
             newReview = reviewRepository.save(registReviewRequest.toEntity(user, cafe));
+            saveTags(registReviewRequest.getTagIds(), newReview);
         } catch (Exception e) {
             throw new ReviewSaveException(ErrorCode.REVIEW_SAVE_ERROR);
         }
@@ -83,8 +75,6 @@ public class ReviewService {
         return findReview(newReview.getId());
     }
 
-
-    // 유효한 태그인지 검사하는 로직 필요
     @Transactional
     public ShowReviewResponse updateReview(String username, long reviewId, UpdateReviewRequest updateReviewRequest) {
         Review oldReview = reviewRepository.findById(reviewId).orElseThrow(() -> {
@@ -94,10 +84,6 @@ public class ReviewService {
         if (!oldReview.getUser().getUsername().equals(username)) {
             throw new UserNotAuthenticatedException(ErrorCode.USER_NOT_AUTH_ERROR);
         }
-
-        // 유효한 태그인지 검사
-//        TagCategory tagCategory = updateReviewRequest.getTags();
-//        tagCategory.isValid();
 
         // 이미지 변경사항 있는 경우
         List<String> imageIdsStr = updateReviewRequest.getImageIds();
@@ -115,9 +101,18 @@ public class ReviewService {
             }
         }
 
+
         Review updatedReview;
         try {
             updatedReview = reviewRepository.save(updateReviewRequest.toEntity(oldReview));
+
+            // 태그 변경사항 있는 경우
+            List<Integer> updateTags = updateReviewRequest.getTagIds();
+            if (updateTags != null) {
+                // 태그 엔티티 모두 삭제후 재생성
+                deleteAllReviewTags(updatedReview);
+                saveTags(updateReviewRequest.getTagIds(), updatedReview);
+            }
         } catch (Exception e) {
             throw new ReviewUpdateException(ErrorCode.REVIEW_UPDATE_ERROR);
         }
@@ -139,6 +134,10 @@ public class ReviewService {
             // 해당 리뷰의 모든 이미지 삭제
             imageService.deleteAllReviewImageInReview(review);
             log.error("이미지 삭제 완료");
+
+            // 해당 리뷰의 모든 태그 삭제
+            List<Tag> tags = tagRepository.findAllByReview(review);
+            tagRepository.deleteAll(tags);
 
             reviewRepository.delete(review);
             log.error("리뷰 삭제 완료");
@@ -162,7 +161,7 @@ public class ReviewService {
         Pageable pageable = PageRequest.of(0, request.getLimit());
 
         try {
-            return reviewRepository.search(request.getSort(), request.getTags(), request.getRating(), request.getTimestamp(), pageable);
+            return reviewRepository.search(request.getSort(), request.getTagIds(), request.getRating(), request.getTimestamp(), pageable);
         } catch (Exception e) {
             log.error(e.toString());
             throw new UnexpectedServerException("findReviews 에러", ErrorCode.UNEXPECTED_ERROR);
@@ -189,6 +188,26 @@ public class ReviewService {
         return showReviewResponses;
     }
 
+    private List<Tag> saveTags(List<Integer> tagIds, Review savedReview) {
+        List<Tag> tagList = new ArrayList<>();
+
+        for (Integer tagId : tagIds) {
+            tagList.add(Tag.builder()
+                    .tagId(tagId)
+                    .review(savedReview)
+                    .build());
+        }
+        if (tagList.isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            return tagRepository.saveAll(tagList);
+        }
+    }
+
+    private void deleteAllReviewTags(Review review) {
+        List<Tag> tags = tagRepository.findAllByReview(review);
+        tagRepository.deleteAll(tags);
+    }
 
 
 

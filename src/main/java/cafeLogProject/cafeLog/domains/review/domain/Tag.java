@@ -1,52 +1,50 @@
 package cafeLogProject.cafeLog.domains.review.domain;
 
-import cafeLogProject.cafeLog.api.review.dto.TagDto;
+
+import cafeLogProject.cafeLog.common.exception.ErrorCode;
+import cafeLogProject.cafeLog.common.exception.review.TagInvalidException;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+import lombok.NoArgsConstructor;
 
+import java.util.Arrays;
+import java.util.List;
+
+@Entity
 @Getter
-public enum Tag {
+@Table(name = "tag_tb")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Tag {
 
-    MENU_SELL_BEAN(1,"원두를 판매해요"),
-    MENU_SELL_DESSERT(2,"디저트를 판매해요"),
-    MENU_GOOD_COFFEE(3,"커피가 맛있어요"),
-    MENU_HAND_DRIP(4,"핸드드립 커피가 있어요"),
-    MENU_SELF_ROASTING(5,"매장에서 직접 로스팅해요"),
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "tag_entity_id")
+    private Long id;
 
-    ETC_GOOD_WORK(101,"작업하기 좋아요"),
-    ETC_GOOD_STUDY(102,"공부하기 좋아요"),
-    ETC_GOOD_MOOD(103,"분위기가 좋아요"),
-    ETC_GOOD_DATING(104,"데이트하기 좋아요"),
-    ETC_GOOD_TALKING(105,"대화하기 좋아요"),
-    ETC_WITH_PAT(106,"반려견과 가기 좋아요"),
-    ETC_WITH_CHILD(107,"아이와 가기 좋아요"),
-    ETC_HAVE_ROOM(108,"방이 있어요"),
-    ETC_HAVE_OUTSIDE(109,"야외석이 있어요"),
-    ETC_COMFORTABLE_SEAT(110,"좌석이 편해요"),
-    ETC_CLEAN_TOILET(111,"화장실이 깨끗해요"),
-    ETC_SPACIOUS_STORE(112,"매장이 넓어요"),
-    ETC_STAFF_KIND(113,"직원이 친절해요");
+    @Column(name = "tag_id")
+    private Integer tagId;
 
-    private final String description;
-    private final int num;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id", nullable = false)
+    private Review review;
 
-    Tag(int num, String description) {
-        this.num = num;
-        this.description = description;
+    @Builder
+    public Tag(Integer tagId, Review review) {
+
+        this.tagId = setTagId(tagId);
+        this.review = review;
     }
 
+    private static final List<Integer> VALID_TAG_IDS = Arrays.asList(
+            1, 2, 3, 4, 5, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113
+    );
 
-    public static void isTagValid(TagDto tag) {
-        findByNum(tag.getId());
-    }
-
-    public static Tag findByNum(int num) {
-        for (Tag tag : Tag.values()) {
-            if (tag.getNum() == num) {
-                return tag;
-            }
+    public Integer setTagId(Integer tagId) {
+        if (!VALID_TAG_IDS.contains(tagId)) {
+            throw new TagInvalidException(ErrorCode.TAG_INVALID_ERROR);
         }
-        throw new HttpMessageNotReadableException("존재하지 않는 tagid입니다.");
+        return tagId;
     }
-
 }
