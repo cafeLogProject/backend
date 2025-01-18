@@ -43,8 +43,6 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
                 .leftJoin(review.user).fetchJoin()
                 .leftJoin(tag).on(review.id.eq(tag.review.id))
                 .where(review.id.eq(reviewId))
-                //                    .groupBy(review.id)
-//                    .having(tag.tagId.count().eq((long) selectedTagIds.size()))
                 .fetch();
 
         return toShowReviewResponse(results);
@@ -87,8 +85,8 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
 //                        groupBy(review.id).as(
 //                                new QShowReviewResponse(
 //                                        review,
-//                                        set(reviewImage.id),    // 카테시안 곱 문제 방지를 위해 set 사용
-//                                        set(tag.tagId)
+//                                        list(reviewImage.id),    // 카테시안 곱 문제 방지를 위해 set 사용
+//                                        list(tag.tagId)
 //                                )
 //                        )
 //                )
@@ -129,7 +127,8 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
                     .from(review)
                     .where(
                             isLowerThenRating(currentRating),
-                            isBeforeCreatedAt(createdAt))
+                            isBeforeCreatedAt(createdAt)
+                    )
                     .fetch();
         } else {
             // 태그 조건 존재하는 경우
@@ -137,9 +136,11 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
                     .select(review.id)
                     .from(review)
                     .join(tag).on(tag.review.id.eq(review.id))
-                    .where(tag.tagId.in(selectedTagIds),
+                    .where(
+                            tag.tagId.in(selectedTagIds),
                             isLowerThenRating(currentRating),
-                            isBeforeCreatedAt(createdAt))
+                            isBeforeCreatedAt(createdAt)
+                    )
                     .groupBy(review.id)
                     .having(tag.tagId.count().eq((long) selectedTagIds.size()))
                     .fetch();

@@ -2,6 +2,7 @@ package cafeLogProject.cafeLog.api.review.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class ShowReviewRequest {
 
     LocalDateTime timestamp;
 
+    @Size(max = 5, message = "최대 태그 개수는 5입니다.")
     List<Integer> tagIds;
 
     @Min(value = 1, message = "별점값은 1 이상이어야 합니다.")
