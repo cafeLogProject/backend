@@ -1,8 +1,9 @@
-package cafeLogProject.cafeLog.domains.review.domain;
+package cafeLogProject.cafeLog.domains.tag.domain;
 
 
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.review.TagInvalidException;
+import cafeLogProject.cafeLog.domains.review.domain.Review;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
