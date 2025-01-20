@@ -3,7 +3,6 @@ package cafeLogProject.cafeLog.api.review.dto;
 
 import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
 import cafeLogProject.cafeLog.domains.review.domain.Review;
-import cafeLogProject.cafeLog.domains.review.domain.Tag;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
