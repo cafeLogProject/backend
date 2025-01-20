@@ -27,6 +27,9 @@ public enum ErrorCode {
     REVIEW_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류에 의해 리뷰를 저장하지 못했습니다."),
     REVIEW_UPDATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류에 의해 리뷰를 저장하지 못했습니다."),
     REVIEW_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류에 의해 리뷰를 삭제하지 못했습니다."),
+
+    DRAFT_REVIEW_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "임시저장 리뷰를 찾을 수 없습니다."),
+
     TAG_INVALID_ERROR(HttpStatus.BAD_REQUEST, "태그 아이디가 유효하지 않습니다."),
 
     CAFE_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "카페를 찾을 수 없습니다."),

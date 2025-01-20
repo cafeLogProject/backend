@@ -7,7 +7,6 @@ import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.UnexpectedServerException;
 import cafeLogProject.cafeLog.common.exception.cafe.CafeNotFoundException;
 import cafeLogProject.cafeLog.domains.image.domain.ReviewImage;
-import cafeLogProject.cafeLog.domains.image.repository.ReviewImageRepository;
 import cafeLogProject.cafeLog.domains.review.domain.Review;
 import cafeLogProject.cafeLog.common.exception.review.ReviewNotFoundException;
 import cafeLogProject.cafeLog.common.exception.review.ReviewSaveException;
@@ -168,24 +167,19 @@ public class ReviewService {
         }
     }
 
-    public ShowReviewResponse findReview(Long reviewId){
-        ShowReviewResponse showReviewResponse = reviewRepository.findShowReviewResponseById(reviewId);
-        if (showReviewResponse == null) {
-            throw new ReviewNotFoundException(ErrorCode.REVIEW_NOT_FOUND_ERROR);
-        }
-        return showReviewResponse;
+    public List<ShowReviewResponse> findUserReviews(String username, ShowUserReviewRequest request) {
+        User user = userRepository.findByUsername(username).orElseThrow(() ->{
+            throw new UserNotFoundException(username, ErrorCode.USER_NOT_FOUND_ERROR);
+        });
+        Pageable pageable = PageRequest.of(0, request.getLimit());
+        return reviewRepository.searchByUser(user, request.getTimestamp(), pageable);
     }
 
-
-    // 테스트용
-    public List<ShowReviewResponse> findAllReviews(){
-        List<Review> reviews = reviewRepository.findAll();
-        List<ShowReviewResponse> showReviewResponses = new ArrayList<>();
-        for (Review review : reviews) {
-            ShowReviewResponse showReviewResponse = reviewRepository.findShowReviewResponseById(review.getId());
-            showReviewResponses.add(showReviewResponse);
-        }
-        return showReviewResponses;
+    public ShowReviewResponse findReview(Long reviewId){
+        ShowReviewResponse showReviewResponse = reviewRepository.findShowReviewResponseById(reviewId).orElseThrow(() -> {
+            throw new ReviewNotFoundException(ErrorCode.REVIEW_NOT_FOUND_ERROR);
+        });
+        return showReviewResponse;
     }
 
     private List<Tag> saveTags(List<Integer> tagIds, Review savedReview) {
