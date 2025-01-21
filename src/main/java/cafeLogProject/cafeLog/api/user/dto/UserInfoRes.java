@@ -12,13 +12,16 @@ public class UserInfoRes {
 
     private String introduce;
 
+    private String email;
+
     private Boolean isProfileImageExist;
 
     @Builder
-    public UserInfoRes(String nickname, String introduce, Boolean isProfileImageExist) {
+    public UserInfoRes(String nickname, String introduce, String email, Boolean isProfileImageExist) {
 
         this.nickname = nickname;
         this.introduce = introduce;
+        this.email = email;
         this.isProfileImageExist = isProfileImageExist;
     }
 }
