@@ -11,3 +11,11 @@
 
 ### 도커 실행 중지
 - docker-compose down
+
+### EC2에서 배포용으로 실행
+- export $(grep -v '^#' .env.prod | xargs) && docker compose -f docker-compose-prod.yml up --build -d
+- docker compose -f docker-compose-prod.yml down
+
+### 로컬에서 실행
+- export $(grep -v '^#' .env.dev | xargs) && docker-compose -f docker-compose-dev.yml up --build -d
+- docker-compose -f docker-compose-dev.yml down

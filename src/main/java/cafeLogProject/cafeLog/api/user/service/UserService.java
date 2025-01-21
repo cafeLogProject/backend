@@ -32,6 +32,7 @@ public class UserService {
         return UserInfoRes.builder()
                 .nickname(user.getNickname())
                 .introduce(user.getIntroduce())
+                .email(user.getEmail())
                 .isProfileImageExist(user.isImageExist())
                 .build();
     }
