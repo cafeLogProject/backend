@@ -1,9 +1,10 @@
 package cafeLogProject.cafeLog.domains.draftReview.domain;
 
 
+import cafeLogProject.cafeLog.common.exception.ErrorCode;
+import cafeLogProject.cafeLog.common.exception.image.ImageNotFoundException;
 import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
 import cafeLogProject.cafeLog.common.domain.BaseEntity;
-import cafeLogProject.cafeLog.domains.image.domain.ReviewImage;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -58,7 +59,32 @@ public class DraftReview extends BaseEntity {
         this.user = user;
     }
 
+    public void addImage(UUID imageId){
+        if (this.imageIds.contains(imageId)) return;
+        this.imageIds.add(imageId);
+    }
 
+    public void deleteImage(String imageId) {
+        UUID imageUuid;
+        try {
+            imageUuid = UUID.fromString(imageId);
+        } catch (Exception e) {
+            // UUID 형식이 아닌 경우
+            throw new ImageNotFoundException(ErrorCode.IMAGE_NOT_FOUND_ERROR);
+        }
+        
+        if (this.imageIds.contains(imageUuid)) {
+            this.imageIds.remove(imageUuid);
+        }
+    }
+
+    public List<String> getImageIdsStr() {
+        List<String> imageIdsStr = new ArrayList<>();
+        for (UUID imageId : imageIds) {
+            imageIdsStr.add(imageId.toString());
+        }
+        return imageIdsStr;
+    }
 
 }
 

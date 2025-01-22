@@ -4,6 +4,7 @@ import cafeLogProject.cafeLog.api.draftReview.dto.RegistDraftReviewRequest;
 import cafeLogProject.cafeLog.api.draftReview.dto.ShowDraftReviewResponse;
 import cafeLogProject.cafeLog.api.draftReview.dto.ShowUserDraftReviewResponse;
 import cafeLogProject.cafeLog.api.draftReview.dto.UpdateDraftReviewRequest;
+import cafeLogProject.cafeLog.api.image.service.ImageUtil;
 import cafeLogProject.cafeLog.api.review.dto.ShowReviewResponse;
 import cafeLogProject.cafeLog.api.review.dto.UpdateReviewRequest;
 import cafeLogProject.cafeLog.common.auth.exception.UserNotAuthenticatedException;
@@ -39,10 +40,12 @@ public class DraftReviewService {
     private final CafeRepository cafeRepository;
     private final DraftReviewRepository draftReviewRepository;
 
-    public ShowDraftReviewResponse findDraftReview(Long draftReviewId){
-        ShowDraftReviewResponse res = draftReviewRepository.findShowDraftReviewResponseById(draftReviewId).orElseThrow(() -> {
-            throw new DraftReviewNotFoundException(draftReviewId.toString(), ErrorCode.DRAFT_REVIEW_NOT_FOUND_ERROR);
-        });
+    public ShowDraftReviewResponse findDraftReview(String username, Long draftReviewId){
+        DraftReview draftReview = validateIdentity(username, draftReviewId);
+        ShowDraftReviewResponse res = new ShowDraftReviewResponse(draftReview);
+//        ShowDraftReviewResponse res = draftReviewRepository.findShowDraftReviewResponseById(draftReviewId).orElseThrow(() -> {
+//            throw new DraftReviewNotFoundException(draftReviewId.toString(), ErrorCode.DRAFT_REVIEW_NOT_FOUND_ERROR);
+//        });
         return res;
     }
 
@@ -68,16 +71,36 @@ public class DraftReviewService {
     }
 
     @Transactional
-    public ShowDraftReviewResponse updateDraftReview(String username, long reviewId, UpdateDraftReviewRequest updateDraftReviewRequest) {
-        DraftReview oldReview = draftReviewRepository.findById(reviewId).orElseThrow(() -> {
-            throw new DraftReviewNotFoundException(Long.toString(reviewId), ErrorCode.REVIEW_NOT_FOUND_ERROR);
+    public ShowDraftReviewResponse updateDraftReview(String username, long draftReviewId, UpdateDraftReviewRequest updateDraftReviewRequest) {
+        DraftReview oldDraftReview = validateIdentity(username, draftReviewId);
+        DraftReview updatedReview = draftReviewRepository.save(updateDraftReviewRequest.toEntity(oldDraftReview));
+        return new ShowDraftReviewResponse(updatedReview);
+    }
+
+    @Transactional
+    public void deleteDraftReviewAndImage(String username, Long draftReviewId) {
+        DraftReview draftReview = validateIdentity(username, draftReviewId);
+        deleteAllImageInDraftReview(draftReview);
+        draftReviewRepository.deleteById(draftReviewId);
+    }
+
+
+    private void deleteAllImageInDraftReview(DraftReview draftReview) {
+        List<String> imageIds = draftReview.getImageIdsStr();
+        for (String imageId : imageIds) {
+            ImageUtil.deleteCompressedImage(ImageUtil.DRAFT_REVIEW_IMAGE_PATH, imageId);
+        }
+    }
+
+    // 본인의 리뷰인지 검사 & DraftReview 리턴
+    private DraftReview validateIdentity(String username, Long draftReviewId){
+        DraftReview draftReview = draftReviewRepository.findById(draftReviewId).orElseThrow(() -> {
+            throw new DraftReviewNotFoundException(draftReviewId.toString(), ErrorCode.DRAFT_REVIEW_NOT_FOUND_ERROR);
         });
         // 해당 리뷰가 본인의 리뷰가 맞는지 확인
-        if (!oldReview.getUser().getUsername().equals(username)) {
+        if (!draftReview.getUser().getUsername().equals(username)) {
             throw new UserNotAuthenticatedException(ErrorCode.USER_NOT_AUTH_ERROR);
         }
-
-        DraftReview updatedReview = draftReviewRepository.save(updateDraftReviewRequest.toEntity(oldReview));
-        return new ShowDraftReviewResponse(updatedReview);
+        return draftReview;
     }
 }

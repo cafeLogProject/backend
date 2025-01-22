@@ -1,6 +1,7 @@
-package cafeLogProject.cafeLog.domains.tag.repository;
+package cafeLogProject.cafeLog.domains.review.repository;
 
 import cafeLogProject.cafeLog.domains.review.domain.Review;
+import cafeLogProject.cafeLog.domains.review.domain.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

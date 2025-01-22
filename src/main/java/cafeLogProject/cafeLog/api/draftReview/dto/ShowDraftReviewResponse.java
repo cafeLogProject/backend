@@ -4,13 +4,18 @@ import cafeLogProject.cafeLog.domains.draftReview.domain.DraftReview;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
-@Getter
+import static cafeLogProject.cafeLog.domains.draftReview.domain.QDraftReview.draftReview;
+
+@Data
+@NoArgsConstructor
+@Slf4j
 public class ShowDraftReviewResponse {
     private Long draftReviewId;
     private String content;
@@ -19,23 +24,22 @@ public class ShowDraftReviewResponse {
     private Set<UUID> imageIds = new HashSet<>();
     private Set<Integer> tagIds = new HashSet<>();
     private Long cafeId;
-    private Long userId;
 
-    @Builder
-    @QueryProjection
-    public ShowDraftReviewResponse(Long draftReviewId, String content, Integer rating, LocalDate visitDate, Set<UUID> imageIds, Set<Integer> tagIds, Long cafeId, Long userId) {
-        this.draftReviewId = draftReviewId;
-        this.content = content;
-        this.rating = rating;
-        this.visitDate = visitDate;
-        this.imageIds = imageIds;
-        this.tagIds = tagIds;
-        this.cafeId = cafeId;
-        this.userId = userId;
-    }
+//    @Builder
+//    @QueryProjection
+//    public ShowDraftReviewResponse(Long draftReviewId, String content, Integer rating, LocalDate visitDate, Set<UUID> imageIds, Set<Integer> tagIds, Long cafeId, Long userId) {
+//        this.draftReviewId = draftReviewId;
+//        this.content = content;
+//        this.rating = rating;
+//        this.visitDate = visitDate;
+//        this.imageIds = imageIds;
+//        this.tagIds = tagIds;
+//        this.cafeId = cafeId;
+//        this.userId = userId;
+//    }
 
     @QueryProjection
-    public ShowDraftReviewResponse(Long draftReviewId, String content, Integer rating, LocalDate visitDate, List<UUID> imageIds, List<Integer> tagIds, Long cafeId, Long userId) {
+    public ShowDraftReviewResponse(Long draftReviewId, String content, Integer rating, LocalDate visitDate, List<UUID> imageIds, List<Integer> tagIds, Long cafeId) {
         this.draftReviewId = draftReviewId;
         this.content = content;
         this.rating = rating;
@@ -43,9 +47,7 @@ public class ShowDraftReviewResponse {
         this.imageIds = new HashSet<>(imageIds);
         this.tagIds = new HashSet<>(tagIds);
         this.cafeId = cafeId;
-        this.userId = userId;
     }
-    @QueryProjection
     public ShowDraftReviewResponse(DraftReview draftReview) {
         this.draftReviewId = draftReview.getId();
         this.content = draftReview.getContent();
@@ -54,7 +56,6 @@ public class ShowDraftReviewResponse {
         this.imageIds =  new HashSet<>(draftReview.getImageIds());
         this.tagIds = new HashSet<>(draftReview.getTagIds());
         this.cafeId = draftReview.getCafe().getId();
-        this.userId = draftReview.getUser().getId();
     }
 
 
@@ -67,7 +68,6 @@ public class ShowDraftReviewResponse {
         this.visitDate = draftReview.getVisitDate();
         this.tagIds = new HashSet<>(draftReview.getTagIds());
         this.cafeId = draftReview.getCafe().getId();
-        this.userId = user.getId();
     }
 
     public void addTagId(Integer tagId) {

@@ -1,4 +1,4 @@
-package cafeLogProject.cafeLog.domains.tag.domain;
+package cafeLogProject.cafeLog.domains.review.domain;
 
 
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "tag_tb")
+@Table(name = "review_tag_tb")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag {
 
