@@ -2,6 +2,7 @@ package cafeLogProject.cafeLog.common.config;
 
 import cafeLogProject.cafeLog.common.auth.jwt.token.AccessToken;
 import cafeLogProject.cafeLog.common.auth.jwt.token.RefreshToken;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -15,10 +16,16 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 @EnableRedisRepositories
 public class RedisConfig {
 
+    @Value("${spring.redis.host}")
+    private String redisHost;
+
+    @Value("${spring.redis.port}")
+    private int redisPort;
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         // Redis 호스트와 포트를 설정
-        return new LettuceConnectionFactory("redis", 6379);
+        return new LettuceConnectionFactory(redisHost, redisPort);
     }
 
 

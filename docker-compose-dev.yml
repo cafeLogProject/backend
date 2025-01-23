@@ -6,6 +6,8 @@ services:
       dockerfile: dev.Dockerfile
     ports:
       - "8080:8080"
+    env_file:
+      - .env.dev
     environment:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
@@ -24,8 +26,8 @@ services:
       - SPRING_DATASOURCE_URL=${DB_DATASOURCE}
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
-      - SPRING_REDIS_HOST=redis
-      - SPRING_REDIS_PORT=6379
+      - SPRING_REDIS_HOST=${SPRING_REDIS_HOST}
+      - SPRING_REDIS_PORT=${SPRING_REDIS_PORT}
       - SPRING_DEVTOOLS_RESTART_ENABLED=true
     volumes:
       - ./src:/app/src
