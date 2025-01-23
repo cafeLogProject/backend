@@ -3,6 +3,7 @@ package cafeLogProject.cafeLog.domains.review.domain;
 
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.review.TagInvalidException;
+import cafeLogProject.cafeLog.domains.review.domain.Review;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "tag_tb")
+@Table(name = "review_tag_tb")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag {
 

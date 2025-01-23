@@ -52,12 +52,12 @@ public class ImageHandler {
     }
 
     public static void delete(String basePath, String imageId) {
+        File file = new File(basePath + imageId);
+        if (!file.exists()){
+            throw new ImageNotFoundException(ErrorCode.IMAGE_NOT_FOUND_ERROR);
+//          return;     //존재하지 않은 경우(이미 삭제한 경우) 건너뛰기
+        }
         try {
-            File file = new File(basePath + imageId);
-            if (!file.exists()){
-                return;     //존재하지 않은 경우(이미 삭제한 경우) 건너뛰기
-//                throw new ImageNotFoundException(ErrorCode.IMAGE_NOT_FOUND_ERROR);
-            }
             file.delete();
         } catch (Exception e) {
             throw new ImageDeleteException(ErrorCode.IMAGE_DELETE_ERROR);

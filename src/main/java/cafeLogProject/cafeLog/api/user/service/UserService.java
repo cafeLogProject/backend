@@ -30,6 +30,7 @@ public class UserService {
         User user = userRepository.findByUsername(userName).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_ERROR));
 
         return UserInfoRes.builder()
+                .userId(user.getId())
                 .nickname(user.getNickname())
                 .introduce(user.getIntroduce())
                 .email(user.getEmail())

@@ -1,25 +1,23 @@
 package cafeLogProject.cafeLog.api.review.service;
 
-import cafeLogProject.cafeLog.api.image.service.ImageService;
+import cafeLogProject.cafeLog.api.image.service.ImageUtil;
 import cafeLogProject.cafeLog.api.review.dto.*;
 import cafeLogProject.cafeLog.common.auth.exception.UserNotAuthenticatedException;
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.UnexpectedServerException;
-import cafeLogProject.cafeLog.common.exception.cafe.CafeNotFoundException;
+import cafeLogProject.cafeLog.common.exception.draftReview.DraftReviewNotFoundException;
+import cafeLogProject.cafeLog.domains.draftReview.domain.DraftReview;
+import cafeLogProject.cafeLog.domains.draftReview.repository.DraftReviewRepository;
 import cafeLogProject.cafeLog.domains.image.domain.ReviewImage;
+import cafeLogProject.cafeLog.domains.image.repository.ReviewImageRepository;
 import cafeLogProject.cafeLog.domains.review.domain.Review;
 import cafeLogProject.cafeLog.common.exception.review.ReviewNotFoundException;
-import cafeLogProject.cafeLog.common.exception.review.ReviewSaveException;
 import cafeLogProject.cafeLog.domains.review.domain.Tag;
-import cafeLogProject.cafeLog.domains.review.exception.ReviewDeleteException;
-import cafeLogProject.cafeLog.domains.review.exception.ReviewUpdateException;
 import cafeLogProject.cafeLog.domains.review.repository.ReviewRepository;
 import cafeLogProject.cafeLog.domains.review.repository.TagRepository;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import cafeLogProject.cafeLog.common.exception.user.UserNotFoundException;
 import cafeLogProject.cafeLog.domains.user.repository.UserRepository;
-import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
-import cafeLogProject.cafeLog.domains.cafe.repository.CafeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -36,113 +35,48 @@ import java.util.List;
 @Slf4j
 public class ReviewService {
     private final UserRepository userRepository;
-    private final CafeRepository cafeRepository;
     private final ReviewRepository reviewRepository;
-    private final ImageService imageService;
     private final TagRepository tagRepository;
+    private final DraftReviewRepository draftReviewRepository;
+    private final ReviewImageRepository reviewImageRepository;
 
     @Transactional
-    public ShowReviewResponse addReview (String username, RegistReviewRequest registReviewRequest) {
+    public ShowReviewResponse addReview(String username, Long draftReviewId, RegistReviewRequest registReviewRequest) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->{
             throw new UserNotFoundException(username, ErrorCode.USER_NOT_FOUND_ERROR);
         });
-        Long cafeId = registReviewRequest.getCafeId();
-        Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(() -> {
-            throw new CafeNotFoundException(Long.toString(cafeId), ErrorCode.CAFE_NOT_FOUND_ERROR);
-        });
+        DraftReview draftReview = validateIdentityWithDraftReview(username, draftReviewId);
+        List<UUID> imageIds = draftReview.getImageIds();
+        List<Integer> tagIds = registReviewRequest.getTagIds();
 
-        // 이미지 관련
-        List<String> imageIdsStr = registReviewRequest.getImageIds();
-        for (String imageIdStr : imageIdsStr) {
-            // 이미지파일 저장되어있는지 확인, 저장되어있지 않은 경우 실패 답변 전송
-            ReviewImage reviewImage = imageService.findByReviewImageIdStr(imageIdStr);
-            if (reviewImage == null) throw new ReviewNotFoundException(imageIdStr, ErrorCode.IMAGE_NOT_FOUND_ERROR);
-        }
-
-        Review newReview;
-        try {
-            newReview = reviewRepository.save(registReviewRequest.toEntity(user, cafe));
-            saveTags(registReviewRequest.getTagIds(), newReview);
-        } catch (Exception e) {
-            throw new ReviewSaveException(ErrorCode.REVIEW_SAVE_ERROR);
-        }
-        // 이미지 엔티티에 리뷰 필드 저장
-        for (String imageIdStr : imageIdsStr) {
-            imageService.addReviewInReviewImage(imageIdStr, newReview.getId());
-        }
-
-        return findReview(newReview.getId());
+        Review newReview = reviewRepository.save(registReviewRequest.toEntity(user, draftReview.getCafe()));
+        saveTags(tagIds, newReview);
+        saveReviewImage(imageIds, newReview);
+        draftReviewRepository.delete(draftReview);
+        return ShowReviewResponse.builder()
+                .review(newReview)
+                .imageIds(imageIds)
+                .tagIds(tagIds)
+                .build();
     }
 
     @Transactional
     public ShowReviewResponse updateReview(String username, long reviewId, UpdateReviewRequest updateReviewRequest) {
-        Review oldReview = reviewRepository.findById(reviewId).orElseThrow(() -> {
-            throw new ReviewNotFoundException(Long.toString(reviewId), ErrorCode.REVIEW_NOT_FOUND_ERROR);
-        });
-        // 해당 리뷰가 본인의 리뷰가 맞는지 확인
-        if (!oldReview.getUser().getUsername().equals(username)) {
-            throw new UserNotAuthenticatedException(ErrorCode.USER_NOT_AUTH_ERROR);
+        Review oldReview = validateIdentityWithReview(username, reviewId);
+        Review updatedReview = reviewRepository.save(updateReviewRequest.toEntity(oldReview));
+        List<Integer> updateTagIds = updateReviewRequest.getTagIds();
+        if (updateTagIds != null) {
+            updateTags(updateTagIds, updatedReview);
         }
-
-        // 이미지 변경사항 있는 경우
-        List<String> imageIdsStr = updateReviewRequest.getImageIds();
-        if (imageIdsStr != null) {
-            List<ReviewImage> images = new ArrayList<>();
-            for (String imageIdStr : imageIdsStr) {
-                // 이미지파일 저장되어있는지 확인, 저장되어있지 않은 경우 실패 답변 전송
-                ReviewImage reviewImage = imageService.findByReviewImageIdStr(imageIdStr);
-                if (reviewImage == null) throw new ReviewNotFoundException(imageIdStr, ErrorCode.IMAGE_NOT_FOUND_ERROR);
-                images.add(reviewImage);
-            }
-            // 새로 저장한 이미지가 있는 경우 그 이미지 엔티티에 리뷰 필드 저장
-            for (String imageIdStr : imageIdsStr) {
-                imageService.addReviewInReviewImage(imageIdStr, oldReview.getId());
-            }
-        }
-
-
-        Review updatedReview;
-        try {
-            updatedReview = reviewRepository.save(updateReviewRequest.toEntity(oldReview));
-
-            // 태그 변경사항 있는 경우
-            List<Integer> updateTags = updateReviewRequest.getTagIds();
-            if (updateTags != null) {
-                // 태그 엔티티 모두 삭제후 재생성
-                deleteAllReviewTags(updatedReview);
-                saveTags(updateReviewRequest.getTagIds(), updatedReview);
-            }
-        } catch (Exception e) {
-            throw new ReviewUpdateException(ErrorCode.REVIEW_UPDATE_ERROR);
-        }
-
         return findReview(updatedReview.getId());
     }
 
     @Transactional
     public void deleteReview(String username, long reviewId) {
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> {
-            throw new ReviewNotFoundException(Long.toString(reviewId), ErrorCode.REVIEW_NOT_FOUND_ERROR);
-        });
-        // 해당 리뷰가 본인의 리뷰가 맞는지 확인
-        if (!review.getUser().getUsername().equals(username)) {
-            throw new UserNotAuthenticatedException(ErrorCode.USER_NOT_AUTH_ERROR);
-        }
-
-        try{
-            // 해당 리뷰의 모든 이미지 삭제
-            imageService.deleteAllReviewImageInReview(review);
-            log.error("이미지 삭제 완료");
-
-            // 해당 리뷰의 모든 태그 삭제
-            List<Tag> tags = tagRepository.findAllByReview(review);
-            tagRepository.deleteAll(tags);
-
-            reviewRepository.delete(review);
-            log.error("리뷰 삭제 완료");
-        } catch (Exception e) {
-            throw new ReviewDeleteException(ErrorCode.REVIEW_DELETE_ERROR);
-        }
+        Review review = validateIdentityWithReview(username, reviewId);
+        deleteAllReviewImageInReview(review);
+        deleteAllTagsInReview(review);
+        reviewRepository.delete(review);
     }
 
     public List<ShowReviewResponse> findCafeReviews(Long cafeId, ShowCafeReviewRequest request){
@@ -182,6 +116,30 @@ public class ReviewService {
         return showReviewResponse;
     }
 
+    // 본인의 임시저장 리뷰인지 검사 & DraftReview 리턴
+    private DraftReview validateIdentityWithDraftReview(String username, Long draftReviewId) {
+        DraftReview draftReview = draftReviewRepository.findById(draftReviewId).orElseThrow(() -> {
+            throw new DraftReviewNotFoundException(draftReviewId.toString(), ErrorCode.DRAFT_REVIEW_NOT_FOUND_ERROR);
+        });
+        // 해당 리뷰가 본인의 리뷰가 맞는지 확인
+        if (!draftReview.getUser().getUsername().equals(username)) {
+            throw new UserNotAuthenticatedException(ErrorCode.USER_NOT_AUTH_ERROR);
+        }
+        return draftReview;
+    }
+
+    // 본인의 리뷰인지 검사 & Review 리턴
+    private Review validateIdentityWithReview(String username, Long reviewId) {
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> {
+            throw new ReviewNotFoundException(reviewId.toString(), ErrorCode.REVIEW_NOT_FOUND_ERROR);
+        });
+        // 해당 리뷰가 본인의 리뷰가 맞는지 확인
+        if (!review.getUser().getUsername().equals(username)) {
+            throw new UserNotAuthenticatedException(ErrorCode.USER_NOT_AUTH_ERROR);
+        }
+        return review;
+    }
+
     private List<Tag> saveTags(List<Integer> tagIds, Review savedReview) {
         List<Tag> tagList = new ArrayList<>();
 
@@ -198,9 +156,42 @@ public class ReviewService {
         }
     }
 
-    private void deleteAllReviewTags(Review review) {
+    private void updateTags(List<Integer> tagIds, Review review) {
+        // 태그 엔티티 모두 삭제후 재생성
         List<Tag> tags = tagRepository.findAllByReview(review);
         tagRepository.deleteAll(tags);
+        saveTags(tagIds, review);
+    }
+
+    private void deleteAllTagsInReview(Review review){
+        List<Tag> tags = tagRepository.findAllByReview(review);
+        tagRepository.deleteAll(tags);
+    }
+
+    // 이미 파일 저장된 이미지를 ReviewImage 객체로도 저장
+    private List<String> saveReviewImage(List<UUID> imageIds, Review review) {
+        List<String> reviewImageIds = new ArrayList<>();
+        for (UUID imageId : imageIds) {
+            // 이미지 파일 경로 변경
+            String imageIdStr = imageId.toString();
+            ImageUtil.renameCompressedImage(ImageUtil.DRAFT_REVIEW_IMAGE_PATH+imageIdStr, ImageUtil.REVIEW_IMAGE_PATH+imageIdStr);
+
+            ReviewImage reviewImage = reviewImageRepository.save(ReviewImage.builder()
+                    .id(imageId)
+                    .review(review)
+                    .build());
+            reviewImageIds.add(reviewImage.getId().toString());
+        }
+        return reviewImageIds;
+    }
+
+    // 특정 리뷰의 모든 리뷰 이미지 삭제
+    private void deleteAllReviewImageInReview(Review review){
+        List<ReviewImage> images = reviewImageRepository.findAllByReview(review);
+        for (ReviewImage reviewImage : images) {
+            ImageUtil.deleteCompressedImage(ImageUtil.REVIEW_IMAGE_PATH, reviewImage.getId().toString());
+            if (reviewImage != null) reviewImageRepository.delete(reviewImage);
+        }
     }
 
 

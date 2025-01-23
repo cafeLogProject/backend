@@ -8,6 +8,8 @@ import java.util.LinkedList;
 @Data
 public class UserInfoRes {
 
+    private Long userId;
+
     private String nickname;
 
     private String introduce;
@@ -17,8 +19,8 @@ public class UserInfoRes {
     private Boolean isProfileImageExist;
 
     @Builder
-    public UserInfoRes(String nickname, String introduce, String email, Boolean isProfileImageExist) {
-
+    public UserInfoRes(Long userId, String nickname, String introduce, String email, Boolean isProfileImageExist) {
+        this.userId = userId;
         this.nickname = nickname;
         this.introduce = introduce;
         this.email = email;
