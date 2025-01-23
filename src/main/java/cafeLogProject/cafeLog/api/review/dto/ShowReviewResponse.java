@@ -26,21 +26,6 @@ public class ShowReviewResponse {
     private LocalDateTime createdAt;
 
     @Builder
-    public ShowReviewResponse(Review review, List<UUID> imageIds, List<Integer> tagIds){
-        this.reviewId = review.getId();
-        this.content = review.getContent();
-        this.rating = review.getRating();
-        this.visitDate = review.getVisitDate();
-        this.imageIds = new HashSet<>(imageIds);
-        this.tagIds = new HashSet<>(tagIds);
-        this.cafeId = review.getCafe().getId();
-        this.userId = review.getUser().getId();
-        this.nickname = review.getUser().getNickname();
-        this.isProfileImageExist = review.getUser().isImageExist();
-        this.createdAt = review.getCreatedAt();
-    }
-
-    @QueryProjection
     public ShowReviewResponse(Long reviewId, String content, Integer rating, LocalDate visitDate, Set<UUID> imageIds, Set<Integer> tagIds, Long cafeId, String cafeName, Long userId, String nickname, Boolean isImageExist, LocalDateTime createdAt) {
         this.reviewId = reviewId;
         this.content = content;
@@ -73,7 +58,6 @@ public class ShowReviewResponse {
         this.isProfileImageExist = review.getUser().isImageExist();
         this.createdAt = review.getCreatedAt();
     }
-
 
     // queryDsl에 사용
     // Tuple 사용시

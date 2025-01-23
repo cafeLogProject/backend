@@ -26,14 +26,14 @@ public class ReviewController {
     @GetMapping("/cafe/{cafeId}")
     public ResponseEntity<List<ShowReviewResponse>> showCafeReviews(@PathVariable(value="cafeId") Long cafeId,
                                                                     @ModelAttribute @Valid ShowCafeReviewRequest showCafeReviewRequest) {
-        List<ShowReviewResponse> res = reviewService.findCafeReviews(cafeId, showCafeReviewRequest);
-        return ResponseEntity.ok().body(res);
+        List<ShowReviewResponse> reviews = reviewService.findCafeReviews(cafeId, showCafeReviewRequest);
+        return ResponseEntity.ok().body(reviews);
     }
 
     @GetMapping("/list")
     public ResponseEntity<List<ShowReviewResponse>> showReviews(@ModelAttribute @Valid ShowReviewRequest showReviewRequest){
-        List<ShowReviewResponse> res = reviewService.findReviews(showReviewRequest);
-        return ResponseEntity.ok().body(res);
+        List<ShowReviewResponse> reviews = reviewService.findReviews(showReviewRequest);
+        return ResponseEntity.ok().body(reviews);
     }
 
     @GetMapping("/my")
@@ -43,20 +43,19 @@ public class ReviewController {
         return ResponseEntity.ok().body(review);
     }
 
-    @PostMapping("{draftReviewId}")
-    public ResponseEntity<ShowReviewResponse> registReview(@PathVariable(value="draftReviewId") Long draftReviewId,
-                                                           @RequestBody @Valid RegistReviewRequest registReviewRequest,
+    @PostMapping("")
+    public ResponseEntity<ShowReviewResponse> registReview(@RequestBody RegistReviewRequest registReviewRequest,
                                                            @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
-        ShowReviewResponse res = reviewService.addReview(oAuth2User.getName(), draftReviewId, registReviewRequest);
-        return ResponseEntity.ok().body(res);
+        ShowReviewResponse review = reviewService.addReview(oAuth2User.getName(), registReviewRequest);
+        return ResponseEntity.ok().body(review);
     }
 
     @PatchMapping("/{reviewId}")
     public ResponseEntity<ShowReviewResponse> updateReview(@PathVariable(value="reviewId") Long reviewId,
                                                            @RequestBody @Valid UpdateReviewRequest updateReviewRequest,
                                                            @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
-        ShowReviewResponse res = reviewService.updateReview(oAuth2User.getName(), reviewId, updateReviewRequest);
-        return ResponseEntity.ok().body(res);
+        ShowReviewResponse review = reviewService.updateReview(oAuth2User.getName(), reviewId, updateReviewRequest);
+        return ResponseEntity.ok().body(review);
     }
 
     @DeleteMapping("/{reviewId}")
@@ -64,5 +63,10 @@ public class ReviewController {
                                           @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
         reviewService.deleteReview(oAuth2User.getName(), reviewId);
         return ResponseEntity.ok().body(null);
+//        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+
+
+
 }

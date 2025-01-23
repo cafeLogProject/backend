@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 public class UserInfoRes {
 
-    private Long userId;
 
     private String nickname;
 
@@ -17,8 +16,8 @@ public class UserInfoRes {
     private Boolean isProfileImageExist;
 
     @Builder
-    public UserInfoRes(Long userId, String nickname, String introduce, String email, Boolean isProfileImageExist) {
-        this.userId = userId;
+    public UserInfoRes(String nickname, String introduce, String email, Boolean isProfileImageExist) {
+
         this.nickname = nickname;
         this.introduce = introduce;
         this.email = email;

@@ -5,8 +5,6 @@ import cafeLogProject.cafeLog.common.exception.UnexpectedServerException;
 import cafeLogProject.cafeLog.common.exception.image.ImageSaveException;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.webp.WebpWriter;
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,8 +42,8 @@ public class ImageCompressor {
 
     public static void renameWebpFileTo(String oldPath, String newPath) {
         try {
-            Path oldFile = Paths.get(oldPath+".webp");
-            Path newFile = Paths.get(newPath+".webp");
+            Path oldFile = Paths.get(oldPath);
+            Path newFile = Paths.get(newPath);
             Files.move(oldFile, newFile);
         } catch (Exception e) {
             throw new UnexpectedServerException("이미지 이름 변경에 실패했습니다.", ErrorCode.UNEXPECTED_ERROR);

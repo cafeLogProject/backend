@@ -32,7 +32,6 @@ public enum ErrorCode {
 
     TAG_INVALID_ERROR(HttpStatus.BAD_REQUEST, "태그 아이디가 유효하지 않습니다."),
 
-
     CAFE_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "카페를 찾을 수 없습니다."),
     CAFE_CATEGORY_ERROR(HttpStatus.BAD_REQUEST, "카테고리가 카페가 아닙니다."),
     CAFE_API_PARSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "네이버 API 응답 중 오류가 발생했습니다."),

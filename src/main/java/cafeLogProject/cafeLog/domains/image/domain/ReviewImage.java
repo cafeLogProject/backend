@@ -5,7 +5,6 @@ import cafeLogProject.cafeLog.common.exception.image.ImageInvalidException;
 import cafeLogProject.cafeLog.common.exception.image.ImageNotFoundException;
 import cafeLogProject.cafeLog.domains.review.domain.Review;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
@@ -33,14 +32,12 @@ public class ReviewImage {
     @JoinColumn(name = "review_id", nullable = true)
     private Review review;
 
-    public ReviewImage(UUID id){
-        this.id = id;
+    public void connectReview(Review review) {
+        this.review = review;
     }
 
-    @Builder
-    public ReviewImage(UUID id, Review review){
+    public ReviewImage(UUID id){
         this.id = id;
-        this.review = review;
     }
 
 }
