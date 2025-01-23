@@ -6,7 +6,6 @@ build/
 !**/src/test/**/build/
 .env.dev
 .env.prod
-**/src/main/resources/application.yml
 
 
 ### STS ###
