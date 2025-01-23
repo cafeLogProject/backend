@@ -4,15 +4,12 @@ import cafeLogProject.cafeLog.api.review.dto.QShowReviewResponse;
 import cafeLogProject.cafeLog.api.review.dto.ShowReviewResponse;
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.review.ReviewInvalidSortError;
-import cafeLogProject.cafeLog.domains.image.domain.ReviewImage;
-import cafeLogProject.cafeLog.domains.review.domain.QReview;
 import cafeLogProject.cafeLog.domains.review.domain.Review;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +32,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
 
     // Tuple 사용하여 dto 형변환하는 경우
     @Override
-    public ShowReviewResponse findShowReviewResponseById(Long reviewId) {
+    public Optional<ShowReviewResponse> findShowReviewResponseById(Long reviewId) {
         List<Tuple> results = queryFactory
                 .from(review)
                 .select(review, tag.tagId, reviewImage.id, user)
@@ -45,8 +42,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
                 .where(review.id.eq(reviewId))
                 .fetch();
 
-        return toShowReviewResponse(results);
-
+        return Optional.ofNullable(toShowReviewResponse(results));
     }
 
     // dto 형변환하는 함수
@@ -95,19 +91,67 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
 
     @Override
     public List<ShowReviewResponse> searchByCafeId(Long cafeId, LocalDateTime createdAt, Pageable pageable) {
+        List<Long> reviewIds;
+        reviewIds = queryFactory
+                .select(review.id)
+                .from(review)
+                .where(
+                        review.cafe.id.eq(cafeId),
+                        isBeforeCreatedAt(createdAt)
+                )
+                .orderBy(review.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
         return queryFactory
                 .from(review)
                 .leftJoin(reviewImage).on(review.id.eq(reviewImage.review.id))
                 .leftJoin(review.user).fetchJoin()
                 .leftJoin(tag).on(review.id.eq(tag.review.id))
-                .where(review.cafe.id.eq(cafeId), isBeforeCreatedAt(createdAt))
+                .where(review.id.in(reviewIds))
                 .orderBy(review.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
                 .transform(
                         groupBy(review.id).list(
                                 new QShowReviewResponse(
                                         review,
+                                        review.cafe.id,
+                                        review.cafe.cafeName,
+                                        set(reviewImage.id),    // 이미지 ID를 리스트로 변환
+                                        set(tag.tagId)
+                                )
+                        )
+                );
+    }
+
+    @Override
+    public List<ShowReviewResponse> searchByUser(User user, LocalDateTime createdAt, Pageable pageable){
+        List<Long> reviewIds;
+        reviewIds = queryFactory
+                .select(review.id)
+                .from(review)
+                .where(
+                        review.user.eq(user),
+                        isBeforeCreatedAt(createdAt)
+                )
+                .orderBy(review.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return queryFactory
+                .from(review)
+                .leftJoin(reviewImage).on(review.id.eq(reviewImage.review.id))
+                .leftJoin(review.user).fetchJoin()
+                .leftJoin(tag).on(review.id.eq(tag.review.id))
+                .where(review.id.in(reviewIds))
+                .orderBy(review.createdAt.desc())
+                .transform(
+                        groupBy(review.id).list(
+                                new QShowReviewResponse(
+                                        review,
+                                        review.cafe.id,
+                                        review.cafe.cafeName,
                                         set(reviewImage.id),    // 이미지 ID를 리스트로 변환
                                         set(tag.tagId)
                                 )
@@ -118,6 +162,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
     @Override
     public List<ShowReviewResponse> search(String sortMethod, List<Integer> selectedTagIds, Integer currentRating, LocalDateTime createdAt, Pageable pageable) {
         List<Long> reviewIds;
+        OrderSpecifier[] orderSpecifiers = createOrderSpecifier(sortMethod);
 
         // 조건에 부합하는 review 필터링하기
         if (selectedTagIds == null || selectedTagIds.isEmpty()) {
@@ -129,6 +174,9 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
                             isLowerThenRating(currentRating),
                             isBeforeCreatedAt(createdAt)
                     )
+                    .orderBy(orderSpecifiers)
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
                     .fetch();
         } else {
             // 태그 조건 존재하는 경우
@@ -141,13 +189,15 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
                             isLowerThenRating(currentRating),
                             isBeforeCreatedAt(createdAt)
                     )
+                    .orderBy(orderSpecifiers)
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
                     .groupBy(review.id)
                     .having(tag.tagId.count().eq((long) selectedTagIds.size()))
                     .fetch();
         }
 
-        // dto화 하기, 페이징, 순서 정렬하기
-        OrderSpecifier[] orderSpecifiers = createOrderSpecifier(sortMethod);
+        // dto화
         return queryFactory
                 .from(review)
                 .leftJoin(tag).on(tag.review.id.eq(review.id))
@@ -155,13 +205,13 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
                 .leftJoin(review.user).fetchJoin()
                 .where(review.id.in(reviewIds))
                 .orderBy(orderSpecifiers)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
                 .transform(
                         groupBy(review.id)
                                 .list(
                                         new QShowReviewResponse(
                                                 review,
+                                                review.cafe.id,
+                                                review.cafe.cafeName,
                                                 set(reviewImage.id),    // 이미지 ID를 리스트로 변환
                                                 set(tag.tagId)
                                         )

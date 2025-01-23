@@ -1,5 +1,7 @@
 package cafeLogProject.cafeLog.api.user.service;
 
+import cafeLogProject.cafeLog.api.user.dto.IsExistNicknameRes;
+import cafeLogProject.cafeLog.api.user.dto.UserInfoRes;
 import cafeLogProject.cafeLog.api.user.dto.UserUpdateReq;
 import cafeLogProject.cafeLog.common.auth.jwt.JWTUserDTO;
 import cafeLogProject.cafeLog.common.exception.user.UserNicknameException;
@@ -23,6 +25,19 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    public UserInfoRes getUserInfo(String userName) {
+
+        User user = userRepository.findByUsername(userName).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_ERROR));
+
+        return UserInfoRes.builder()
+                .userId(user.getId())
+                .nickname(user.getNickname())
+                .introduce(user.getIntroduce())
+                .email(user.getEmail())
+                .isProfileImageExist(user.isImageExist())
+                .build();
+    }
+
     @Transactional
     public void updateUser(String userName, UserUpdateReq userUpdateReq) {
 
@@ -34,6 +49,16 @@ public class UserService {
         user.updateUserIntroduce(userUpdateReq.getIntroduce());
 
         userRepository.save(user);
+    }
+
+    public IsExistNicknameRes isExistNickname(String nickname) {
+
+        Boolean isExist = userRepository.existsByNickname(nickname);
+
+        if (isExist) {
+            return new IsExistNicknameRes(nickname, true);
+        }
+        return new IsExistNicknameRes(nickname, false);
     }
 
     private void validateNickname(String userName, UserUpdateReq userUpdateReq) {

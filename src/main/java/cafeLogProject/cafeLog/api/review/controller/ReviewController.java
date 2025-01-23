@@ -18,7 +18,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("/{reviewId}")
-    public ResponseEntity<ShowReviewResponse> findReview(@PathVariable(value="reviewId") Long reviewId) {
+    public ResponseEntity<ShowReviewResponse> findReviewByReviewId(@PathVariable(value="reviewId") Long reviewId) {
         ShowReviewResponse showReviewResponse = reviewService.findReview(reviewId);
         return ResponseEntity.ok().body(showReviewResponse);
     }
@@ -34,6 +34,13 @@ public class ReviewController {
     public ResponseEntity<List<ShowReviewResponse>> showReviews(@ModelAttribute @Valid ShowReviewRequest showReviewRequest){
         List<ShowReviewResponse> res = reviewService.findReviews(showReviewRequest);
         return ResponseEntity.ok().body(res);
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<ShowReviewResponse>> showMyReviews(@AuthenticationPrincipal CustomOAuth2User oAuth2User,
+                                                                  @ModelAttribute @Valid ShowUserReviewRequest showUserReviewRequest){
+        List<ShowReviewResponse> review = reviewService.findUserReviews(oAuth2User.getName(), showUserReviewRequest);
+        return ResponseEntity.ok().body(review);
     }
 
     @PostMapping("{draftReviewId}")

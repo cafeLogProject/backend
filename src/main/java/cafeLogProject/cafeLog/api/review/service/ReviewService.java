@@ -101,11 +101,18 @@ public class ReviewService {
         }
     }
 
+    public List<ShowReviewResponse> findUserReviews(String username, ShowUserReviewRequest request) {
+        User user = userRepository.findByUsername(username).orElseThrow(() ->{
+            throw new UserNotFoundException(username, ErrorCode.USER_NOT_FOUND_ERROR);
+        });
+        Pageable pageable = PageRequest.of(0, request.getLimit());
+        return reviewRepository.searchByUser(user, request.getTimestamp(), pageable);
+    }
+
     public ShowReviewResponse findReview(Long reviewId){
-        ShowReviewResponse showReviewResponse = reviewRepository.findShowReviewResponseById(reviewId);
-        if (showReviewResponse == null) {
+        ShowReviewResponse showReviewResponse = reviewRepository.findShowReviewResponseById(reviewId).orElseThrow(() -> {
             throw new ReviewNotFoundException(ErrorCode.REVIEW_NOT_FOUND_ERROR);
-        }
+        });
         return showReviewResponse;
     }
 
@@ -122,7 +129,7 @@ public class ReviewService {
     }
 
     // 본인의 리뷰인지 검사 & Review 리턴
-    private Review validateIdentityWithReview(String username, Long reviewId){
+    private Review validateIdentityWithReview(String username, Long reviewId) {
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> {
             throw new ReviewNotFoundException(reviewId.toString(), ErrorCode.REVIEW_NOT_FOUND_ERROR);
         });

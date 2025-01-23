@@ -4,7 +4,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 
 @Data
-public class GetCafeInfoRes {
+public class CafeInfoRes {
 
     private String cafeName;
     private String address;
@@ -16,7 +16,7 @@ public class GetCafeInfoRes {
     private long avgRating;
 
     @QueryProjection
-    public GetCafeInfoRes(String cafeName, String address, String roadAddress, String mapx, String mapy, String link, boolean is_closed_down, long avgRating) {
+    public CafeInfoRes(String cafeName, String address, String roadAddress, String mapx, String mapy, String link, boolean is_closed_down, long avgRating) {
         this.cafeName = cafeName;
         this.address = address;
         this.roadAddress = roadAddress;
