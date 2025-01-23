@@ -4,8 +4,8 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-.env.dev
 .env.prod
+.env.dev
 
 
 ### STS ###
@@ -29,7 +29,6 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 /src/main/generated/
-/src/main/resources/application.yml
 
 ### NetBeans ###
 /nbproject/private/
