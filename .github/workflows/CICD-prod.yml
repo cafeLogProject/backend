@@ -56,7 +56,7 @@ jobs:
           script: |
             cd backend
             
-            docker stop backend-app
+            docker stop backend-app-1
             export $(grep -v '^#' .env.prod | xargs) && docker compose -f docker-compose-prod.yml up --build -d
             docker image prune -f
 
