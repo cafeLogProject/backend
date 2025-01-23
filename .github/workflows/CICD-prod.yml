@@ -58,6 +58,7 @@ jobs:
             
             docker stop backend-app-1 || true
             docker rm backend-app-1 || true
+            docker rmi acoldbottle/backend-app:latest
             
             export $(grep -v '^#' .env.prod | xargs) && docker compose -f docker-compose-prod.yml up --build -d
             docker image prune -f
