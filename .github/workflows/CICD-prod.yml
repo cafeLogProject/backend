@@ -39,7 +39,7 @@ jobs:
 
       - name: Docker Image Build and Push
         run: |
-          docker buildx build --platform linux/amd64 -t acoldbottle/backend-app:latest -f prod.Dockerfile --load .
+          docker buildx build --no-cache --platform linux/amd64 -t acoldbottle/backend-app:latest -f prod.Dockerfile --load .
           docker push acoldbottle/backend-app:latest
           
   cd:
