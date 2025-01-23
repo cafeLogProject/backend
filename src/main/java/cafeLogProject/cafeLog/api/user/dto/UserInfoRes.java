@@ -1,6 +1,5 @@
 package cafeLogProject.cafeLog.api.user.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
