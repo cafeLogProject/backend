@@ -28,6 +28,7 @@ import java.util.Map;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
+    private final NicknameGenerator nicknameGenerator;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -85,7 +86,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                                 .provider(user.getProvider())
                                 .build();
 
-                        newUser.setNicknameFirstLogin(new NicknameGenerator(userRepository).generateNickname());
+                        newUser.setNicknameFirstLogin(nicknameGenerator.generateNickname());
                         userRepository.save(newUser);
                         log.info("새로운 사용자 등록, username={}", user.getUsername());
                         return newUser;
