@@ -13,10 +13,10 @@ public class CafeInfoRes {
     private String mapy;
     private String link;
     private boolean is_closed_down;
-    private long avgRating;
+    private double avgRating;
 
     @QueryProjection
-    public CafeInfoRes(String cafeName, String address, String roadAddress, String mapx, String mapy, String link, boolean is_closed_down, long avgRating) {
+    public CafeInfoRes(String cafeName, String address, String roadAddress, String mapx, String mapy, String link, boolean is_closed_down, double avgRating) {
         this.cafeName = cafeName;
         this.address = address;
         this.roadAddress = roadAddress;

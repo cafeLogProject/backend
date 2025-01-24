@@ -27,7 +27,7 @@ public class CafeRepositoryImpl implements CafeRepositoryCustom{
                         cafe.mapy,
                         cafe.link,
                         cafe.isClosedDown,
-                        review.rating.avg().longValue()
+                        review.rating.avg().doubleValue()
                 ))
                 .from(cafe)
                 .leftJoin(review).on(review.cafe.id.eq(cafeId))
