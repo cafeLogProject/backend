@@ -21,5 +21,6 @@
 - docker-compose -f docker-compose-dev.yml down
 
 ### 윈도우 로컬에서 실행
-- .env.dev 파일명을 .env로 변경
+- docker-compose-dev.yml의 app.env_file : .env.dev를 .env로 변경
+- application.yml의 google.redirect-uri 주석처리
 - docker-compose -f docker-compose-dev.yml up --build

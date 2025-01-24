@@ -4,6 +4,7 @@ import cafeLogProject.cafeLog.api.draftReview.dto.QShowDraftReviewResponse;
 import cafeLogProject.cafeLog.api.draftReview.dto.QShowUserDraftReviewResponse;
 import cafeLogProject.cafeLog.api.draftReview.dto.ShowDraftReviewResponse;
 import cafeLogProject.cafeLog.api.draftReview.dto.ShowUserDraftReviewResponse;
+import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
 import cafeLogProject.cafeLog.domains.draftReview.domain.DraftReview;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -57,7 +58,26 @@ public class DraftReviewRepositoryCustomImpl implements DraftReviewRepositoryCus
                                 new QShowUserDraftReviewResponse(
                                         draftReview.id,
                                         draftReview.modifiedAt,
-                                        draftReview.cafe.cafeName
+                                        draftReview.cafe.cafeName,
+                                        draftReview.cafe.id
+                                )
+                        )
+                );
+    }
+
+    @Override
+    public List<ShowUserDraftReviewResponse> findAllIdsByUserAndCafe(User user, Cafe cafe) {
+        return queryFactory
+                .from(draftReview)
+                .where(draftReview.user.eq(user), draftReview.cafe.eq(cafe))
+                .orderBy(draftReview.modifiedAt.desc())
+                .transform(
+                        groupBy(draftReview.id).list(
+                                new QShowUserDraftReviewResponse(
+                                        draftReview.id,
+                                        draftReview.modifiedAt,
+                                        draftReview.cafe.cafeName,
+                                        draftReview.cafe.id
                                 )
                         )
                 );
