@@ -14,12 +14,14 @@ public class ShowUserDraftReviewResponse {
     Long draftReviewId;
     LocalDateTime modifiedAt;
     String cafeName;
+    Long cafeId;
 
 
     @QueryProjection
-    public ShowUserDraftReviewResponse(Long draftReviewId, LocalDateTime modifiedAt, String cafeName) {
+    public ShowUserDraftReviewResponse(Long draftReviewId, LocalDateTime modifiedAt, String cafeName, Long cafeId) {
         this.draftReviewId = draftReviewId;
         this.modifiedAt = modifiedAt;
         this.cafeName = cafeName;
+        this.cafeId = cafeId;
     }
 }
