@@ -5,7 +5,9 @@ import cafeLogProject.cafeLog.api.review.dto.*;
 import cafeLogProject.cafeLog.common.auth.exception.UserNotAuthenticatedException;
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.UnexpectedServerException;
+import cafeLogProject.cafeLog.common.exception.cafe.CafeNotFoundException;
 import cafeLogProject.cafeLog.common.exception.draftReview.DraftReviewNotFoundException;
+import cafeLogProject.cafeLog.domains.cafe.repository.CafeRepository;
 import cafeLogProject.cafeLog.domains.draftReview.domain.DraftReview;
 import cafeLogProject.cafeLog.domains.draftReview.repository.DraftReviewRepository;
 import cafeLogProject.cafeLog.domains.image.domain.ReviewImage;
@@ -39,6 +41,7 @@ public class ReviewService {
     private final TagRepository tagRepository;
     private final DraftReviewRepository draftReviewRepository;
     private final ReviewImageRepository reviewImageRepository;
+    private final CafeRepository cafeRepository;
 
     @Transactional
     public ShowReviewResponse addReview(String username, Long draftReviewId, RegistReviewRequest registReviewRequest) {
@@ -80,6 +83,9 @@ public class ReviewService {
     }
 
     public List<ShowReviewResponse> findCafeReviews(Long cafeId, ShowCafeReviewRequest request){
+        cafeRepository.findById(cafeId).orElseThrow(() -> {
+            throw new CafeNotFoundException(cafeId.toString(), ErrorCode.CAFE_NOT_FOUND_ERROR);
+        });
         Pageable pageable = PageRequest.of(0, request.getLimit());
 
         try {
@@ -92,13 +98,7 @@ public class ReviewService {
 
     public List<ShowReviewResponse> findReviews(ShowReviewRequest request) {
         Pageable pageable = PageRequest.of(0, request.getLimit());
-
-        try {
-            return reviewRepository.search(request.getSort(), request.getTagIds(), request.getRating(), request.getTimestamp(), pageable);
-        } catch (Exception e) {
-            log.error(e.toString());
-            throw new UnexpectedServerException("findReviews 에러", ErrorCode.UNEXPECTED_ERROR);
-        }
+        return reviewRepository.search(request.getSort(), request.getTagIds(), request.getRating(), request.getTimestamp(), pageable);
     }
 
     public List<ShowReviewResponse> findUserReviews(String username, ShowUserReviewRequest request) {
