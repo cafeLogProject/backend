@@ -8,6 +8,7 @@ public class ToggleFavoriteReq {
 
     @NotNull
     private Long cafeId;
+
     @NotNull
     private Boolean isScrap;
 }
