@@ -9,6 +9,8 @@ categories:
     label:
       - 'Refactor'
       - 'Docs'
+  - title: '🧪 Test'
+    label: 'Test'
 change-template: '- $TITLE #$NUMBER @$AUTHOR '
 version-resolver:
   major:
