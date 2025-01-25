@@ -24,7 +24,7 @@ version-resolver:
 template: |
   ## 💡 Updates
   ---
-  $Changes
+  $CHANGES
 no-changes-template: 'No Updates'
 
 
