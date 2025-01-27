@@ -11,7 +11,9 @@ class CafeLogApplicationTests {
 
 //	@Test
 //	void contextLoads() {
-//		System.out.println("안녕");
+//        Given
+//         When
+//         Then
 //	}
 
 }

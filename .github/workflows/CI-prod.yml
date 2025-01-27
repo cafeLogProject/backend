@@ -37,5 +37,6 @@ jobs:
       - name: Build Gradle
         run: |
           chmod +x ./gradlew
-          ./gradlew clean build -x test --no-daemon
+          ./gradlew clean build --no-daemon
+#          ./gradlew clean build -x test --no-daemon
 

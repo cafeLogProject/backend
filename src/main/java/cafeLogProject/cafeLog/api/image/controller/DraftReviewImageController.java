@@ -3,6 +3,7 @@ package cafeLogProject.cafeLog.api.image.controller;
 import cafeLogProject.cafeLog.api.image.dto.RegistDraftReviewImageResponse;
 import cafeLogProject.cafeLog.api.image.service.DraftReviewImageService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;

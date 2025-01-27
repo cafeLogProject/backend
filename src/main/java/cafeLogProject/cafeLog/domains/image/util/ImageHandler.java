@@ -2,7 +2,6 @@ package cafeLogProject.cafeLog.domains.image.util;
 
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.image.*;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,25 +9,13 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.UUID;
 
 // 이미지 파일 서버 로컬 스토리지에 저장/불러오기
 public class ImageHandler {
 
-    //이미지 파일 형식이 맞는지 확인
-    public static void isImageFile(MultipartFile file) {
-        try {
-            BufferedImage bufferedImage = ImageIO.read(file.getInputStream());
-            if (bufferedImage == null) {
-                throw new ImageInvalidException(ErrorCode.IMAGE_INVALID_ERROR);
-            }
-        } catch (Exception e) {
-            throw new ImageInvalidException(ErrorCode.IMAGE_INVALID_ERROR);
-        }
-    }
-
     public static File save(String basePath, String imageId, MultipartFile image) {
         try{
+            if (image == null) throw new ImageInvalidException(ErrorCode.IMAGE_INVALID_ERROR);
             String fullPathName = basePath + imageId;
             File newFile = new File(fullPathName);
             image.transferTo(newFile);   //파일 저장
@@ -70,5 +57,24 @@ public class ImageHandler {
         return fileName;
     }
 
+    // MIME 타입 검사
+    public static void isImageFile(MultipartFile file) {
+        String contentType = file.getContentType();
+        if (contentType == null || !(contentType.equals("image/jpg") || contentType.equals("image/jpeg"))) {
+            throw new ImageInvalidException(ErrorCode.IMAGE_INVALID_ERROR);
+        }
+    }
+
+    // 손상된 이미지 여부 검사
+    public static void isDamagedImageFile(MultipartFile file) {
+        try {
+            BufferedImage bufferedImage = ImageIO.read(file.getInputStream());
+            if (bufferedImage == null) {
+                throw new ImageDamagedException(ErrorCode.IMAGE_DAMAGED_ERROR);
+            }
+        } catch (Exception e) {
+            throw new ImageDamagedException(ErrorCode.IMAGE_DAMAGED_ERROR);
+        }
+    }
 
 }
