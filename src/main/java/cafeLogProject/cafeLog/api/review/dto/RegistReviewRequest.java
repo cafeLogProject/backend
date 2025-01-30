@@ -24,7 +24,7 @@ public class RegistReviewRequest {
     @NotNull(message = "방문날짜는 필수 입력 값입니다.")
     private LocalDate visitDate;
     @Size(max = 5, message = "최대 태그 개수는 5입니다.")
-    private List<Integer> tagIds;
+    private List<Integer> tagIds = new ArrayList<>();
 
     @Builder
     public RegistReviewRequest(String content, Integer rating, LocalDate visitDate, List<Integer> tagIds) {

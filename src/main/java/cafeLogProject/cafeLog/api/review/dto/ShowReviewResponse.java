@@ -31,13 +31,23 @@ public class ShowReviewResponse {
         this.content = review.getContent();
         this.rating = review.getRating();
         this.visitDate = review.getVisitDate();
-        this.imageIds = new HashSet<>(imageIds);
-        this.tagIds = new HashSet<>(tagIds);
         this.cafeId = review.getCafe().getId();
         this.userId = review.getUser().getId();
         this.nickname = review.getUser().getNickname();
         this.isProfileImageExist = review.getUser().isImageExist();
         this.createdAt = review.getCreatedAt();
+
+        if (imageIds == null) {
+            this.imageIds = new HashSet<>();
+        } else {
+            this.imageIds = new HashSet<>(imageIds);
+        }
+
+        if (tagIds == null) {
+            this.tagIds = new HashSet<>();
+        } else {
+            this.tagIds = new HashSet<>(tagIds);
+        }
     }
 
     @QueryProjection

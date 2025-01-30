@@ -43,10 +43,12 @@ public class User extends BaseEntity {
     private UserRole role = ROLE_USER;
 
     @Builder
-    public User(String username, String email, String provider) {
+    public User(String username, String email, String provider, String nickname, boolean isImageExist) {
         this.username = username;
         this.email = email;
         this.provider = provider;
+        this.nickname = nickname;
+        this.isImageExist = isImageExist;
         this.role = ROLE_USER;
     }
 

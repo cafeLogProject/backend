@@ -8,9 +8,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.File;
@@ -24,19 +29,20 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+//@TestPropertySource(locations = "classpath:application-test.yml")
+//@ActiveProfiles("test")
 public class ImageUtilTest {
     String requestImagePath;
     String savedFolderPath;
     String damagedImagePath;
     String bigImagePath;
-//    @Autowired
     ImageUtil imageUtil = new ImageUtil();
 
     @BeforeEach
     public void before() throws Exception{
         // ImageUtil 클래스의 환경변수 임의로 설정
         ReflectionTestUtils.setField(imageUtil, "BASE_PATH", "C:\\spring_study\\backend");   // 로컬에서 테스트시 사용, value에 env의 PROJECT_PATH값 입력해야 함
-//        ReflectionTestUtils.setField(imageUtil, "BASE_PATH", "/app");     //도커로 테스트시 사용
+//        ReflectionTestUtils.setField(imageUtil, "BASE_PATH", "/app");     //깃헙 액션에서 테스트시 사용
 
         // 환경변수 등록되었는지 확인
         assertTrue(ImageUtil.BASE_PATH != null);
