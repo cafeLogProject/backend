@@ -6,9 +6,9 @@ import cafeLogProject.cafeLog.common.auth.jwt.JWTLoginHandler;
 import cafeLogProject.cafeLog.common.auth.jwt.JWTLogoutFilter;
 import cafeLogProject.cafeLog.common.auth.jwt.JWTUtil;
 import cafeLogProject.cafeLog.common.auth.jwt.token.JWTTokenService;
+import cafeLogProject.cafeLog.common.auth.oauth2.CustomAuthenticationEntryPoint;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.session.DefaultCookieSerializerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,6 +28,7 @@ public class SecurityConfig {
     private final JWTLoginHandler loginHandler;
     private final JWTUtil jwtUtil;
     private final JWTTokenService tokenService;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     public static final String[] whiteList = {
             "/api/auth/login",
             "/api/auth/check",
@@ -83,6 +84,10 @@ public class SecurityConfig {
                         .requestMatchers(whiteList).permitAll()
                         .requestMatchers("/api/**", "/logout").authenticated()
                         .anyRequest().denyAll());
+
+        http
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(authenticationEntryPoint));
 
         http
                 .sessionManagement((auth) -> auth
