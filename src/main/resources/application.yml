@@ -67,9 +67,6 @@ spring:
               user-info-uri: ${NAVER_USER_INFO_URI}
               user-name-attribute: response # 회원 정보를 json으로 받는데 response라는 키값으로 네이버가 리턴해줌
 
-  frontend:
-    redirect-url: ${SPRING_FRONTEND_URL}
-
 logging.level:
   org.hibernate.SQL: debug
   org.hibernate.orm.jdbc.bind: trace
