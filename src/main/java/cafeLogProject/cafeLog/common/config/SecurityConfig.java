@@ -6,8 +6,10 @@ import cafeLogProject.cafeLog.common.auth.jwt.JWTLoginHandler;
 import cafeLogProject.cafeLog.common.auth.jwt.JWTLogoutFilter;
 import cafeLogProject.cafeLog.common.auth.jwt.JWTUtil;
 import cafeLogProject.cafeLog.common.auth.jwt.token.JWTTokenService;
-import cafeLogProject.cafeLog.common.auth.oauth2.CustomAuthenticationEntryPoint;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2UserService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,9 +17,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+
+import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -28,7 +34,6 @@ public class SecurityConfig {
     private final JWTLoginHandler loginHandler;
     private final JWTUtil jwtUtil;
     private final JWTTokenService tokenService;
-    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     public static final String[] whiteList = {
             "/api/auth/login",
             "/api/auth/check",
@@ -85,9 +90,22 @@ public class SecurityConfig {
                         .requestMatchers("/api/**", "/logout").authenticated()
                         .anyRequest().denyAll());
 
-        http
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(authenticationEntryPoint));
+//        http
+//                .exceptionHandling(ex -> ex
+//                        .authenticationEntryPoint(new AuthenticationEntryPoint() {
+//                            @Override
+//                            public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+//                                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                                response.setContentType("application/json; charset=UTF-8");
+//
+//                                String json = String.format("{\"status\": %d, \"message\": \"%s\"}",
+//                                        HttpServletResponse.SC_UNAUTHORIZED,
+//                                        "인증이 필요합니다.");
+//
+//                                response.getWriter().write(json);
+//                            }
+//                        }
+//                        ));
 
         http
                 .sessionManagement((auth) -> auth

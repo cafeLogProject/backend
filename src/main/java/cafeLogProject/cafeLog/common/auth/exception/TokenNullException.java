@@ -5,6 +5,7 @@ import cafeLogProject.cafeLog.common.exception.CafeAppException;
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 
 public class TokenNullException extends CafeAppException {
+
     public TokenNullException(ErrorCode errorCode) {
         super(errorCode);
     }
