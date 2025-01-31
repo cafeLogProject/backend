@@ -83,23 +83,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/**", "/logout").authenticated()
                         .anyRequest().denyAll());
 
-//        http
-//                .exceptionHandling(ex -> ex
-//                        .authenticationEntryPoint(new AuthenticationEntryPoint() {
-//                            @Override
-//                            public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-//                                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//                                response.setContentType("application/json; charset=UTF-8");
-//
-//                                String json = String.format("{\"status\": %d, \"message\": \"%s\"}",
-//                                        HttpServletResponse.SC_UNAUTHORIZED,
-//                                        "인증이 필요합니다.");
-//
-//                                response.getWriter().write(json);
-//                            }
-//                        }
-//                        ));
-
         http
                 .sessionManagement((auth) -> auth
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
