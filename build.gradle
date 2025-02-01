@@ -55,6 +55,9 @@ dependencies {
 	testImplementation 'com.h2database:h2:2.1.214'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc' //JDBC Driver
 
+	// mockito
+	testImplementation 'org.mockito:mockito-inline:3.6.0'
+
 	// queryDSL 관련 라이브러리
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
