@@ -7,6 +7,7 @@ import cafeLogProject.cafeLog.common.auth.jwt.JWTLogoutFilter;
 import cafeLogProject.cafeLog.common.auth.jwt.JWTUtil;
 import cafeLogProject.cafeLog.common.auth.jwt.token.JWTTokenService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,8 +33,6 @@ public class SecurityConfig {
             "/api/auth/check",
             "/login"
     };
-
-
 
     @Bean
     public JWTFilter jwtFilter() {
@@ -78,10 +77,22 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTLogoutFilter(tokenService), LogoutFilter.class);
 
         http
+                .exceptionHandling(entrypoint -> entrypoint
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json; charset=UTF-8");
+
+                            String json = String.format("{\"status\": %d, \"message\": \"%s\"}",
+                                    HttpServletResponse.SC_UNAUTHORIZED,
+                                    "접근 권한이 없습니다.");
+
+                            response.getWriter().write(json);
+                        }));
+
+        http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(whiteList).permitAll()
-                        .requestMatchers("/api/**", "/logout").authenticated()
-                        .anyRequest().denyAll());
+                        .anyRequest().authenticated());
 
         http
                 .sessionManagement((auth) -> auth
