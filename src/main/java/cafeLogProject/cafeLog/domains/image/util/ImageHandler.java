@@ -13,6 +13,7 @@ import java.io.File;
 import java.util.UUID;
 
 // 이미지 파일 서버 로컬 스토리지에 저장/불러오기
+@Slf4j
 public class ImageHandler {
 
     //이미지 파일 형식이 맞는지 확인
@@ -54,12 +55,15 @@ public class ImageHandler {
     public static void delete(String basePath, String imageId) {
         File file = new File(basePath + imageId);
         if (!file.exists()){
+            log.error("image Not Found Exception ["+basePath+imageId+"] : 존재하지 않는 이미지 삭제 시도");
             throw new ImageNotFoundException(ErrorCode.IMAGE_NOT_FOUND_ERROR);
 //          return;     //존재하지 않은 경우(이미 삭제한 경우) 건너뛰기
         }
         try {
             file.delete();
         } catch (Exception e) {
+            log.error(e.toString());
+            log.error("Image Delete Exception ["+basePath+imageId+"] : 이미지 삭제 실패. 차후 조치 필요");
             throw new ImageDeleteException(ErrorCode.IMAGE_DELETE_ERROR);
         }
     }

@@ -189,7 +189,11 @@ public class ReviewService {
     private void deleteAllReviewImageInReview(Review review){
         List<ReviewImage> images = reviewImageRepository.findAllByReview(review);
         for (ReviewImage reviewImage : images) {
-            ImageUtil.deleteCompressedImage(ImageUtil.REVIEW_IMAGE_PATH, reviewImage.getId().toString());
+            try {
+                ImageUtil.deleteCompressedImage(ImageUtil.REVIEW_IMAGE_PATH, reviewImage.getId().toString());
+            } catch (Exception e) {
+                log.error("deleteAllReviewImageInReview 메소드 에러 발생");
+            }
             if (reviewImage != null) reviewImageRepository.delete(reviewImage);
         }
     }
