@@ -1,13 +1,17 @@
 package cafeLogProject.cafeLog.service.draftReviewService;
 
+import cafeLogProject.cafeLog.api.cafe.controller.NaverApiController;
 import cafeLogProject.cafeLog.api.cafe.dto.SaveCafeReq;
 import cafeLogProject.cafeLog.api.cafe.service.CafeService;
+import cafeLogProject.cafeLog.api.cafe.service.NaverApiService;
 import cafeLogProject.cafeLog.api.draftReview.dto.RegistDraftReviewRequest;
 import cafeLogProject.cafeLog.api.draftReview.dto.ShowDraftReviewResponse;
 import cafeLogProject.cafeLog.api.draftReview.service.DraftReviewService;
 import cafeLogProject.cafeLog.api.image.service.DraftReviewImageService;
 import cafeLogProject.cafeLog.api.image.service.ImageUtil;
 import cafeLogProject.cafeLog.common.auth.exception.UserNotAuthenticatedException;
+import cafeLogProject.cafeLog.common.auth.jwt.JWTUtil;
+import cafeLogProject.cafeLog.common.config.RedisConfig;
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.draftReview.DraftReviewNotFoundException;
 import cafeLogProject.cafeLog.domains.user.domain.User;
@@ -16,6 +20,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +46,18 @@ import static org.mockito.Mockito.mockStatic;
 @ActiveProfiles("test")
 @Transactional
 public class DeleteDraftReviewsAndImagesTest {
+    @Mock
+    NaverApiService naverApiService;
+    @InjectMocks
+    NaverApiController naverApiController;
+//    @Mock
+//    ImageUtil imageUtil;
+    @Mock
+    JWTUtil jwtUtil;
+    @Mock
+    RedisConfig redisConfig;
+
+
     @Autowired
     DraftReviewService draftReviewService;
     @Autowired
