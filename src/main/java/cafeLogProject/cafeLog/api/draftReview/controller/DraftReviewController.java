@@ -2,7 +2,6 @@ package cafeLogProject.cafeLog.api.draftReview.controller;
 
 import cafeLogProject.cafeLog.api.draftReview.dto.*;
 import cafeLogProject.cafeLog.api.draftReview.service.DraftReviewService;
-import cafeLogProject.cafeLog.api.image.service.DraftReviewImageService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.draftReview.DraftReviewNotFoundException;
