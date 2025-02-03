@@ -42,7 +42,7 @@ jobs:
       - name: Create Application-test.yml
         run: |
           mkdir -p src/test/java/resources
-          echo "${{ secrets.PROD_APPLICATION_YML }}" > src/test/java/resources/application-test.yml
+          echo "${{ secrets.PROD_APPLICATION_TEST_YML }}" > src/test/java/resources/application-test.yml
 
       - name: Build Gradle
         run: |
