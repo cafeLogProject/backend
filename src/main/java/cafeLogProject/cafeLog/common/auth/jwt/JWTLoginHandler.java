@@ -7,6 +7,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -18,8 +20,11 @@ import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.createCookie;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JWTLoginHandler implements AuthenticationSuccessHandler {
 
+    @Value("${FRONTEND_REDIRECT}")
+    private String frontendRedirect;
     private final JWTTokenService tokenService;
     private final UserService userService;
 
@@ -44,6 +49,10 @@ public class JWTLoginHandler implements AuthenticationSuccessHandler {
         response.setStatus(HttpStatus.OK.value());
         response.addCookie(createCookie("access", access));
         response.addCookie(createCookie("refresh", refresh));
+
+        if (!frontendRedirect.equals("dev")) {
+            response.sendRedirect(frontendRedirect);
+        }
 
     }
 }
