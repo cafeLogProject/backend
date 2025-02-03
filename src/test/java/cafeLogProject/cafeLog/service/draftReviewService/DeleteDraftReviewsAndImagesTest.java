@@ -46,18 +46,6 @@ import static org.mockito.Mockito.mockStatic;
 @ActiveProfiles("test")
 @Transactional
 public class DeleteDraftReviewsAndImagesTest {
-    @Mock
-    NaverApiService naverApiService;
-    @InjectMocks
-    NaverApiController naverApiController;
-//    @Mock
-//    ImageUtil imageUtil;
-    @Mock
-    JWTUtil jwtUtil;
-    @Mock
-    RedisConfig redisConfig;
-
-
     @Autowired
     DraftReviewService draftReviewService;
     @Autowired
