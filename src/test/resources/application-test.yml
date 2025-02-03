@@ -78,3 +78,20 @@ path:
   base: ${PROJECT_PATH}   #로컬 컴퓨터의 프로젝트 파일 경로 (ex C:\경로\경로\backend)
 
 
+#spring:
+#  datasource:
+#    url: jdbc:h2:mem:test
+#    driver-class-name: org.h2.Driver
+#    username: root
+#    password:
+#
+#  h2:
+#    console:
+#      enabled: true
+#      path: /h2
+#
+#  jpa:
+#    database-platform: org.hibernate.dialect.H2Dialect
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: update
