@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface CafeRepositoryCustom {
 
-    Optional<CafeInfoRes> findCafeWithAverageRating(Long cafeId);
+    Optional<CafeInfoRes> findCafeWithAverageRating(Long cafeId, String username);
 }
