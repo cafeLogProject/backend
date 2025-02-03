@@ -5,10 +5,12 @@ import cafeLogProject.cafeLog.api.cafe.dto.IsExistCafeRes;
 import cafeLogProject.cafeLog.api.cafe.dto.SaveCafeReq;
 import cafeLogProject.cafeLog.api.cafe.dto.SaveCafeRes;
 import cafeLogProject.cafeLog.api.cafe.service.CafeService;
+import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,9 +20,10 @@ public class CafeController {
     private final CafeService cafeService;
 
     @GetMapping("/{cafeId}")
-    public ResponseEntity<CafeInfoRes> getCafeInfo(@PathVariable Long cafeId) {
+    public ResponseEntity<CafeInfoRes> getCafeInfo(@PathVariable Long cafeId,
+                                                   @AuthenticationPrincipal CustomOAuth2User user) {
 
-        CafeInfoRes cafeInfo = cafeService.getCafeInfo(cafeId);
+        CafeInfoRes cafeInfo = cafeService.getCafeInfo(cafeId, user.getName());
         return ResponseEntity.ok(cafeInfo);
     }
 
