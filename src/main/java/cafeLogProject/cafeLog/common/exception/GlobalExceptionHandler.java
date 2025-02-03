@@ -1,7 +1,6 @@
 package cafeLogProject.cafeLog.common.exception;
 
 import cafeLogProject.cafeLog.common.dto.ApiErrorResponse;
-import cafeLogProject.cafeLog.common.exception.CafeAppException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
