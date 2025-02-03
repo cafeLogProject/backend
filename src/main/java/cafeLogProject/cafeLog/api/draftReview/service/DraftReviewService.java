@@ -56,6 +56,16 @@ public class DraftReviewService {
         return draftReviewRepository.findAllIdsByUser(user);
     }
 
+    public List<ShowUserDraftReviewResponse> findAllReviewsByUserAndCafe(String username, Long cafeId){
+        User user = userRepository.findByUsername(username).orElseThrow(() ->{
+            throw new UserNotFoundException(username, ErrorCode.USER_NOT_FOUND_ERROR);
+        });
+        Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(() -> {
+            throw new CafeNotFoundException(Long.toString(cafeId), ErrorCode.CAFE_NOT_FOUND_ERROR);
+        });
+        return draftReviewRepository.findAllIdsByUserAndCafe(user, cafe);
+    }
+
     @Transactional
     public ShowDraftReviewResponse addDraftReview(String username, RegistDraftReviewRequest registDraftReviewRequest) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->{

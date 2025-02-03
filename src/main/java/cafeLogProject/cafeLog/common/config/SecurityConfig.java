@@ -7,8 +7,8 @@ import cafeLogProject.cafeLog.common.auth.jwt.JWTLogoutFilter;
 import cafeLogProject.cafeLog.common.auth.jwt.JWTUtil;
 import cafeLogProject.cafeLog.common.auth.jwt.token.JWTTokenService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.session.DefaultCookieSerializerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -34,8 +34,6 @@ public class SecurityConfig {
             "/login"
     };
 
-
-
     @Bean
     public JWTFilter jwtFilter() {
         return new JWTFilter(jwtUtil, tokenService);
@@ -44,21 +42,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        //cors 설정
-//        http
-//                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-//                    @Override
-//                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-//                        CorsConfiguration configuration = new CorsConfiguration();
-//
-//                        configuration.setAllowedOrigins(Collections.singletonList("*"));
-//                        configuration.setAllowedMethods(Collections.singletonList("*"));
-//                        configuration.setAllowCredentials(true);
-//                        configuration.setMaxAge(3600L);
-//
-//                        return configuration;
-//                    }
-//                }));
 
         http
                 .csrf(AbstractHttpConfigurer::disable);
@@ -79,10 +62,22 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTLogoutFilter(tokenService), LogoutFilter.class);
 
         http
+                .exceptionHandling(entrypoint -> entrypoint
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json; charset=UTF-8");
+
+                            String json = String.format("{\"status\": %d, \"message\": \"%s\"}",
+                                    HttpServletResponse.SC_UNAUTHORIZED,
+                                    "접근 권한이 없습니다.");
+
+                            response.getWriter().write(json);
+                        }));
+
+        http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(whiteList).permitAll()
-                        .requestMatchers("/api/**", "/logout").authenticated()
-                        .anyRequest().denyAll());
+                        .anyRequest().authenticated());
 
         http
                 .sessionManagement((auth) -> auth
@@ -90,5 +85,19 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOriginPatterns(List.of("*"));
+//        configuration.setAllowedHeaders(List.of("*"));
+//        configuration.setAllowedMethods(List.of("*"));
+//        configuration.setAllowCredentials(true);
+//        configuration.setMaxAge(3600L);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 
 }

@@ -3,6 +3,8 @@ package cafeLogProject.cafeLog.api.user.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.LinkedList;
+
 @Data
 public class UserInfoRes {
 

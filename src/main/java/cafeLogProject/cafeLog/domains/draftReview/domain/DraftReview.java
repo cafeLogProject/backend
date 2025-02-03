@@ -3,14 +3,17 @@ package cafeLogProject.cafeLog.domains.draftReview.domain;
 
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.image.ImageNotFoundException;
+import cafeLogProject.cafeLog.common.exception.review.TagInvalidException;
 import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
 import cafeLogProject.cafeLog.common.domain.BaseEntity;
+import cafeLogProject.cafeLog.domains.review.domain.Tag;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,7 +57,12 @@ public class DraftReview extends BaseEntity {
         this.rating = rating;
         this.visitDate = visitDate;
         this.imageIds = (imageIds == null ? new ArrayList<>() : imageIds);
-        this.tagIds = (tagIds == null ? new ArrayList<>() : tagIds);
+        if (tagIds == null){
+            this.tagIds = new ArrayList<>();
+        } else {
+            tagIds.forEach(tagId -> isValidTagId(tagId));
+            this.tagIds = tagIds;
+        }
         this.cafe = cafe;
         this.user = user;
     }
@@ -84,6 +92,16 @@ public class DraftReview extends BaseEntity {
             imageIdsStr.add(imageId.toString());
         }
         return imageIdsStr;
+    }
+
+    private static final List<Integer> VALID_TAG_IDS = Arrays.asList(
+            1, 2, 3, 4, 5, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113
+    );
+
+    public void isValidTagId(Integer tagId) {
+        if (!VALID_TAG_IDS.contains(tagId)) {
+            throw new TagInvalidException(ErrorCode.TAG_INVALID_ERROR);
+        }
     }
 
 }

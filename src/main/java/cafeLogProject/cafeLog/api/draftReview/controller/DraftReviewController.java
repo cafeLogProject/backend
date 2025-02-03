@@ -9,6 +9,7 @@ import cafeLogProject.cafeLog.api.image.service.DraftReviewImageService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +30,14 @@ public class DraftReviewController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ShowUserDraftReviewResponse>> findAllReviewsByUser(@AuthenticationPrincipal CustomOAuth2User oAuth2User){
-        List<ShowUserDraftReviewResponse> res = draftReviewService.findAllReviewsByUser(oAuth2User.getName());
+    public ResponseEntity<List<ShowUserDraftReviewResponse>> findAllReviewsByUser(@Param(value="cafeId") Long cafeId,
+                                                                                  @AuthenticationPrincipal CustomOAuth2User oAuth2User){
+        List<ShowUserDraftReviewResponse> res;
+        if (cafeId == null) {
+            res = draftReviewService.findAllReviewsByUser(oAuth2User.getName());
+        } else {
+            res = draftReviewService.findAllReviewsByUserAndCafe(oAuth2User.getName(), cafeId);
+        }
         return ResponseEntity.ok().body(res);
     }
 
