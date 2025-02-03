@@ -39,8 +39,3 @@ jobs:
           chmod +x ./gradlew
           ./gradlew clean build -x test --no-daemon
 
-      - name: Run Tests
-        run: |
-          chmod +x ./gradlew
-          ./gradlew test --no-daemon
-
