@@ -39,9 +39,13 @@ jobs:
           mkdir -p src/main/resources
           echo "${{ secrets.PROD_APPLICATION_YML }}" > src/main/resources/application.yml
 
+      - name: Create Application-test.yml
+        run: |
+          mkdir -p src/test/java/resources
+          echo "${{ secrets.PROD_APPLICATION_YML }}" > src/test/java/resources/application-test.yml
+
       - name: Build Gradle
         run: |
-          echo "${{ secrets.PROD_APPLICATION_YML }}" > src/test/java/resources/application-test.yml
           chmod +x ./gradlew
           ./gradlew clean build --no-daemon
 
