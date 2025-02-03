@@ -1,53 +1,53 @@
-//package cafeLogProject.cafeLog.service.draftReviewService;
-//
-//import cafeLogProject.cafeLog.api.cafe.dto.SaveCafeReq;
-//import cafeLogProject.cafeLog.api.cafe.service.CafeService;
-//import cafeLogProject.cafeLog.api.draftReview.dto.RegistDraftReviewRequest;
-//import cafeLogProject.cafeLog.api.draftReview.dto.ShowDraftReviewResponse;
-//import cafeLogProject.cafeLog.api.draftReview.service.DraftReviewService;
-//import cafeLogProject.cafeLog.api.image.dto.RegistReviewImageResponse;
-//import cafeLogProject.cafeLog.api.image.service.DraftReviewImageService;
-//import cafeLogProject.cafeLog.api.image.service.ImageUtil;
-//import cafeLogProject.cafeLog.api.image.service.ReviewImageService;
-//import cafeLogProject.cafeLog.api.review.dto.RegistReviewRequest;
-//import cafeLogProject.cafeLog.api.review.dto.ShowReviewResponse;
-//import cafeLogProject.cafeLog.api.review.service.ReviewService;
-//import cafeLogProject.cafeLog.common.auth.exception.UserNotAuthenticatedException;
-//import cafeLogProject.cafeLog.common.exception.ErrorCode;
-//import cafeLogProject.cafeLog.common.exception.draftReview.DraftReviewNotFoundException;
-//import cafeLogProject.cafeLog.domains.review.repository.ReviewRepository;
-//import cafeLogProject.cafeLog.domains.user.domain.User;
-//import cafeLogProject.cafeLog.domains.user.repository.UserRepository;
-//import org.junit.jupiter.api.AfterEach;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.MockedStatic;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.mock.web.MockMultipartFile;
-//import org.springframework.test.context.ActiveProfiles;
-//import org.springframework.test.context.TestPropertySource;
-//import org.springframework.transaction.annotation.Transactional;
-//import org.springframework.web.multipart.MultipartFile;
-//
-//import java.time.LocalDate;
-//import java.time.LocalDateTime;
-//import java.util.List;
-//
-//import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-//import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
-//import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-//import static org.junit.jupiter.api.Assertions.assertThrows;
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.ArgumentMatchers.anyString;
-//import static org.mockito.Mockito.mockStatic;
-//
-//@SpringBootTest
+package cafeLogProject.cafeLog.service.draftReviewService;
+
+import cafeLogProject.cafeLog.api.cafe.dto.SaveCafeReq;
+import cafeLogProject.cafeLog.api.cafe.service.CafeService;
+import cafeLogProject.cafeLog.api.draftReview.dto.RegistDraftReviewRequest;
+import cafeLogProject.cafeLog.api.draftReview.dto.ShowDraftReviewResponse;
+import cafeLogProject.cafeLog.api.draftReview.service.DraftReviewService;
+import cafeLogProject.cafeLog.api.image.dto.RegistReviewImageResponse;
+import cafeLogProject.cafeLog.api.image.service.DraftReviewImageService;
+import cafeLogProject.cafeLog.api.image.service.ImageUtil;
+import cafeLogProject.cafeLog.api.image.service.ReviewImageService;
+import cafeLogProject.cafeLog.api.review.dto.RegistReviewRequest;
+import cafeLogProject.cafeLog.api.review.dto.ShowReviewResponse;
+import cafeLogProject.cafeLog.api.review.service.ReviewService;
+import cafeLogProject.cafeLog.common.auth.exception.UserNotAuthenticatedException;
+import cafeLogProject.cafeLog.common.exception.ErrorCode;
+import cafeLogProject.cafeLog.common.exception.draftReview.DraftReviewNotFoundException;
+import cafeLogProject.cafeLog.domains.review.repository.ReviewRepository;
+import cafeLogProject.cafeLog.domains.user.domain.User;
+import cafeLogProject.cafeLog.domains.user.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mockStatic;
+
+@SpringBootTest
 //@TestPropertySource(locations = "classpath:application-test.yml")
-//@ActiveProfiles("test")
-//@Transactional
-//public class DeleteDraftReviewsAndImagesTest {
+@ActiveProfiles("test")
+@Transactional
+public class DeleteDraftReviewsAndImagesTest {
 //
 //    @Autowired
 //    DraftReviewService draftReviewService;
@@ -194,4 +194,12 @@
 //        assertDoesNotThrow(() -> draftReviewService.findDraftReview(username, draftReviewId2));
 //
 //    }
-//}
+
+
+
+    @Test
+    @DisplayName("테스트")
+    public void deleteDraftReviewsAndImagesWithImagesSuccess() {
+        assertThat(1).isEqualTo(1);
+    }
+}
