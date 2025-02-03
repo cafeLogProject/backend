@@ -40,7 +40,7 @@ spring:
             scope:
               - profile
               - email
-#            redirect-uri: http://ec2-43-200-92-254.ap-northeast-2.compute.amazonaws.com:8080/login/oauth2/code/google
+            redirect-uri: http://ec2-43-200-92-254.ap-northeast-2.compute.amazonaws.com:8080/login/oauth2/code/google
 
           facebook:
             client-id: ${FACEBOOK_CLIENT_ID} # Facebook 클라이언트 ID
