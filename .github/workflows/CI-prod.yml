@@ -52,7 +52,7 @@ jobs:
       - name: Run Tests
         run: |
           chmod +x ./gradlew
-          ./gradlew test --no-daemon
+          ./gradlew test -i --no-daemon
 
 #      - name: Build Gradle
 #        run: |
