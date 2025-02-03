@@ -115,8 +115,11 @@ public class JWTFilter extends OncePerRequestFilter {
             throw new TokenNotFoundException(TOKEN_NOT_FOUND_ERROR);
         }
 
-        response.addCookie(createCookie("access", newAccessToken));
-        response.addCookie(createCookie("refresh", newRefreshToken));
+//        response.addCookie(createCookie("access", newAccessToken));
+//        response.addCookie(createCookie("refresh", newRefreshToken));
+
+        response.setHeader("Set-Cookie", "access=" + newAccessToken + "; HttpOnly; Path=/; SameSite=None");
+        response.setHeader("Set-Cookie", "refresh=" + newRefreshToken + "; HttpOnly; Path=/; SameSite=None");
 
         return tokenService.extractUserInfoFromToken(newAccessToken);
     }

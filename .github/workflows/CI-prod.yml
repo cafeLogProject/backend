@@ -28,7 +28,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-            
+
       - name: Create Application.yml
         run: |
           mkdir -p src/main/resources
@@ -38,4 +38,9 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew clean build -x test --no-daemon
+
+      - name: Run Tests
+        run: |
+          chmod +x ./gradlew
+          ./gradlew test --no-daemon
 
