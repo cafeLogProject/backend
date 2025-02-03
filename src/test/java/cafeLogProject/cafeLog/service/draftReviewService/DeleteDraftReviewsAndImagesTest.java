@@ -192,5 +192,6 @@ public class DeleteDraftReviewsAndImagesTest {
         assertDoesNotThrow(() -> draftReviewService.findDraftReview(username, draftReviewId1));
         assertDoesNotThrow(() -> draftReviewService.findDraftReview(username2, user2draftReviewId));
         assertDoesNotThrow(() -> draftReviewService.findDraftReview(username, draftReviewId2));
+
     }
 }
