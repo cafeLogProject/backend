@@ -1,4 +1,8 @@
 spring:
+  devtools:
+    restart:
+      enabled: true
+
   datasource:
     url: jdbc:h2:mem:test
     driver-class-name: org.h2.Driver
@@ -10,8 +14,65 @@ spring:
       enabled: true
       path: /h2
 
+  #이미지 용량 제한 설정
+  servlet:
+    multipart:
+      max-file-size: 4MB
+      max-request-size: 4MB
+
+  redis:
+    host: ${SPRING_REDIS_HOST}
+    port: ${SPRING_REDIS_PORT}
+
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     show-sql: true
     hibernate:
       ddl-auto: update
+
+  jwt:
+    secret: ${JWT_SECRET}
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID} # Google 클라이언트 ID
+            client-secret: ${GOOGLE_CLIENT_SECRET} # Google 클라이언트 비밀
+            scope:
+              - profile
+              - email
+            redirect-uri: http://ec2-43-200-92-254.ap-northeast-2.compute.amazonaws.com:8080/login/oauth2/code/google
+
+          facebook:
+            client-id: ${FACEBOOK_CLIENT_ID} # Facebook 클라이언트 ID
+            client-secret: ${FACEBOOK_CLIENT_SECRET} # Facebook 클라이언트 비밀
+            scope:
+              - public_profile
+              - email
+
+          naver:
+            client-id: ${NAVER_CLIENT_ID} # Naver 클라이언트 ID
+            client-secret: ${NAVER_CLIENT_SECRET} # Naver 클라이언트 비밀
+            scope:
+              - name
+              - email
+            client-name: Naver
+            authorization-grant-type: authorization_code
+            redirect-uri: ${NAVER_REDIRECT_URI}
+
+
+        provider: # 네이버, 카카오 등은 기본 프로바이더가 아니기 때문에 따로 등록해줘야함. 기본 프로바이더 -> 구글, 페이스북, 트위터
+          naver:
+            authorization-uri: ${NAVER_AUTHORIZATION_URI}
+            token-uri: ${NAVER_TOKEN_URI}
+            user-info-uri: ${NAVER_USER_INFO_URI}
+            user-name-attribute: response # 회원 정보를 json으로 받는데 response라는 키값으로 네이버가 리턴해줌
+
+logging.level:
+  org.hibernate.SQL: debug
+  org.hibernate.orm.jdbc.bind: trace
+
+path:
+  base: ${PROJECT_PATH}   #로컬 컴퓨터의 프로젝트 파일 경로 (ex C:\경로\경로\backend)

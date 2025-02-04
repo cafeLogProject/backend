@@ -33,8 +33,7 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
-@TestPropertySource(locations = "classpath:application-test.yml")
+@SpringBootTest(properties = "classpath:application-test.yml")
 @ActiveProfiles("test")
 @Transactional
 public class SaveReviewTest {
