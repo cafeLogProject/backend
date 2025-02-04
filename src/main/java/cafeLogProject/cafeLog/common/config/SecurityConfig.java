@@ -30,8 +30,7 @@ public class SecurityConfig {
     private final JWTTokenService tokenService;
     public static final String[] whiteList = {
             "/api/auth/login",
-            "/api/auth/check",
-            "/login"
+            "/api/auth/check"
     };
 
     @Bean
