@@ -32,11 +32,11 @@ jobs:
       - name: Create Application.yml
         run: |
           mkdir -p src/main/resources
-          echo "${{ secrets.PROD_APPLICATION_YML }}" > src/main/resources/application.yml
+          echo "${{ secrets.PROD_APPLICATION_YML_2 }}" > src/main/resources/application.yml
 
       - name: Build Gradle
         run: |
           chmod +x ./gradlew
-          ./gradlew clean build --no-daemon
+          ./gradlew clean build -i --no-daemon
 #          ./gradlew clean build -x test --no-daemon
 
