@@ -51,8 +51,11 @@ public class ReviewImageService {
     public void deleteReviewImage(String username, String imageId) {
         ReviewImage reviewImage = findByReviewImageIdStr(imageId);
         validateIdentity(username, reviewImage.getReview().getId());
-
-        ImageUtil.deleteCompressedImage(ImageUtil.REVIEW_IMAGE_PATH, imageId);
+        try {
+            ImageUtil.deleteCompressedImage(ImageUtil.REVIEW_IMAGE_PATH, imageId);
+        } catch (Exception e) {
+            log.error("deleteReviewImage 메소드 에러 발생");
+        }
         if (reviewImage != null) reviewImageRepository.delete(reviewImage);
     }
 

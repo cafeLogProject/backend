@@ -51,6 +51,7 @@ public class UpdateDraftReviewRequest {
                 .rating(rating)
                 .visitDate(visitDate)
                 .tagIds(tagIds)
+                .imageIds(review.getImageIds())
                 .cafe(review.getCafe())
                 .user(review.getUser())
                 .build();

@@ -5,6 +5,9 @@ on:
     branches:
       - develop
 
+permissions:
+  contents: write
+
 jobs:
   ci:
     runs-on: ubuntu-22.04
@@ -19,7 +22,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}-
           restore-keys: |
             ${{ runner.os }}-gradle-
 
@@ -39,7 +42,7 @@ jobs:
 
       - name: Docker Image Build and Push
         run: |
-          docker buildx build --platform linux/amd64 -t acoldbottle/backend-app:latest -f prod.Dockerfile --load .
+          docker buildx build --no-cache --platform linux/amd64 -t acoldbottle/backend-app:latest -f prod.Dockerfile --load .
           docker push acoldbottle/backend-app:latest
           
   cd:
@@ -56,7 +59,10 @@ jobs:
           script: |
             cd backend
             
-            docker stop backend-app
+            docker stop backend-app-1 || true
+            docker rm backend-app-1 || true
+            docker rmi acoldbottle/backend-app:latest
+            
             export $(grep -v '^#' .env.prod | xargs) && docker compose -f docker-compose-prod.yml up --build -d
             docker image prune -f
 

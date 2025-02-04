@@ -11,6 +11,8 @@ import cafeLogProject.cafeLog.common.auth.exception.UserNotAuthenticatedExceptio
 import cafeLogProject.cafeLog.common.exception.ErrorCode;
 import cafeLogProject.cafeLog.common.exception.cafe.CafeNotFoundException;
 import cafeLogProject.cafeLog.common.exception.draftReview.DraftReviewNotFoundException;
+import cafeLogProject.cafeLog.common.exception.image.ImageDeleteException;
+import cafeLogProject.cafeLog.common.exception.image.ImageNotFoundException;
 import cafeLogProject.cafeLog.common.exception.review.ReviewNotFoundException;
 import cafeLogProject.cafeLog.common.exception.user.UserNotFoundException;
 import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
@@ -94,11 +96,43 @@ public class DraftReviewService {
         draftReviewRepository.deleteById(draftReviewId);
     }
 
+    @Transactional
+    public void deleteDraftReviewsAndImages(String username, List<Long> draftReviewIds) {
+        // 모든 리뷰의 이미지 추출
+        List<String> imageIdsInAllDraftReviews = new ArrayList<>();
+        for (Long draftReviewId : draftReviewIds) {
+            DraftReview draftReview = validateIdentity(username, draftReviewId);
+            draftReview.getImageIdsStr().stream().forEach((i)->imageIdsInAllDraftReviews.add(i));
+        }
+
+        // 리뷰 db에서 모두 삭제
+        draftReviewRepository.deleteAllById(draftReviewIds);
+
+        // 이미지 파일 모두 삭제
+        // db 오류로 인한 롤백 가능성때문에 db 먼저 모두 삭제후 이미지 나중에 삭제
+        deleteAllImages(imageIdsInAllDraftReviews);
+    }
+
+
 
     private void deleteAllImageInDraftReview(DraftReview draftReview) {
         List<String> imageIds = draftReview.getImageIdsStr();
         for (String imageId : imageIds) {
-            ImageUtil.deleteCompressedImage(ImageUtil.DRAFT_REVIEW_IMAGE_PATH, imageId);
+            try {
+                ImageUtil.deleteCompressedImage(ImageUtil.DRAFT_REVIEW_IMAGE_PATH, imageId);
+            } catch (Exception e){
+                log.error("deleteAllImageInDraftReview 메소드 에러 발생");
+            }
+        }
+    }
+
+    private void deleteAllImages(List<String> imageIds) {
+        for (String imageId : imageIds) {
+            try {
+                ImageUtil.deleteCompressedImage(ImageUtil.DRAFT_REVIEW_IMAGE_PATH, imageId);
+            } catch (Exception e) {
+                log.error("deleteAllImages 메소드 에러 발생");
+            }
         }
     }
 

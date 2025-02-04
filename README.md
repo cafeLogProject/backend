@@ -17,7 +17,7 @@
 - docker compose -f docker-compose-prod.yml down
 
 ### 맥 로컬에서 실행
-- export $(grep -v '^#' .env | xargs) && docker-compose -f docker-compose-dev.yml up --build -d
+- export $(grep -v '^#' .env.dev | xargs) && docker-compose -f docker-compose-dev.yml up --build -d
 - docker-compose -f docker-compose-dev.yml down
 
 ### 윈도우 로컬에서 실행

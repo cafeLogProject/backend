@@ -28,7 +28,12 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-            
+
+#      - name: Start Redis
+#        uses: supercharge/redis-github-action@1.1.0
+#        with:
+#          redis-version: 6
+
       - name: Create Application.yml
         run: |
           mkdir -p src/main/resources
@@ -39,9 +44,13 @@ jobs:
           mkdir -p src/test/resources
           echo "${{ secrets.PROD_APPLICATION_TEST_YML }}" > src/test/resources/application-test.yml
 
-      - name: Build Gradle
+      - name: Build Gradle                        #Test도 실행됨
         run: |
           chmod +x ./gradlew
           ./gradlew clean build -i --no-daemon
-#          ./gradlew clean build -x test --no-daemon
 
+
+#      - name: Run Tests
+#        run: |
+#          chmod +x ./gradlew
+#          ./gradlew test -i --no-daemon
