@@ -42,7 +42,7 @@ public class ImageUtilTest {
     public void before() throws Exception{
         // ImageUtil 클래스의 환경변수 임의로 설정
 //        ReflectionTestUtils.setField(imageUtil, "BASE_PATH", "C:\\spring_study\\backend");   // 로컬에서 테스트시 사용, value에 env의 PROJECT_PATH값 입력해야 함
-        ReflectionTestUtils.setField(imageUtil, "BASE_PATH", "/home/ubuntu/backend");     //깃헙 액션에서 테스트시 사용
+        ReflectionTestUtils.setField(imageUtil, "BASE_PATH", "/home/runner/work/backend/backend");     //깃헙 액션에서 테스트시 사용
 
         // 환경변수 등록되었는지 확인
         assertTrue(ImageUtil.BASE_PATH != null);
