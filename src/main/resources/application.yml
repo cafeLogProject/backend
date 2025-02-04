@@ -74,4 +74,6 @@ logging.level:
 path:
   base: ${PROJECT_PATH}   #로컬 컴퓨터의 프로젝트 파일 경로 (ex C:\경로\경로\backend)
 
+front:
+  redirect: ${FRONTEND_REDIRECT}
 

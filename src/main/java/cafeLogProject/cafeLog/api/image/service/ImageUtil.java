@@ -2,7 +2,6 @@ package cafeLogProject.cafeLog.api.image.service;
 
 import cafeLogProject.cafeLog.domains.image.util.ImageCompressor;
 import cafeLogProject.cafeLog.domains.image.util.ImageHandler;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -16,7 +15,7 @@ import java.io.File;
 @Service
 @Slf4j
 public class ImageUtil {
-    private static String BASE_PATH;
+    public static String BASE_PATH;
 
     public static String DRAFT_REVIEW_IMAGE_PATH = "/src/main/resources/static/imgs/draftReview/";
     public static String PROFILE_IMAGE_PATH = "/src/main/resources/static/imgs/profile/";
@@ -30,6 +29,7 @@ public class ImageUtil {
     // 이미지 파일 저장 & 압축
     public static void saveImage(String path, String imageId, MultipartFile file) {
         ImageHandler.isImageFile(file);
+        ImageHandler.isDamagedImageFile(file);
         File savedImageFile = ImageHandler.save(BASE_PATH+path, imageId, file);
         ImageCompressor.convertToWebpWithLossless(BASE_PATH+path, imageId, savedImageFile);  //이미지 압축
     }

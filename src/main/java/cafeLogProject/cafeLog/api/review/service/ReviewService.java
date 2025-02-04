@@ -142,6 +142,7 @@ public class ReviewService {
 
     private List<Tag> saveTags(List<Integer> tagIds, Review savedReview) {
         List<Tag> tagList = new ArrayList<>();
+        if (tagIds == null) return new ArrayList<>();
 
         for (Integer tagId : tagIds) {
             tagList.add(Tag.builder()
