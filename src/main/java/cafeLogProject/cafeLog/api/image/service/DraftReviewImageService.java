@@ -42,7 +42,11 @@ public class DraftReviewImageService {
     @Transactional
     public void deleteDraftReviewImage(String username, Long draftReviewId, String imageId) {
         DraftReview draftReview = validateIdentity(username, draftReviewId);
-        ImageUtil.deleteCompressedImage(ImageUtil.DRAFT_REVIEW_IMAGE_PATH, imageId);
+        try {
+            ImageUtil.deleteCompressedImage(ImageUtil.DRAFT_REVIEW_IMAGE_PATH, imageId);
+        } catch (Exception e) {
+            log.error("deleteDraftReviewImage 메소드 에러 발생");
+        }
         draftReview.deleteImage(imageId);
     }
 

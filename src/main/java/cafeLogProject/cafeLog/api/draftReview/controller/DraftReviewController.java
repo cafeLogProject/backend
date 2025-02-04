@@ -1,12 +1,10 @@
 package cafeLogProject.cafeLog.api.draftReview.controller;
 
-import cafeLogProject.cafeLog.api.draftReview.dto.RegistDraftReviewRequest;
-import cafeLogProject.cafeLog.api.draftReview.dto.ShowDraftReviewResponse;
-import cafeLogProject.cafeLog.api.draftReview.dto.ShowUserDraftReviewResponse;
-import cafeLogProject.cafeLog.api.draftReview.dto.UpdateDraftReviewRequest;
+import cafeLogProject.cafeLog.api.draftReview.dto.*;
 import cafeLogProject.cafeLog.api.draftReview.service.DraftReviewService;
-import cafeLogProject.cafeLog.api.image.service.DraftReviewImageService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
+import cafeLogProject.cafeLog.common.exception.ErrorCode;
+import cafeLogProject.cafeLog.common.exception.draftReview.DraftReviewNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
@@ -56,11 +54,24 @@ public class DraftReviewController {
         return ResponseEntity.ok().body(res);
     }
 
-    @DeleteMapping("/{draftReviewId}")
-    public ResponseEntity<?> deleteDraftReview(@PathVariable(value="draftReviewId") Long draftReviewId,
-                                          @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
-        draftReviewService.deleteDraftReviewAndImage(oAuth2User.getName(), draftReviewId);
-//        draftReviewImageService.deleteAllImageInDraftReview(oAuth2User.getName(), draftReviewId);
+//    @DeleteMapping("/{draftReviewId}")
+//    public ResponseEntity<?> deleteDraftReview(@PathVariable(value="draftReviewId") Long draftReviewId,
+//                                          @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
+//        draftReviewService.deleteDraftReviewAndImage(oAuth2User.getName(), draftReviewId);
+//        return ResponseEntity.ok().body(null);
+//    }
+
+    @DeleteMapping("")
+    public ResponseEntity<?> deleteDraftReview(@RequestBody DeleteDraftReviewRequest req,
+                                               @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
+        if (req.getDraftReviewIds() == null || req.getDraftReviewIds().isEmpty()) {
+            throw new DraftReviewNotFoundException(ErrorCode.DRAFT_REVIEW_NOT_FOUND_ERROR);
+        }
+        if (req.getDraftReviewIds().size() == 1) {
+            draftReviewService.deleteDraftReviewAndImage(oAuth2User.getName(), req.getDraftReviewIds().get(0));
+        } else {
+            draftReviewService.deleteDraftReviewsAndImages(oAuth2User.getName(), req.getDraftReviewIds());
+        }
         return ResponseEntity.ok().body(null);
     }
 }
