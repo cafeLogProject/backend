@@ -23,7 +23,7 @@ import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.createCookie;
 @Slf4j
 public class JWTLoginHandler implements AuthenticationSuccessHandler {
 
-    @Value("${FRONTEND_REDIRECT}")
+    @Value("${front.redirect}")
     private String frontendRedirect;
     private final JWTTokenService tokenService;
     private final UserService userService;

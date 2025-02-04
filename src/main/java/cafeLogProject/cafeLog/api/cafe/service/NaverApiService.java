@@ -25,10 +25,10 @@ public class NaverApiService {
 
     private final RestTemplate restTemplate;
 
-    @Value("${NAVER_CLIENT_ID}")
+    @Value("${spring.security.oauth2.client.registration.naver.client-id}")
     private String naverClientId;
 
-    @Value("${NAVER_CLIENT_SECRET}")
+    @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
     private String naverClientSecret;
 
     public NaverApiRes searchNaverApi(String name) {
