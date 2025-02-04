@@ -35,23 +35,23 @@ spring:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID} # Google 클라이언트 ID
-            client-secret: ${GOOGLE_CLIENT_SECRET} # Google 클라이언트 비밀
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope:
               - profile
               - email
             redirect-uri: http://ec2-43-200-92-254.ap-northeast-2.compute.amazonaws.com:8080/login/oauth2/code/google
 
           facebook:
-            client-id: ${FACEBOOK_CLIENT_ID} # Facebook 클라이언트 ID
-            client-secret: ${FACEBOOK_CLIENT_SECRET} # Facebook 클라이언트 비밀
+            client-id: ${FACEBOOK_CLIENT_ID}
+            client-secret: ${FACEBOOK_CLIENT_SECRET}
             scope:
               - public_profile
               - email
 
           naver:
-            client-id: ${NAVER_CLIENT_ID} # Naver 클라이언트 ID
-            client-secret: ${NAVER_CLIENT_SECRET} # Naver 클라이언트 비밀
+            client-id: ${NAVER_CLIENT_ID}
+            client-secret: ${NAVER_CLIENT_SECRET}
             scope:
               - name
               - email
@@ -72,7 +72,7 @@ logging.level:
   org.hibernate.orm.jdbc.bind: trace
 
 path:
-  base: ${PROJECT_PATH}   #로컬 컴퓨터의 프로젝트 파일 경로 (ex C:\경로\경로\backend)
+  base: ${PROJECT_PATH}
 
 front:
   redirect: ${FRONTEND_REDIRECT}
