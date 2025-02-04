@@ -47,7 +47,7 @@ jobs:
       - name: Build Gradle                        #Test도 실행됨
         run: |
           chmod +x ./gradlew
-          ./gradlew clean build --no-daemon
+          ./gradlew clean build -i --no-daemon
 
 
 #      - name: Run Tests
