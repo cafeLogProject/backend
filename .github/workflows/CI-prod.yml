@@ -44,7 +44,7 @@ jobs:
           mkdir -p src/test/resources
           echo "${{ secrets.PROD_APPLICATION_TEST_YML }}" > src/test/resources/application-test.yml
 
-      - name: Build Gradle
+      - name: Build Gradle                        #Test도 실행됨
         run: |
           chmod +x ./gradlew
           ./gradlew clean build -i --no-daemon
@@ -53,9 +53,3 @@ jobs:
 #        run: |
 #          chmod +x ./gradlew
 #          ./gradlew test -i --no-daemon
-
-#      - name: Build Gradle
-#        run: |
-#          chmod +x ./gradlew
-#          ./gradlew clean build -i --no-daemon
-#          ./gradlew clean build -x test --no-daemon

@@ -44,7 +44,6 @@ import static org.mockito.Mockito.mockStatic;
 //@SpringBootTest
 //@TestPropertySource(locations = "classpath:application-test.yml")
 @SpringBootTest(properties = "classpath:application-test.yml")
-//@SpringBootTest(properties = "spring.config.location=classpath:application-test.yml")
 @ActiveProfiles("test")
 @Transactional
 public class DeleteDraftReviewsAndImagesTest {
