@@ -57,9 +57,9 @@ public class JWTLoginHandler implements AuthenticationSuccessHandler {
         addResponseCookie(response, refreshCookie);
 
         response.getWriter().write("{\"message\":\"Login successful\"}");
-//        if (!frontendRedirect.equals("dev")) {
-//            response.sendRedirect(frontendRedirect);
-//        }
+        if (!frontendRedirect.equals("dev")) {
+            response.sendRedirect(frontendRedirect);
+        }
 
     }
 }
