@@ -70,18 +70,18 @@ public class SecurityConfig {
         http
                 .addFilterBefore(new JWTLogoutFilter(tokenService), LogoutFilter.class);
 
-        http
-                .exceptionHandling(entrypoint -> entrypoint
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.setContentType("application/json; charset=UTF-8");
-
-                            String json = String.format("{\"status\": %d, \"message\": \"%s\"}",
-                                    HttpServletResponse.SC_UNAUTHORIZED,
-                                    "접근 권한이 없습니다.");
-
-                            response.getWriter().write(json);
-                        }));
+//        http
+//                .exceptionHandling(entrypoint -> entrypoint
+//                        .authenticationEntryPoint((request, response, authException) -> {
+//                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                            response.setContentType("application/json; charset=UTF-8");
+//
+//                            String json = String.format("{\"status\": %d, \"message\": \"%s\"}",
+//                                    HttpServletResponse.SC_UNAUTHORIZED,
+//                                    "접근 권한이 없습니다.");
+//
+//                            response.getWriter().write(json);
+//                        }));
 
         http
                 .authorizeHttpRequests((auth) -> auth
