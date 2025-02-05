@@ -9,7 +9,6 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  #이미지 용량 제한 설정
   servlet:
     multipart:
       max-file-size: 4MB
@@ -40,7 +39,7 @@ spring:
             scope:
               - profile
               - email
-            redirect-uri: https://ec2-43-200-92-254.ap-northeast-2.compute.amazonaws.com/login/oauth2/code/google
+            redirect-uri: https://brewscape-server.p-e.kr/login/oauth2/code/google
 
           facebook:
             client-id: ${FACEBOOK_CLIENT_ID}
@@ -60,12 +59,12 @@ spring:
             redirect-uri: ${NAVER_REDIRECT_URI}
 
 
-        provider: # 네이버, 카카오 등은 기본 프로바이더가 아니기 때문에 따로 등록해줘야함. 기본 프로바이더 -> 구글, 페이스북, 트위터
+        provider:
             naver:
               authorization-uri: ${NAVER_AUTHORIZATION_URI}
               token-uri: ${NAVER_TOKEN_URI}
               user-info-uri: ${NAVER_USER_INFO_URI}
-              user-name-attribute: response # 회원 정보를 json으로 받는데 response라는 키값으로 네이버가 리턴해줌
+              user-name-attribute: response
 
 logging.level:
   org.hibernate.SQL: debug
