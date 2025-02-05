@@ -73,6 +73,11 @@ logging.level:
 path:
   base: ${PROJECT_PATH}
 
+server:
+  tomcat:
+    remoteip:
+      protocol-header: x-forwarded-proto
+
 front:
   redirect: ${FRONTEND_REDIRECT}
 
