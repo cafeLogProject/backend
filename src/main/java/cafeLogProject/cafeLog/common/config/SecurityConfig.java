@@ -37,7 +37,8 @@ public class SecurityConfig {
             "/api/auth/login",
             "/api/auth/check",
             "/login/oauth2/code/**",
-            "/login/oauth2/authorization/**"
+            "/login/oauth2/authorization/**",
+            "/login"
     };
 
     @Bean
@@ -69,7 +70,7 @@ public class SecurityConfig {
 
         http
                 .addFilterBefore(new JWTLogoutFilter(tokenService), LogoutFilter.class);
-
+//
 //        http
 //                .exceptionHandling(entrypoint -> entrypoint
 //                        .authenticationEntryPoint((request, response, authException) -> {
@@ -98,7 +99,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*"));
+        configuration.setAllowedOriginPatterns(List.of("https://packetbreeze.com"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowCredentials(true);
