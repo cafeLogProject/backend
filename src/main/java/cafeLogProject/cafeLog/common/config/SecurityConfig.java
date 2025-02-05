@@ -37,7 +37,8 @@ public class SecurityConfig {
             "/api/auth/login",
             "/api/auth/check",
             "/login/oauth2/code/**",
-            "/login/oauth2/authorization/**"
+            "/login/oauth2/authorization/**",
+            "/login"
     };
 
     @Bean

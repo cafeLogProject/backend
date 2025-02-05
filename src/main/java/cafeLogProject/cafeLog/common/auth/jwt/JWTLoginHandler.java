@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.addResponseCookie;
-import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.createCookie;
+import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.createResponseCookie;
+
 
 @Component
 @RequiredArgsConstructor
@@ -50,11 +50,13 @@ public class JWTLoginHandler implements AuthenticationSuccessHandler {
         response.setContentType("application/json");
         response.setStatus(HttpStatus.OK.value());
 
-        ResponseCookie accessCookie = createCookie("access", access);
-        ResponseCookie refreshCookie = createCookie("refresh", refresh);
+        ResponseCookie accessTokenCookie = createResponseCookie("access", access);
+        ResponseCookie refreshTokenCookie = createResponseCookie("refresh", refresh);
 
-        addResponseCookie(response, accessCookie);
-        addResponseCookie(response, refreshCookie);
+        response.setContentType("application/json");
+        response.setStatus(HttpStatus.OK.value());
+        response.addHeader("Set-Cookie", accessTokenCookie.toString());
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
         if (!frontendRedirect.equals("dev")) {
             response.sendRedirect(frontendRedirect);

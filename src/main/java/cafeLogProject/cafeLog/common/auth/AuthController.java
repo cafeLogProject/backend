@@ -18,8 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
-import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.extractToken;
-import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.removeCookie;
+import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.*;
 
 @Slf4j
 @RestController
@@ -32,8 +31,8 @@ public class AuthController {
     @GetMapping("/login")
     public ResponseEntity<Map<String, String>> loginPage(HttpServletResponse response) {
 
-        removeCookie(response, "access");
-        removeCookie(response, "refresh");
+        removeResponseCookie(response, "access");
+        removeResponseCookie(response, "refresh");
 
         Map<String, String> loginLink = new HashMap<>();
         loginLink.put("google", "/oauth2/authorization/google");
