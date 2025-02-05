@@ -34,9 +34,10 @@ public class UserController {
     }
 
     @GetMapping("/users/check")
-    public ResponseEntity<IsExistNicknameRes> isExistNickname(@RequestParam @Valid String nickname) {
+    public ResponseEntity<IsExistNicknameRes> isExistNickname(@RequestParam @Valid String nickname,
+                                                              @AuthenticationPrincipal CustomOAuth2User user) {
 
-        IsExistNicknameRes isExist = userService.isExistNickname(nickname);
+        IsExistNicknameRes isExist = userService.isExistNickname(user.getName(), nickname);
         return ResponseEntity.ok(isExist);
     }
 
