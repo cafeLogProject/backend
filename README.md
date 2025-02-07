@@ -35,7 +35,7 @@
 ### 프론트
 | ![java](image/fr/java.png) | ![maven](image/be/maven.png) | ![spring_boot](image/be/spring_boot.png) | ![jpa](image/be/jpa.png) | ![security](image/be/ss.png)  |
 |----------------------------|------------------------------|------------------------------------------|--------------------------|-------------------------------|
-| ?                    | ?                        | ?                              | ?                   | ?               |
+| ?                    | ?                        | ?                              | ?                   | ?                |
 
 ### 백엔드 
 | ![java](image/be/java.png) | ![gradle](image/be/gradle.png) | ![spring_boot](image/be/spring_boot.png) | ![Oauth2](image/be/oauth2.png) | ![security](image/be/ss.png)  |
