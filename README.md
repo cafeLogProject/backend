@@ -33,28 +33,30 @@
 ## 📚 기술 스택
 
 ### 프론트
-| ![java](image/fr/java.png) | ![maven](image/be/maven.png) | ![spring_boot](image/be/spring_boot.png) | ![jpa](image/be/jpa.png) | ![security](image/be/ss.png)  |
+| ![java](image/fr/-.png) | ![maven](image/be/-.png) | ![spring_boot](image/be/-.png) | ![jpa](image/be/-.png) | ![security](image/be/-.png)  |
 |----------------------------|------------------------------|------------------------------------------|--------------------------|-------------------------------|
 | ?                    | ?                        | ?                              | ?                   | ?                |
 
 ### 백엔드 
-| ![java](image/be/java.png) | ![gradle](image/be/gradle.png) | ![spring_boot](image/be/spring_boot.png) | ![Oauth2](image/be/oauth2.png) | ![security](image/be/ss.png)  |
+| ![java](image/be/java.png) | ![gradle](image/be/gradle.png) | ![spring_boot](image/be/spring_boot.png) | ![Oauth2](image/be/oauth2.jpeg) | ![security](image/be/ss.png)  |
 |----------------------------|------------------------------|------------------------------------------|--------------------------|-------------------------------|
 | Java 21                    | gradle                       | Spring Boot                              |  Oauth2         | Spring Security               |
 
-| ![JPA](image/be/jpa.png) | ![QueryDSL](image/be/queryDsl.png) | ![Redis](image/be/redis.png) | ![mysql](image/be/mysql.png) | ![ElastiCache](image/be/elastiCache.png) |
-|------------------------------------|------------------------------|----------------------------------|------------------------------|------------------------------|
-|  Spring Data JPA                   |  QueryDSL                    | Redis                            | MySQL 8                      | ElastiCache                  |
 
-| ![Mockito](image/be/mockito.png) | ![junit](image/be/junit.png) | ![mockito](image/be/mockito.png) | ![mysql](image/be/mysql.png) |
-|------------------------------------|------------------------------|----------------------------------|------------------------------|
-|  Mockito                           | Junit 5                      |                             |                       |
+| ![JPA](image/be/jpa.png) | ![QueryDSL](image/be/queryDsl.jpg) | ![Redis](image/be/redis.png) | ![mysql](image/be/mysql.png) | ![ElastiCache](image/be/elasticache.png) |
+|--------------------------|------------------------------|----------------------------------|------------------------------|------------------------------|
+|  Spring Data JPA         |  QueryDSL                    | Redis                            | MySQL 8                      | ElastiCache                  |
+
+
+| ![Mockito](image/be/mockito.png) | ![junit](image/be/junit.png) |
+|------------------------------------|------------------------------|
+|  Mockito                           | Junit 5                      |
 
 
 ### DevOps
-| ![actions](image/devops/actions.png) | ![ec2](image/devops/docker.png) | ![s3](image/devops/ec2.png) | ![codedeploy](image/devops/rds.png) | ![rds](image/devops/rds.png) |
-|--------------------------------------|------------------------------|----------------------------|--------------------------------------------|------------------------------|
-| Github Actions                       | Docker                       |  AWS EC2                          |   AWS RDS                                  |                       |
+| ![actions](image/devops/actions.png) | ![ec2](image/devops/docker.png) | ![s3](image/devops/ec2.png) | ![codedeploy](image/devops/rds.png) |
+|--------------------------------------|------------------------------|----------------------------|--------------------------------------------|
+| Github Actions                       | Docker                       |  AWS EC2                          |   AWS RDS                                  |
 
 ### 협업툴
 | ![jira](image/work/github.png) | ![notion](image/work/notion.png) | ![slack](image/work/figma.png) | ![github](image/work/discord.png) |
