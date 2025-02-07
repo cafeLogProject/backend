@@ -43,6 +43,13 @@
     - 기능 테스트
       - 통합 테스트 코드 작성
 ## 기술 스택
+Java 8
+Spring Framework 5.0.1, Spring MVC
+Junit5
+Maven
+Mybatis
+Eclipse, Visual Studio Code
+
 
 ### 핵심 기술
 
@@ -53,42 +60,12 @@
     - Zustand (전역 상태 관리)
     - TanStack Query v5 (서버 상태 관리)
 
-### 스타일링
 
-- SCSS Modules
-    - 컴포넌트별 스코프된 스타일링
-    - `*.module.scss` 파일 사용
-    - 7-1 pattern 사용
-    - bem 방법론 적용
 
-### 테스트 및 개발 도구
 
-- MSW (API Mocking)
-- Vitest
-- React Testing Library
-
-### 인증
-
-- OAuth2.0
-    - Google
-    - Facebook
-    - Naver
-
-### 주요 라이브러리
-
-- `axios`: HTTP 클라이언트
-- `js-cookie`: 쿠키 관리
-- `react-router-dom`: 라우팅
-- `@tanstack/react-query`: 서버 상태 관리
-- `zustand`: 전역 상태 관리
-- `msw`: API 모킹
-- `swiper, react-modal, react-toastify` : UI/UX
-
-### 코드 품질
-
-- ESLint
-- Prettier
-- TypeScript strict 모드
+### ERD 설계
+### 인프라 구조
+### 
 
 ### 아키텍처
 
