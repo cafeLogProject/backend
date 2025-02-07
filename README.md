@@ -1,4 +1,8 @@
-[로고 이미지]
+<div align="center">
+	
+![](./image/brewscape.png)
+
+</div>
 
 # ☕ brewscape - 카페로그
 #### "공부하기 좋은 카페 없나? 커피가 맛있는 카페 없나?"
@@ -9,6 +13,16 @@
 
 ## 📅 개발 기간
 #### `2024.12.13 ~ 2025.2.6 (2개월)`
+
+<br>
+
+## 🏃 팀원 소개
+|[김병찬](https://github.com/팀원1아이디)|[문남경](https://github.com/팀원2아이디)| [이승헌](https://github.com/팀원3아이디) |[임용태](https://github.com/팀원4아이디)| [이주연](https://github.com/leejuyeon-star)|
+| :-------------------------: | :-------------------------: | :----------------------: | :-----------------------: | :-----------------------: |
+| Backend | UI/UX Design | Frontend | Frontend | Backend |
+| ![-](image/profile/-.png) | ![-](image/profile/-.png) | ![-](image/profile/-.png) | ![-](image/profile/-.png) | ![leejuyeon](image/profile/leejuyeon.jpg) |
+
+
 
 <br>
 
