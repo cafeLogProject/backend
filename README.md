@@ -33,27 +33,33 @@
 ## 📚 기술 스택
 
 ### 프론트
-| ![java](image/be/java.png) | ![maven](image/be/maven.png) | ![spring_boot](image/be/spring_boot.png) | ![jpa](image/be/jpa.png) | ![security](image/be/ss.png)  |
+| ![java](image/fr/java.png) | ![maven](image/be/maven.png) | ![spring_boot](image/be/spring_boot.png) | ![jpa](image/be/jpa.png) | ![security](image/be/ss.png)  |
 |----------------------------|------------------------------|------------------------------------------|--------------------------|-------------------------------|
-| Java 17                    | maven                        | Spring Boot                              | Spring Data JPA          | Spring Security               |
+| ?                    | ?                        | ?                              | ?                   | ?               |
 
 ### 백엔드 
-| ![java](image/be/java.png) | ![maven](image/be/maven.png) | ![spring_boot](image/be/spring_boot.png) | ![jpa](image/be/jpa.png) | ![security](image/be/ss.png)  |
+| ![java](image/be/java.png) | ![gradle](image/be/gradle.png) | ![spring_boot](image/be/spring_boot.png) | ![Oauth2](image/be/oauth2.png) | ![security](image/be/ss.png)  |
 |----------------------------|------------------------------|------------------------------------------|--------------------------|-------------------------------|
-| Java 17                    | maven                        | Spring Boot                              | Spring Data JPA          | Spring Security               |
+| Java 21                    | gradle                       | Spring Boot                              |  Oauth2         | Spring Security               |
 
-| ![restdocs](image/be/restdocs.png) | ![junit](image/be/junit.png) | ![mockito](image/be/mockito.png) | ![mysql](image/be/mysql.png) |
+| ![JPA](image/be/jpa.png) | ![QueryDSL](image/be/queryDsl.png) | ![Redis](image/be/redis.png) | ![mysql](image/be/mysql.png) | ![ElastiCache](image/be/elastiCache.png) |
+|------------------------------------|------------------------------|----------------------------------|------------------------------|------------------------------|
+|  Spring Data JPA                   |  QueryDSL                    | Redis                            | MySQL 8                      | ElastiCache                  |
+
+| ![Mockito](image/be/mockito.png) | ![junit](image/be/junit.png) | ![mockito](image/be/mockito.png) | ![mysql](image/be/mysql.png) |
 |------------------------------------|------------------------------|----------------------------------|------------------------------|
-| Spring RestDocs                    | Junit 5                      | Mockito                          | MySQL 8                      |
+|  Mockito                           | Junit 5                      |                             |                       |
+
+
 ### DevOps
-| ![actions](image/devops/actions.png) | ![ec2](image/devops/ec2.png) | ![s3](image/devops/s3.png) | ![codedeploy](image/devops/codedeploy.png) | ![rds](image/devops/rds.png) |
+| ![actions](image/devops/actions.png) | ![ec2](image/devops/docker.png) | ![s3](image/devops/ec2.png) | ![codedeploy](image/devops/rds.png) | ![rds](image/devops/rds.png) |
 |--------------------------------------|------------------------------|----------------------------|--------------------------------------------|------------------------------|
-| Github Actions                       | AWS EC2                      | AWS S3                     | AWS CodeDeploy                             | AWS RDS                      |
+| Github Actions                       | Docker                       |  AWS EC2                          |   AWS RDS                                  |                       |
 
 ### 협업툴
-| ![jira](image/work/jira.png) | ![notion](image/work/notion.png) | ![slack](image/work/slack.png) | ![github](image/work/github.png) |
+| ![jira](image/work/github.png) | ![notion](image/work/notion.png) | ![slack](image/work/figma.png) | ![github](image/work/discord.png) |
 |------------------------------|----------------------------------|--------------------------------|----------------------------------|
-| JIRA                         | notion                           | Slack                          | Github                           |
+| Github                       | notion                           | Figma                          | Discord                           |
 
 <br>
 
