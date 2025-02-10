@@ -68,7 +68,6 @@ public class UserService {
         if (nickname == null || nickname.trim().isEmpty()) {
             throw new UserNicknameNullException(USER_NICKNAME_NULL_ERROR);
         }
-
         return userRepository.findByNicknameContainingIgnoreCase(nickname);
     }
 

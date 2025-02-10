@@ -37,4 +37,5 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
                 .where(user.nickname.startsWith(nickname))
                 .fetch();
     }
+
 }

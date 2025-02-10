@@ -1,8 +1,8 @@
 package cafeLogProject.cafeLog.api.user.controller;
 
-import cafeLogProject.cafeLog.api.user.dto.UserSearchRes;
 import cafeLogProject.cafeLog.api.user.dto.IsExistNicknameRes;
 import cafeLogProject.cafeLog.api.user.dto.UserInfoRes;
+import cafeLogProject.cafeLog.api.user.dto.UserSearchRes;
 import cafeLogProject.cafeLog.api.user.dto.UserUpdateReq;
 import cafeLogProject.cafeLog.api.user.service.UserService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
@@ -14,7 +14,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api")

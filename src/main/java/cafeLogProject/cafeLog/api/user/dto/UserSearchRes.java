@@ -12,6 +12,7 @@ public class UserSearchRes {
     private String nickname;
     private String introduce;
 
+
     @QueryProjection
     public UserSearchRes(Long userId, String nickname, String introduce) {
 
