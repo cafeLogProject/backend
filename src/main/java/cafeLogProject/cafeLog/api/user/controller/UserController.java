@@ -1,5 +1,6 @@
 package cafeLogProject.cafeLog.api.user.controller;
 
+import cafeLogProject.cafeLog.api.user.dto.UserSearchRes;
 import cafeLogProject.cafeLog.api.user.dto.IsExistNicknameRes;
 import cafeLogProject.cafeLog.api.user.dto.UserInfoRes;
 import cafeLogProject.cafeLog.api.user.dto.UserUpdateReq;
@@ -7,13 +8,18 @@ import cafeLogProject.cafeLog.api.user.service.UserService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
 
     private final UserService userService;
@@ -41,4 +47,10 @@ public class UserController {
         return ResponseEntity.ok(isExist);
     }
 
+    @GetMapping("/profile/search")
+    public ResponseEntity<List<UserSearchRes>> searchUsersByNickname(@RequestParam String name) {
+
+        List<UserSearchRes> userSearchRes = userService.searchUsersByNickname(name);
+        return ResponseEntity.ok(userSearchRes);
+    }
 }

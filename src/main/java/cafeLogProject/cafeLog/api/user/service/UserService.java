@@ -1,10 +1,12 @@
 package cafeLogProject.cafeLog.api.user.service;
 
+import cafeLogProject.cafeLog.api.user.dto.UserSearchRes;
 import cafeLogProject.cafeLog.api.user.dto.IsExistNicknameRes;
 import cafeLogProject.cafeLog.api.user.dto.UserInfoRes;
 import cafeLogProject.cafeLog.api.user.dto.UserUpdateReq;
 import cafeLogProject.cafeLog.common.auth.jwt.JWTUserDTO;
 import cafeLogProject.cafeLog.common.exception.user.UserNicknameException;
+import cafeLogProject.cafeLog.common.exception.user.UserNicknameNullException;
 import cafeLogProject.cafeLog.common.exception.user.UserNotFoundException;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import cafeLogProject.cafeLog.domains.user.repository.UserRepository;
@@ -13,8 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static cafeLogProject.cafeLog.common.exception.ErrorCode.USER_NICKNAME_ERROR;
-import static cafeLogProject.cafeLog.common.exception.ErrorCode.USER_NOT_FOUND_ERROR;
+import java.util.List;
+
+import static cafeLogProject.cafeLog.common.exception.ErrorCode.*;
 
 
 @Service
@@ -58,6 +61,15 @@ public class UserService {
         }
 
         return new IsExistNicknameRes(nickname, true);
+    }
+
+    public List<UserSearchRes> searchUsersByNickname(String nickname) {
+
+        if (nickname == null || nickname.trim().isEmpty()) {
+            throw new UserNicknameNullException(USER_NICKNAME_NULL_ERROR);
+        }
+
+        return userRepository.findByNicknameContainingIgnoreCase(nickname);
     }
 
     private void validateNickname(String userName, UserUpdateReq userUpdateReq) {
