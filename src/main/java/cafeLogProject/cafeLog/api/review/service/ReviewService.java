@@ -175,6 +175,14 @@ public class ReviewService {
         return reviewRepository.searchByUser(user, request.getTimestamp(), pageable);
     }
 
+    public List<ShowReviewResponse> findUserReviews(Long userId, ShowUserReviewRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> {
+            throw new UserNotFoundException(userId.toString(), ErrorCode.USER_NOT_FOUND_ERROR);
+        });
+        Pageable pageable = PageRequest.of(0, request.getLimit());
+        return reviewRepository.searchByUser(user, request.getTimestamp(), pageable);
+    }
+
     public ShowReviewResponse findReview(Long reviewId){
         ShowReviewResponse showReviewResponse = reviewRepository.findShowReviewResponseById(reviewId).orElseThrow(() -> {
             throw new ReviewNotFoundException(ErrorCode.REVIEW_NOT_FOUND_ERROR);

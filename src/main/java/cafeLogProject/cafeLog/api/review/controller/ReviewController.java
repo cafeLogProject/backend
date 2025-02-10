@@ -4,6 +4,7 @@ import cafeLogProject.cafeLog.api.review.dto.*;
 import cafeLogProject.cafeLog.api.review.service.ReviewService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,6 +41,13 @@ public class ReviewController {
     public ResponseEntity<List<ShowReviewResponse>> showMyReviews(@AuthenticationPrincipal CustomOAuth2User oAuth2User,
                                                                   @ModelAttribute @Valid ShowUserReviewRequest showUserReviewRequest){
         List<ShowReviewResponse> review = reviewService.findUserReviews(oAuth2User.getName(), showUserReviewRequest);
+        return ResponseEntity.ok().body(review);
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<List<ShowReviewResponse>> showReviewsByUserId(@NotNull(message = "userId는 필수입니다") Long userId,
+                                                                  @ModelAttribute @Valid ShowUserReviewRequest showUserReviewRequest){
+        List<ShowReviewResponse> review = reviewService.findUserReviews(userId, showUserReviewRequest);
         return ResponseEntity.ok().body(review);
     }
 

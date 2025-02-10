@@ -4,12 +4,8 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 public class ShowUserReviewRequest {
@@ -25,7 +21,7 @@ public class ShowUserReviewRequest {
     }
 
     @Builder
-    public ShowUserReviewRequest (Integer limit, LocalDateTime timestamp) {
+    public ShowUserReviewRequest(Integer limit, LocalDateTime timestamp) {
         this.limit = limit;
         this.timestamp = timestamp;
     }
