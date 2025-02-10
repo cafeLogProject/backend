@@ -39,7 +39,7 @@ spring:
             scope:
               - profile
               - email
-#            redirect-uri: https://brewscape-server.p-e.kr/login/oauth2/code/google
+            redirect-uri: https://brewscape-server.p-e.kr/login/oauth2/code/google
 
           facebook:
             client-id: ${FACEBOOK_CLIENT_ID}
