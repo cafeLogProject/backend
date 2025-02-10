@@ -237,7 +237,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
 
     // 리뷰의 생성시간 <= 주어진 생성시간 이면 true
     private BooleanExpression isBeforeCreatedAt(LocalDateTime createdAt) {
-        return createdAt != null ? review.createdAt.loe(createdAt) : null;
+        return createdAt != null ? review.createdAt.lt(createdAt) : null;
     }
 
     // 리뷰의 별점 <= 주어진 별점값 이면 true
