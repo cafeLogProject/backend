@@ -11,15 +11,29 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
-    //@Valid 위반 에러 헨들러
+    //dto에서의 @Valid 위반 에러 헨들러
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorResponse> MethodArgumentNotValidException(MethodArgumentNotValidException e) {
         String message = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+        if (message.equals("")) {
+            message = "필수 입력 항목이 누락되었습니다.";
+        }
+        log.error(message);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ApiErrorResponse(HttpStatus.BAD_REQUEST, message));
+    }
+
+    // 파라미터에서의 @Valid 위반 에러 헨들러
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ApiErrorResponse> HandlerMethodValidationException(HandlerMethodValidationException e) {
+        String message = e.getParameterValidationResults().toString();
         if (message.equals("")) {
             message = "필수 입력 항목이 누락되었습니다.";
         }
