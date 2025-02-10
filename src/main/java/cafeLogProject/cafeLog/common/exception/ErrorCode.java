@@ -32,6 +32,7 @@ public enum ErrorCode {
 
     TAG_INVALID_ERROR(HttpStatus.BAD_REQUEST, "태그 아이디가 유효하지 않습니다."),
 
+
     CAFE_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "카페를 찾을 수 없습니다."),
     CAFE_CATEGORY_ERROR(HttpStatus.BAD_REQUEST, "카테고리가 카페가 아닙니다."),
     CAFE_API_PARSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "네이버 API 응답 중 오류가 발생했습니다."),
@@ -40,6 +41,7 @@ public enum ErrorCode {
     IMAGE_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류에 의해 이미지를 저장하지 못했습니다."),
     IMAGE_LOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류에 의해 이미지를 불러오지 못했습니다."),
     IMAGE_INVALID_ERROR(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "이미지 파일 형식이 아닙니다."),
+    IMAGE_DAMAGED_ERROR(HttpStatus.BAD_REQUEST, "손상된 이미지 파일입니다."),
     IMAGE_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류에 의해 이미지를 삭제하지 못했습니다.");
 
     private final HttpStatus httpStatus;

@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -18,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
-import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.extractToken;
-import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.removeCookie;
+import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.*;
+import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.addResponseCookie;
 
 @Slf4j
 @RestController
@@ -50,9 +52,18 @@ public class AuthController {
     }
 
     @GetMapping("/check")
-    public ResponseEntity<ExpiredCheckDTO> expiredCheck(HttpServletRequest request) {
+    public ResponseEntity<ExpiredCheckDTO> expiredCheck(HttpServletRequest request, HttpServletResponse response) {
         String accessToken = extractToken(request, "access"); // 엑세스 토큰 추출
         String refreshToken = extractToken(request, "refresh");
+
+        response.setContentType("application/json");
+        response.setStatus(HttpStatus.OK.value());
+
+        ResponseCookie accessCookie = createCookie("access", accessToken);
+        ResponseCookie refreshCookie = createCookie("refresh", refreshToken);
+
+        addResponseCookie(response, accessCookie);
+        addResponseCookie(response, refreshCookie);
 
         return ResponseEntity.ok(tokenService.checkTokenIsExpired(accessToken, refreshToken));
 

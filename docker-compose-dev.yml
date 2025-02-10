@@ -1,0 +1,54 @@
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env.dev
+    environment:
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - FACEBOOK_CLIENT_ID=${FACEBOOK_CLIENT_ID}
+      - FACEBOOK_CLIENT_SECRET=${FACEBOOK_CLIENT_SECRET}
+      - NAVER_CLIENT_ID=${NAVER_CLIENT_ID}
+      - NAVER_CLIENT_SECRET=${NAVER_CLIENT_SECRET}
+      - NAVER_REDIRECT_URI=${NAVER_REDIRECT_URI}
+      - NAVER_AUTHORIZATION_URI=${NAVER_AUTHORIZATION_URI}
+      - NAVER_TOKEN_URI=${NAVER_TOKEN_URI}
+      - NAVER_USER_INFO_URI=${NAVER_USER_INFO_URI}
+      - PROJECT_PATH=${PROJECT_PATH}
+      - SPRING_DATASOURCE_URL=${DB_DATASOURCE}
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SPRING_REDIS_HOST=${SPRING_REDIS_HOST}
+      - SPRING_REDIS_PORT=${SPRING_REDIS_PORT}
+      - SPRING_DEVTOOLS_RESTART_ENABLED=true
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      - redis
+      - mysql
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}  # root 비밀번호 설정
+      MYSQL_DATABASE: cafedb  # 생성할 데이터베이스 이름
+    volumes:
+      - mysql_data:/var/lib/mysql  # 데이터 지속성을 위한 볼륨
+
+volumes:
+  mysql_data:

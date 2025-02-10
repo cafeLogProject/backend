@@ -1,13 +1,6 @@
-# backend
 
-### 도커 실행(처음)
-- docker-compose up --build
 
-### 도커 실행(수정 사항 없을 때)
-- docker-compose up
+## ERD 구조
+https://www.erdcloud.com/d/ExSqiHGefkF3uJWE6
 
-### 원하는 컨테이너만 재실행할때
-- docker restart {name}
-
-### 도커 실행 중지
-- docker-compose down
+<img src="https://raw.githubusercontent.com/cafeLogProject/backend/develop/image/erd_2.png">

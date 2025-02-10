@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -19,8 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.createCookie;
-import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.extractToken;
+import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.*;
 import static cafeLogProject.cafeLog.common.config.SecurityConfig.whiteList;
 import static cafeLogProject.cafeLog.common.exception.ErrorCode.*;
 
@@ -115,8 +115,14 @@ public class JWTFilter extends OncePerRequestFilter {
             throw new TokenNotFoundException(TOKEN_NOT_FOUND_ERROR);
         }
 
-        response.addCookie(createCookie("access", newAccessToken));
-        response.addCookie(createCookie("refresh", newRefreshToken));
+//        response.addCookie(createCookie("access", newAccessToken));
+//        response.addCookie(createCookie("refresh", newRefreshToken));
+
+        ResponseCookie access = createCookie("access", newAccessToken);
+        ResponseCookie refresh = createCookie("refresh", newRefreshToken);
+
+        addResponseCookie(response, access);
+        addResponseCookie(response, refresh);
 
         return tokenService.extractUserInfoFromToken(newAccessToken);
     }

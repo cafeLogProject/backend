@@ -1,12 +1,13 @@
 package cafeLogProject.cafeLog.api.cafe.service;
 
-import cafeLogProject.cafeLog.api.cafe.dto.GetCafeInfoRes;
+import cafeLogProject.cafeLog.api.cafe.dto.CafeInfoRes;
 import cafeLogProject.cafeLog.api.cafe.dto.IsExistCafeRes;
 import cafeLogProject.cafeLog.api.cafe.dto.SaveCafeReq;
 import cafeLogProject.cafeLog.common.exception.cafe.CafeCategoryException;
 import cafeLogProject.cafeLog.common.exception.cafe.CafeNotFoundException;
 import cafeLogProject.cafeLog.domains.cafe.domain.Cafe;
 import cafeLogProject.cafeLog.domains.cafe.repository.CafeRepository;
+import cafeLogProject.cafeLog.domains.favorite.repository.FavoriteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,11 +22,13 @@ import static cafeLogProject.cafeLog.common.exception.ErrorCode.*;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CafeService {
+
     private final CafeRepository cafeRepository;
+    private final FavoriteRepository favoriteRepository;
 
-    public GetCafeInfoRes getCafeInfo(Long cafeId) {
+    public CafeInfoRes getCafeInfo(Long cafeId, String username) {
 
-        return cafeRepository.findCafeWithAverageRating(cafeId)
+        return cafeRepository.findCafeWithAverageRating(cafeId, username)
                 .orElseThrow(() -> new CafeNotFoundException(CAFE_NOT_FOUND_ERROR));
     }
 

@@ -46,8 +46,8 @@ public class JWTTokenService {
     @Transactional
     public void deleteTokenByUsername(String username) {
 
-        refreshRepository.deleteByUsername(username);
-        accessRepository.deleteByUsername(username);
+        refreshRepository.deleteByUsername("refresh:" + username);
+        accessRepository.deleteByUsername("access:" + username);
     }
 
     /**

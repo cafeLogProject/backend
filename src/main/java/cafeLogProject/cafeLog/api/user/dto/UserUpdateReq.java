@@ -11,6 +11,6 @@ public class UserUpdateReq {
     @Size(min = 1, max = 20, message = "닉네임은 1자 이상 20자 이하로 설정해야 합니다.")
     private String nickName;
 
-    @Size(max = 20, message = "자기소개는 20자 이하로 설정해야 합니다.")
+    @Size(max = 50, message = "자기소개는 20자 이하로 설정해야 합니다.")
     private String introduce;
 }

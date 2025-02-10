@@ -1,5 +1,7 @@
 package cafeLogProject.cafeLog.api.user.service;
 
+import cafeLogProject.cafeLog.api.user.dto.IsExistNicknameRes;
+import cafeLogProject.cafeLog.api.user.dto.UserInfoRes;
 import cafeLogProject.cafeLog.api.user.dto.UserUpdateReq;
 import cafeLogProject.cafeLog.common.auth.jwt.JWTUserDTO;
 import cafeLogProject.cafeLog.common.exception.user.UserNicknameException;
@@ -23,12 +25,25 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    @Transactional
-    public void updateUser(String userName, UserUpdateReq userUpdateReq) {
+    public UserInfoRes getUserInfo(String userName) {
 
         User user = userRepository.findByUsername(userName).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_ERROR));
 
-        validateNickname(userName, userUpdateReq);
+        return UserInfoRes.builder()
+                .userId(user.getId())
+                .nickname(user.getNickname())
+                .introduce(user.getIntroduce())
+                .email(user.getEmail())
+                .isProfileImageExist(user.isImageExist())
+                .build();
+    }
+
+    @Transactional
+    public void updateUser(String username, UserUpdateReq userUpdateReq) {
+
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_ERROR));
+
+        validateNickname(username, userUpdateReq);
 
         user.updateUserNickname(userUpdateReq.getNickName());
         user.updateUserIntroduce(userUpdateReq.getIntroduce());
@@ -36,8 +51,18 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public IsExistNicknameRes isExistNickname(String username, String nickname) {
+
+        if (!userRepository.existsNicknameExcludingSelf(username, nickname)) {
+            return new IsExistNicknameRes(nickname, false);
+        }
+
+        return new IsExistNicknameRes(nickname, true);
+    }
+
     private void validateNickname(String userName, UserUpdateReq userUpdateReq) {
-        if (userUpdateReq.getNickName() != null && userRepository.existsByNickname(userUpdateReq.getNickName())) {
+
+        if (userUpdateReq.getNickName() != null && userRepository.existsNicknameExcludingSelf(userName, userUpdateReq.getNickName())) {
             log.warn("nickname is duplicate. user = {}, nickname = {}", userName, userUpdateReq.getNickName());
             throw new UserNicknameException(USER_NICKNAME_ERROR);
         }
