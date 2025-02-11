@@ -171,7 +171,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
                     .select(review.id)
                     .from(review)
                     .where(
-                            isLowerThenRating(currentRating),
+                            isRatingLessThanOrEqual(currentRating),
                             isBeforeCreatedAt(createdAt)
                     )
                     .orderBy(orderSpecifiers)
@@ -186,7 +186,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
                     .join(tag).on(tag.review.id.eq(review.id))
                     .where(
                             tag.tagId.in(selectedTagIds),
-                            isLowerThenRating(currentRating),
+                            isRatingLessThanOrEqual(currentRating),
                             isBeforeCreatedAt(createdAt)
                     )
                     .orderBy(orderSpecifiers)
@@ -241,7 +241,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
     }
 
     // 리뷰의 별점 <= 주어진 별점값 이면 true
-    private BooleanExpression isLowerThenRating(Integer currentRating) {
+    private BooleanExpression isRatingLessThanOrEqual(Integer currentRating) {
         return currentRating != null ? review.rating.loe(currentRating) : null;
     }
 
