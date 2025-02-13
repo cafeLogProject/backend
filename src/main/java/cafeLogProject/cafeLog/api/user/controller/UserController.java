@@ -1,9 +1,6 @@
 package cafeLogProject.cafeLog.api.user.controller;
 
-import cafeLogProject.cafeLog.api.user.dto.UserSearchRes;
-import cafeLogProject.cafeLog.api.user.dto.IsExistNicknameRes;
-import cafeLogProject.cafeLog.api.user.dto.UserInfoRes;
-import cafeLogProject.cafeLog.api.user.dto.UserUpdateReq;
+import cafeLogProject.cafeLog.api.user.dto.*;
 import cafeLogProject.cafeLog.api.user.service.UserService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
 import jakarta.validation.Valid;
@@ -52,5 +49,13 @@ public class UserController {
 
         List<UserSearchRes> userSearchRes = userService.searchUsersByNickname(name);
         return ResponseEntity.ok(userSearchRes);
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<OtherUserInfoRes> getOtherUserInfo(@AuthenticationPrincipal CustomOAuth2User user,
+                                                             @PathVariable Long userId) {
+
+        OtherUserInfoRes otherUserInfo = userService.getOtherUserInfo(user.getName(), userId);
+        return ResponseEntity.ok(otherUserInfo);
     }
 }
