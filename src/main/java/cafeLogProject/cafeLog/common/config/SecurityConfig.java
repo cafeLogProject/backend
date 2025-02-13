@@ -53,7 +53,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable);
 
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+                .cors(AbstractHttpConfigurer::disable);
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         http
                 .formLogin(AbstractHttpConfigurer::disable);
