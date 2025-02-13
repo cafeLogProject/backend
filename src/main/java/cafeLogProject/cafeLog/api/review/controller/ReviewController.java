@@ -3,14 +3,22 @@ package cafeLogProject.cafeLog.api.review.controller;
 import cafeLogProject.cafeLog.api.review.dto.*;
 import cafeLogProject.cafeLog.api.review.service.ReviewService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
+import cafeLogProject.cafeLog.common.exception.ErrorCode;
+import cafeLogProject.cafeLog.common.exception.UnexpectedServerException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ServerErrorException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -72,5 +80,19 @@ public class ReviewController {
                                           @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
         reviewService.deleteReview(oAuth2User.getName(), reviewId);
         return ResponseEntity.ok().body(null);
+    }
+
+    @GetMapping("/follow")
+    public ResponseEntity<List<ShowReviewResponse>> showFollowingReviews(@ModelAttribute @Valid ShowFollowingReviewRequest showFollowingReviewRequest,
+                                                  @AuthenticationPrincipal CustomOAuth2User oAuth2User){
+//        List<ShowReviewResponse> res = reviewService.findFollowingReviews(oAuth2User.getName(), showFollowingReviewRequest);
+        
+        // 프론트 테스트용 mock 제작
+        LocalDate visitDate = LocalDate.of(2025,2,1);
+        LocalDateTime createdAt = LocalDateTime.now();
+        List<Integer> tagIds = Arrays.asList(9999,8888);
+        ShowReviewResponse mock = new ShowReviewResponse((long)1000,"내용",5,visitDate, null, new HashSet<>(tagIds), (long)1, "스타벅스", (long)1, "닉네임", false, createdAt);
+        List<ShowReviewResponse> mockRes = List.of(mock, mock, mock,mock,mock);
+        return ResponseEntity.ok().body(mockRes);
     }
 }

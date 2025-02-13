@@ -50,6 +50,7 @@ public class ShowReviewResponse {
         }
     }
 
+    @Builder
     @QueryProjection
     public ShowReviewResponse(Long reviewId, String content, Integer rating, LocalDate visitDate, Set<UUID> imageIds, Set<Integer> tagIds, Long cafeId, String cafeName, Long userId, String nickname, Boolean isImageExist, LocalDateTime createdAt) {
         this.reviewId = reviewId;
