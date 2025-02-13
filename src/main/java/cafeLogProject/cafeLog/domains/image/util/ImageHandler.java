@@ -17,18 +17,12 @@ public class ImageHandler {
 
     public static File save(String basePath, String imageId, MultipartFile image) {
         try{
-            log.error("111111111111");
             if (image == null) throw new ImageInvalidException(ErrorCode.IMAGE_INVALID_ERROR);
             String fullPathName = basePath + imageId;
-            log.error("22222222222");
             File newFile = new File(fullPathName);
-            log.error("33333333333333");
             image.transferTo(newFile);   //파일 저장
             return newFile;
         } catch (Exception e) {
-            log.error("image error!!!!!!", e);
-            log.error("image error!!!!!!", e.toString());
-            log.error("image error!!!!!!", e.getClass());
             throw new ImageSaveException(ErrorCode.IMAGE_SAVE_ERROR);
         }
     }
