@@ -2,14 +2,18 @@ package cafeLogProject.cafeLog.domains.follow.repository;
 
 import cafeLogProject.cafeLog.api.follow.dto.QUserFollowRes;
 import cafeLogProject.cafeLog.api.follow.dto.UserFollowRes;
+import cafeLogProject.cafeLog.common.exception.ErrorCode;
+import cafeLogProject.cafeLog.common.exception.FollowCursorException;
 import cafeLogProject.cafeLog.domains.user.domain.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static cafeLogProject.cafeLog.domains.follow.domain.QFollow.follow;
 import static cafeLogProject.cafeLog.domains.review.domain.QReview.review;
@@ -20,6 +24,7 @@ import static cafeLogProject.cafeLog.domains.user.domain.QUser.user;
 public class FollowRepositoryImpl implements FollowRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Override
     public void deleteFollow(User currentUser, User otherUser) {
@@ -111,12 +116,17 @@ public class FollowRepositoryImpl implements FollowRepositoryCustom {
         if (cursor == null) {
             result.addAll(getSortedFollowList(limit, followList));
         } else {
-            boolean amIFollowingCursorUser = amIFollowing(currentUserId, cursor);
-            if (amIFollowingCursorUser) {
-                addFollowingUsers(result, followList, cursor, limit, currentUserId, otherUserId);
+            Integer isFollowFromCache = getIsFollowFromCache(currentUserId, otherUserId, cursor);
+            if (isFollowFromCache == 1) {
+                addFollowingUsers(result, followList, cursor, limit, cursor, otherUserId);
             } else {
                 addUnfollowingUsers(result, followList, cursor, limit);
             }
+        }
+
+        if (!result.isEmpty()) {
+            UserFollowRes lastFollowRes = result.get(result.size() - 1);
+            cacheLastResult(lastFollowRes.getFollowId(), currentUserId, otherUserId, lastFollowRes.getIsFollow());
         }
 
         return result;
@@ -139,18 +149,35 @@ public class FollowRepositoryImpl implements FollowRepositoryCustom {
     }
 
     /**
-     * @return cursor 의 값을 follow.id 로 가진 유저를 내가 팔로잉했는지 boolean 값으로 반환
-     *          * true 일 경우 -> 내가 팔로잉하고 있는 유저부터 조회하기 위해.
-     *          * false 일 경우 -> 내가 팔로잉하고 있지 않은 유저만 조회하기 위해.
+     * @return 마지막으로 조회한 팔로우 아이디와 내가 팔로잉했는지 여부
+     * return 1 --> 내가 팔로잉
+     * return 0 --> 내가 팔로잉하지 않음
+     *
+     * 마지막으로 조회했던 팔로우 아이디를 커서로 사용하지 않는 경우 예외 처리
      */
-    private boolean amIFollowing(Long currentUserId, Long cursor) {
+    private Integer getIsFollowFromCache(Long currentUserId, Long otherUserId, Long cursor) {
 
-            return queryFactory
-                    .select(follow.id)
-                    .from(follow)
-                    .where(follow.follower.id.eq(currentUserId)
-                            .and(follow.following.id.eq(cursor)))
-                    .fetchOne() != null;
+        String value = redisTemplate.opsForValue().get(currentUserId + ":" + otherUserId);
+        String[] values = value.split(":");
+
+        if (values[0].equals(cursor.toString())) {
+            return Integer.valueOf(values[1]);
+        } else {
+            throw new FollowCursorException(ErrorCode.FOLLOW_CURSOR_EXCEPTION);
+        }
+    }
+
+    /**
+     * 마지막 조회 결과를 레디스에 저장
+     * 마지막으로 조회한 follow가 삭제되는 경우도 있기 때문
+     * 키는 현재유저아이디:타겟유저아이디 --> 유저마다 isFollow 값이 다르기 때문에
+     * 값은 마지막으로 조회한 followId:isFollow
+     */
+    private void cacheLastResult(Long lastResultFollowId, Long currentUserId, Long otherUserId, int isFollow) {
+
+        String key = currentUserId + ":" + otherUserId;
+        String value = lastResultFollowId + ":" + isFollow;
+        redisTemplate.opsForValue().set(key, value, 1, TimeUnit.HOURS);
     }
 
     /**
@@ -218,7 +245,5 @@ public class FollowRepositoryImpl implements FollowRepositoryCustom {
 
         result.addAll(unfollowingList);
     }
-
-
 
 }
