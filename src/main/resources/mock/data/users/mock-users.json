@@ -1,0 +1,102 @@
+[
+  {
+    "id": "g123456",
+    "email": "kim.minho@example.com",
+    "displayName": "김민호"
+  },
+  {
+    "id": "g234567",
+    "email": "park.jieun@example.com",
+    "displayName": "박지은"
+  },
+  {
+    "id": "g345678",
+    "email": "lee.junho@example.com",
+    "displayName": "이준호"
+  },
+  {
+    "id": "g456789",
+    "email": "choi.soyeon@example.com",
+    "displayName": "최소연"
+  },
+  {
+    "id": "n112233",
+    "email": "han.jiwon@example.com",
+    "displayName": "한지원"
+  },
+  {
+    "id": "n223344",
+    "email": "jung.hyerin@example.com",
+    "displayName": "정혜린"
+  },
+  {
+    "id": "n334455",
+    "email": "kang.dongwoo@example.com",
+    "displayName": "강동우"
+  },
+  {
+    "id": "n445566",
+    "email": "song.minah@example.com",
+    "displayName": "송민아"
+  },
+  {
+    "id": "f123123",
+    "email": "yoon.seojin@example.com",
+    "displayName": "윤서진"
+  },
+  {
+    "id": "f234234",
+    "email": "baek.jinyoung@example.com",
+    "displayName": "백진영"
+  },
+  {
+    "id": "g567890",
+    "email": "shin.yuna@example.com",
+    "displayName": "신유나"
+  },
+  {
+    "id": "g678901",
+    "email": "kim.jaehyun@example.com",
+    "displayName": "김재현"
+  },
+  {
+    "id": "n556677",
+    "email": "oh.seunghee@example.com",
+    "displayName": "오승희"
+  },
+  {
+    "id": "n667788",
+    "email": "lee.taehyung@example.com",
+    "displayName": "이태형"
+  },
+  {
+    "id": "f345345",
+    "email": "park.soojin@example.com",
+    "displayName": "박수진"
+  },
+  {
+    "id": "g789012",
+    "email": "hwang.minyoung@example.com",
+    "displayName": "황민영"
+  },
+  {
+    "id": "n778899",
+    "email": "jo.hyunjin@example.com",
+    "displayName": "조현진"
+  },
+  {
+    "id": "f456456",
+    "email": "seo.jihoon@example.com",
+    "displayName": "서지훈"
+  },
+  {
+    "id": "g890123",
+    "email": "nam.woohyun@example.com",
+    "displayName": "남우현"
+  },
+  {
+    "id": "n889900",
+    "email": "jang.yeeun@example.com",
+    "displayName": "장예은"
+  }
+]
