@@ -10,4 +10,5 @@ public interface FollowRepositoryCustom {
     void deleteFollow(User currentUser, User otherUser);
     List<UserFollowRes> getFollowerList(Long currentUserId, Long otherUserId, int limit, Long cursor);
     List<UserFollowRes> getFollowingList(Long currentUserId, Long otherUserId, int limit, Long cursor);
+
 }
