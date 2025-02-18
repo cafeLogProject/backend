@@ -10,6 +10,10 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,24 +26,59 @@ public class SqlScriptRunner implements CommandLineRunner {
     private final DataSource dataSource;
     private final ResourceLoader resourceLoader;
 
-    // Define SQL scripts in order of execution
+    private static final List<String> TABLES = Arrays.asList(
+        "cafe_db",
+        "user_tb", 
+        "draft_review_tb",
+        "review_tb",
+        "follow_tb"
+    );
+
     private static final List<String> SQL_SCRIPTS = Arrays.asList(
-            "sql/01_cafe.sql",
-            "sql/02_user.sql",
-            "sql/03_draft.sql",
-            "sql/04_review.sql",
-            "sql/05_follow.sql"
+        "sql/01_cafe.sql",
+        "sql/02_user.sql", 
+        "sql/03_draft.sql",
+        "sql/04_review.sql",
+        "sql/05_follow.sql"
     );
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("Starting SQL script execution...");
+        log.info("Checking if tables are empty...");
+        
+        if (!areTablesEmpty()) {
+            log.info("Tables already contain data. Skipping SQL script execution.");
+            return;
+        }
+
+        log.info("All tables are empty. Starting SQL script execution...");
+        executeScripts();
+    }
+
+    private boolean areTablesEmpty() {
+        try (Connection conn = dataSource.getConnection()) {
+            for (String table : TABLES) {
+                try (PreparedStatement ps = conn.prepareStatement("SELECT COUNT(*) FROM " + table)) {
+                    ResultSet rs = ps.executeQuery();
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        log.info("Table {} is not empty", table);
+                        return false;
+                    }
+                }
+            }
+            return true;
+        } catch (SQLException e) {
+            log.error("Error checking tables: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    private void executeScripts() {
         boolean hasErrors = false;
 
         for (String scriptPath : SQL_SCRIPTS) {
             try {
                 Resource resource = resourceLoader.getResource("classpath:" + scriptPath);
-
                 if (!resource.exists()) {
                     log.error("SQL script not found: {}", scriptPath);
                     hasErrors = true;
