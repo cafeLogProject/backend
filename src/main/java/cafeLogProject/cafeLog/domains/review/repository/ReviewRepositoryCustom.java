@@ -23,4 +23,6 @@ public interface ReviewRepositoryCustom {
     // 모든 리뷰 조회 & 필터링
     // 특정 매개변수가 null인 경우 조건 건너뜀
     List<ShowReviewResponse> search(String orderMethod, List<Integer> tagIds, Integer currentRating, LocalDateTime createdAt, Pageable pageable);
+
+    List<ShowReviewResponse> searchByFollowingUsers(Long id, LocalDateTime timestamp, Pageable pageable);
 }
