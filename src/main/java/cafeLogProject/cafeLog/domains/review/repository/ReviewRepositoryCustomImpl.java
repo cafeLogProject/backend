@@ -225,34 +225,20 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
 
     @Override
     public List<ShowReviewResponse> searchByFollowingUsers(Long userId, LocalDateTime timestamp, Pageable pageable) {
-        // 1. 팔로잉 ID 목록 조회
-        List<Long> followingUserIds = queryFactory
-                .select(follow.following.id)
-                .from(follow)
-                .where(follow.follower.id.eq(userId))
-                .fetch();
-
-        if (followingUserIds.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        // 2. 리뷰 ID 목록 먼저 조회 (필요한 리뷰만 가져오기 위함)
+        // 팔로잉한 유저의 리뷰 ID 조회
         List<Long> reviewIds = queryFactory
                 .select(review.id)
                 .from(review)
+                .join(follow).on(review.user.id.eq(follow.following.id))
                 .where(
-                        review.user.id.in(followingUserIds),
+                        follow.follower.id.eq(userId),
                         review.createdAt.lt(timestamp)
                 )
                 .orderBy(review.createdAt.desc())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        if (reviewIds.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        // 3. 리뷰와 관련 데이터 한 번에 조회 (카페 정보 포함)
+        // 리뷰와 관련 데이터 한 번에 조회 (카페 정보 포함)
         List<Tuple> results = queryFactory
                 .select(review, tag.tagId, reviewImage.id, user, cafe)
                 .from(review)
@@ -277,6 +263,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
                 .sorted(Comparator.comparing(ShowReviewResponse::getCreatedAt).reversed())
                 .collect(Collectors.toList());
     }
+
     private OrderSpecifier[] createOrderSpecifier(String sortMethod) {
         List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
         switch (sortMethod) {

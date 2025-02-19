@@ -84,10 +84,6 @@ public class ReviewController {
                 request
         );
 
-        if (reviews.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
         return ResponseEntity.ok(reviews);
     }
 }
