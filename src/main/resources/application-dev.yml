@@ -1,0 +1,90 @@
+spring:
+  devtools:
+    restart:
+      enabled: true
+
+  datasource:
+    url: ${DB_DATASOURCE}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  servlet:
+    multipart:
+      max-file-size: 4MB
+      max-request-size: 4MB
+
+  redis:
+    host: ${SPRING_REDIS_HOST}
+    port: ${SPRING_REDIS_PORT}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  jwt:
+    secret: ${JWT_SECRET}
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
+            scope:
+              - email
+              - profile
+
+
+          facebook:
+            client-id: ${FACEBOOK_CLIENT_ID}
+            client-secret: ${FACEBOOK_CLIENT_SECRET}
+            scope:
+              - public_profile
+              - email
+
+          naver:
+            client-id: ${NAVER_CLIENT_ID}
+            client-secret: ${NAVER_CLIENT_SECRET}
+            scope:
+              - name
+              - email
+            client-name: Naver
+            authorization-grant-type: authorization_code
+            redirect-uri: ${NAVER_REDIRECT_URI}
+
+
+        provider:
+          google:
+            authorization-uri: "http://localhost:8080/mock/oauth2/authorize"
+            token-uri: "http://localhost:8080/mock/oauth2/token"
+            user-info-uri: "http://localhost:8080/mock/oauth2/userinfo"
+            user-name-attribute: sub
+
+          naver:
+            authorization-uri: ${NAVER_AUTHORIZATION_URI}
+            token-uri: ${NAVER_TOKEN_URI}
+            user-info-uri: ${NAVER_USER_INFO_URI}
+            user-name-attribute: response
+
+logging.level:
+  org.hibernate.SQL: debug
+  org.hibernate.orm.jdbc.bind: trace
+
+path:
+  base: ${PROJECT_PATH}
+
+server:
+  port: ${SERVER_PORT:8080}
+  tomcat:
+    remoteip:
+      protocol-header: x-forwarded-proto
+
+front:
+  redirect: ${FRONTEND_REDIRECT}

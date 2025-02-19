@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.*;
-import static cafeLogProject.cafeLog.common.config.SecurityConfig.whiteList;
 import static cafeLogProject.cafeLog.common.exception.ErrorCode.*;
 
 @Slf4j
@@ -30,13 +29,26 @@ public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
     private final JWTTokenService tokenService;
+    private final String[] whiteList;
 
+
+    private boolean isWhitelisted(String uri) {
+        for (String pattern : whiteList) {
+            if (pattern.contains("**")) {
+                String prefix = pattern.substring(0, pattern.indexOf("**"));
+                if (uri.startsWith(prefix)) {
+                    return true;
+                }
+            } else if (uri.equals(pattern)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-
-        // 화이트리스트에 있는 경로는 필터를 건너뛰기
-        if (Arrays.asList(whiteList).contains(request.getRequestURI())) {
+        if (isWhitelisted(request.getRequestURI())) {
             chain.doFilter(request, response);
             return;
         }
@@ -68,7 +80,7 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     /**
-     *  AccessToken 이 null 이거나 값이 비어있는지 확인
+     * AccessToken 이 null 이거나 값이 비어있는지 확인
      */
     private void checkNullOrEmpty(String accessToken) {
 
@@ -79,7 +91,7 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     /**
-     *  JWTUserDTO 반환  --> access 토큰이 만료되었다면 재발급 후 반환
+     * JWTUserDTO 반환  --> access 토큰이 만료되었다면 재발급 후 반환
      */
     private JWTUserDTO extractUserInfo(String accessToken, String refreshToken, HttpServletResponse response) {
 
