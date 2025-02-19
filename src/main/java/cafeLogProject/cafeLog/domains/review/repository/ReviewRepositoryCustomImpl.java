@@ -17,11 +17,14 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import static cafeLogProject.cafeLog.domains.cafe.domain.QCafe.cafe;
 import static cafeLogProject.cafeLog.domains.image.domain.QReviewImage.reviewImage;
 import static cafeLogProject.cafeLog.domains.review.domain.QReview.review;
 import static cafeLogProject.cafeLog.domains.review.domain.QTag.tag;
 import static cafeLogProject.cafeLog.domains.user.domain.QUser.user;
+import static cafeLogProject.cafeLog.domains.follow.domain.QFollow.follow;
 import static com.querydsl.core.group.GroupBy.*;
 
 
@@ -125,7 +128,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
     }
 
     @Override
-    public List<ShowReviewResponse> searchByUser(User user, LocalDateTime createdAt, Pageable pageable){
+    public List<ShowReviewResponse> searchByUser(User user, LocalDateTime createdAt, Pageable pageable) {
         List<Long> reviewIds;
         reviewIds = queryFactory
                 .select(review.id)
@@ -220,13 +223,54 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
                 );
     }
 
-    private OrderSpecifier[] createOrderSpecifier(String sortMethod){
+    @Override
+    public List<ShowReviewResponse> searchByFollowingUsers(Long userId, LocalDateTime timestamp, Pageable pageable) {
+        // 팔로잉한 유저의 리뷰 ID 조회
+        List<Long> reviewIds = queryFactory
+                .select(review.id)
+                .from(review)
+                .join(follow).on(review.user.id.eq(follow.following.id))
+                .where(
+                        follow.follower.id.eq(userId),
+                        review.createdAt.lt(timestamp)
+                )
+                .orderBy(review.createdAt.desc())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        // 리뷰와 관련 데이터 한 번에 조회 (카페 정보 포함)
+        List<Tuple> results = queryFactory
+                .select(review, tag.tagId, reviewImage.id, user, cafe)
+                .from(review)
+                .leftJoin(reviewImage).on(review.id.eq(reviewImage.review.id))
+                .leftJoin(review.user, user)
+                .leftJoin(review.cafe, cafe)  // 카페 정보 조인
+                .leftJoin(tag).on(review.id.eq(tag.review.id))
+                .where(review.id.in(reviewIds))
+                .fetch();
+
+        return results.stream()
+                .collect(Collectors.groupingBy(
+                        tuple -> tuple.get(review).getId(),
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                this::toShowReviewResponse
+                        )
+                ))
+                .values()
+                .stream()
+                .filter(Objects::nonNull)
+                .sorted(Comparator.comparing(ShowReviewResponse::getCreatedAt).reversed())
+                .collect(Collectors.toList());
+    }
+
+    private OrderSpecifier[] createOrderSpecifier(String sortMethod) {
         List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
         switch (sortMethod) {
-            case "NEW" :
+            case "NEW":
                 orderSpecifiers.add(new OrderSpecifier(Order.DESC, review.createdAt));
                 return orderSpecifiers.toArray(new OrderSpecifier[orderSpecifiers.size()]);
-            case "HIGH_RATING" :
+            case "HIGH_RATING":
                 orderSpecifiers.add(new OrderSpecifier(Order.DESC, review.rating));
                 orderSpecifiers.add(new OrderSpecifier(Order.DESC, review.createdAt));
                 return orderSpecifiers.toArray(new OrderSpecifier[orderSpecifiers.size()]);
