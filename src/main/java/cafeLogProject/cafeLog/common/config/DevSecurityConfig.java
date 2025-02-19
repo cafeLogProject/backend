@@ -7,6 +7,7 @@ import cafeLogProject.cafeLog.common.auth.jwt.JWTLogoutFilter;
 import cafeLogProject.cafeLog.common.auth.jwt.JWTUtil;
 import cafeLogProject.cafeLog.common.auth.jwt.token.JWTTokenService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2UserService;
+import cafeLogProject.cafeLog.common.auth.common.CustomOAuth2AuthorizationRequestResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -22,18 +25,22 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@Profile("!dev")
-public class SecurityConfig {
+@Profile("dev")
+public class DevSecurityConfig {
 
     private final CustomOAuth2UserService oAuth2UserService;
     private final JWTLoginHandler loginHandler;
     private final JWTUtil jwtUtil;
     private final JWTTokenService tokenService;
+    private final ClientRegistrationRepository clientRegistrationRepository;
+
     public static final String[] whiteList = {
             "/api/auth/login",
             "/api/auth/check",
             "/login/oauth2/code/**",
             "/login/oauth2/authorization/**",
+            "/oauth2/authorization/**",
+            "/mock/oauth2/**",
             "/login"
     };
 
@@ -44,6 +51,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        DefaultOAuth2AuthorizationRequestResolver defaultResolver =
+                new DefaultOAuth2AuthorizationRequestResolver(
+                        clientRegistrationRepository,
+                        "/oauth2/authorization"
+                );
+        CustomOAuth2AuthorizationRequestResolver customResolver =
+                new CustomOAuth2AuthorizationRequestResolver(defaultResolver);
 
 
         http
@@ -56,10 +70,13 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable);
 
         http
-                .oauth2Login((auth) -> auth
-                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
-                                .userService(oAuth2UserService))
-                        .successHandler(loginHandler));
+                .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(auth -> auth
+                                .authorizationRequestResolver(customResolver)
+                        )
+                        .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
+                        .successHandler(loginHandler)
+                );
 
         http
                 .addFilterAfter(jwtFilter(), UsernamePasswordAuthenticationFilter.class);

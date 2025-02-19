@@ -208,5 +208,11 @@ public class ReviewService {
     }
 
 
+    public List<ShowReviewResponse> findFollowingUsersReviews(String username, ShowUserReviewRequest request) {
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username, ErrorCode.USER_NOT_FOUND_ERROR));
 
+        Pageable pageable = PageRequest.of(0, request.getLimit());
+        return reviewRepository.searchByFollowingUsers(currentUser.getId(), request.getTimestamp(), pageable);
+    }
 }

@@ -19,40 +19,40 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("/{reviewId}")
-    public ResponseEntity<ShowReviewResponse> findReviewByReviewId(@PathVariable(value="reviewId") Long reviewId) {
+    public ResponseEntity<ShowReviewResponse> findReviewByReviewId(@PathVariable(value = "reviewId") Long reviewId) {
         ShowReviewResponse showReviewResponse = reviewService.findReview(reviewId);
         return ResponseEntity.ok().body(showReviewResponse);
     }
 
     @GetMapping("/cafe/{cafeId}")
-    public ResponseEntity<List<ShowReviewResponse>> showCafeReviews(@PathVariable(value="cafeId") Long cafeId,
+    public ResponseEntity<List<ShowReviewResponse>> showCafeReviews(@PathVariable(value = "cafeId") Long cafeId,
                                                                     @ModelAttribute @Valid ShowCafeReviewRequest showCafeReviewRequest) {
         List<ShowReviewResponse> res = reviewService.findCafeReviews(cafeId, showCafeReviewRequest);
         return ResponseEntity.ok().body(res);
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<ShowReviewResponse>> showReviews(@ModelAttribute @Valid ShowReviewRequest showReviewRequest){
+    public ResponseEntity<List<ShowReviewResponse>> showReviews(@ModelAttribute @Valid ShowReviewRequest showReviewRequest) {
         List<ShowReviewResponse> res = reviewService.findReviews(showReviewRequest);
         return ResponseEntity.ok().body(res);
     }
 
     @GetMapping("/my")
     public ResponseEntity<List<ShowReviewResponse>> showMyReviews(@AuthenticationPrincipal CustomOAuth2User oAuth2User,
-                                                                  @ModelAttribute @Valid ShowUserReviewRequest showUserReviewRequest){
+                                                                  @ModelAttribute @Valid ShowUserReviewRequest showUserReviewRequest) {
         List<ShowReviewResponse> review = reviewService.findUserReviews(oAuth2User.getName(), showUserReviewRequest);
         return ResponseEntity.ok().body(review);
     }
 
     @GetMapping("/user")
     public ResponseEntity<List<ShowReviewResponse>> showReviewsByUserId(@NotNull(message = "userId는 필수입니다") Long userId,
-                                                                  @ModelAttribute @Valid ShowUserReviewRequest showUserReviewRequest){
+                                                                        @ModelAttribute @Valid ShowUserReviewRequest showUserReviewRequest) {
         List<ShowReviewResponse> review = reviewService.findUserReviews(userId, showUserReviewRequest);
         return ResponseEntity.ok().body(review);
     }
 
     @PostMapping("{draftReviewId}")
-    public ResponseEntity<ShowReviewResponse> registReview(@PathVariable(value="draftReviewId") Long draftReviewId,
+    public ResponseEntity<ShowReviewResponse> registReview(@PathVariable(value = "draftReviewId") Long draftReviewId,
                                                            @RequestBody @Valid RegistReviewRequest registReviewRequest,
                                                            @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
         ShowReviewResponse res = reviewService.addReview(oAuth2User.getName(), draftReviewId, registReviewRequest);
@@ -60,7 +60,7 @@ public class ReviewController {
     }
 
     @PatchMapping("/{reviewId}")
-    public ResponseEntity<ShowReviewResponse> updateReview(@PathVariable(value="reviewId") Long reviewId,
+    public ResponseEntity<ShowReviewResponse> updateReview(@PathVariable(value = "reviewId") Long reviewId,
                                                            @RequestBody @Valid UpdateReviewRequest updateReviewRequest,
                                                            @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
         ShowReviewResponse res = reviewService.updateReview(oAuth2User.getName(), reviewId, updateReviewRequest);
@@ -68,9 +68,22 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{reviewId}")
-    public ResponseEntity<?> deleteReview(@PathVariable(value="reviewId") Long reviewId,
+    public ResponseEntity<?> deleteReview(@PathVariable(value = "reviewId") Long reviewId,
                                           @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
         reviewService.deleteReview(oAuth2User.getName(), reviewId);
         return ResponseEntity.ok().body(null);
+    }
+
+    @GetMapping("/follow")
+    public ResponseEntity<List<ShowReviewResponse>> getFollowingUsersReviews(
+            @AuthenticationPrincipal CustomOAuth2User user,
+            @ModelAttribute @Valid ShowUserReviewRequest request) {
+
+        List<ShowReviewResponse> reviews = reviewService.findFollowingUsersReviews(
+                user.getName(),
+                request
+        );
+
+        return ResponseEntity.ok(reviews);
     }
 }
