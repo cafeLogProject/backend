@@ -19,15 +19,20 @@ import java.time.ZonedDateTime;
 public class ImageHandler {
 
     public static File save(String basePath, String imageId, MultipartFile image) {
+        File newFile;
         try{
             if (image == null) throw new ImageInvalidException(ErrorCode.IMAGE_INVALID_ERROR);
             String fullPathName = basePath + imageId;
-            File newFile = new File(fullPathName);
+            newFile = new File(fullPathName);
             image.transferTo(newFile);   //파일 저장
-            return newFile;
         } catch (Exception e) {
             throw new ImageSaveException(ErrorCode.IMAGE_SAVE_ERROR);
         }
+        if (!hasLastModified(newFile)) {
+            delete(basePath, imageId);
+            throw new ImageSaveException("읽기 권한이 없거나, 알 수 없는 오류로 인해 Last-Modified값이 0입니다", ErrorCode.IMAGE_SAVE_ERROR);
+        }
+        return newFile;
     }
 
     public static Resource load(String basePath, String imageId) {
@@ -90,12 +95,26 @@ public class ImageHandler {
         try {
             File file = resource.getFile();
             Long lastModifiedNum = file.lastModified();
-            if (lastModifiedNum == 0) throw new ImageLoadException("파일 접근권한이 없거나 특정 OS로 인해 lastModified값이 0입니다.", ErrorCode.IMAGE_LOAD_ERROR);
+            if (lastModifiedNum == 0) throw new ImageLoadException("알 수 없는 원인으로 인해 lastModified값이 0입니다.", ErrorCode.IMAGE_LOAD_ERROR);
             ZonedDateTime lastModifiedDate = Instant.ofEpochMilli(lastModifiedNum).atZone(ZoneId.systemDefault());
             return lastModifiedDate;
         } catch (Exception e) {
             // 다른 저장소 (예: S3)에서 로드된 경우 (URL 리소스 처리하는 경우) 별도 처리 필요
             throw new ImageInvalidException(ErrorCode.IMAGE_INVALID_ERROR);
+        }
+    }
+
+    // 이미지 저장시 Last-Modified 생성되었는지 확인
+    public static boolean hasLastModified(File file) {
+        try {
+            Long lastModifiedNum = file.lastModified();
+            if (lastModifiedNum == 0) {
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            // 다른 저장소 (예: S3)에서 로드된 경우 (URL 리소스 처리하는 경우) 별도 처리 필요
+            return false;
         }
     }
 
