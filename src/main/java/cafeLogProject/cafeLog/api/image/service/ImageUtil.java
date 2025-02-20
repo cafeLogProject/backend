@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.time.ZonedDateTime;
 
 
 // 이미지 파일 저장 관련
@@ -48,6 +49,11 @@ public class ImageUtil {
     // 이미지 파일 경로 변경
     public static void renameCompressedImage(String oldPath, String newPath){
         ImageCompressor.renameWebpFileTo(BASE_PATH+oldPath, BASE_PATH+newPath);
+    }
+
+    // 이미지의 Last-Modified 값 리턴
+    public static ZonedDateTime getLastModifiedDate(Resource resource) {
+        return ImageHandler.getLastModifiedDate(resource);
     }
 
 }
