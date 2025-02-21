@@ -11,7 +11,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api")
@@ -44,18 +43,19 @@ public class UserController {
         return ResponseEntity.ok(isExist);
     }
 
-    @GetMapping("/profile/search")
-    public ResponseEntity<List<UserSearchRes>> searchUsersByNickname(@RequestParam String name) {
-
-        List<UserSearchRes> userSearchRes = userService.searchUsersByNickname(name);
-        return ResponseEntity.ok(userSearchRes);
-    }
-
     @GetMapping("/users/{userId}")
     public ResponseEntity<OtherUserInfoRes> getOtherUserInfo(@AuthenticationPrincipal CustomOAuth2User user,
                                                              @PathVariable Long userId) {
 
         OtherUserInfoRes otherUserInfo = userService.getOtherUserInfo(user.getName(), userId);
         return ResponseEntity.ok(otherUserInfo);
+    }
+
+    @GetMapping("/profile/search")
+    public ResponseEntity<List<UserSearchRes>> searchUserByNickname(@RequestParam String nickname,
+                                                                    @AuthenticationPrincipal CustomOAuth2User user) {
+
+        List<UserSearchRes> userSearchRes = userService.searchUserByNickname(nickname, user.getName());
+        return ResponseEntity.ok(userSearchRes);
     }
 }
