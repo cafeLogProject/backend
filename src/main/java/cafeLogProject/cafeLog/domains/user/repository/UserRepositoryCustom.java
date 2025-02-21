@@ -10,7 +10,8 @@ import java.util.Optional;
 public interface UserRepositoryCustom {
 
     boolean existsNicknameExcludingSelf(String username, String newNickname);
-    List<UserSearchRes> findByNicknameContainingIgnoreCase(String nickname);
     Optional<OtherUserInfoRes> findOtherUserInfo(String currentUsername, Long otherUserId);
     Optional<UserInfoRes> findMyProfileWithReviewCount(String username);
+
+    List<UserSearchRes> searchUserByNickname(String searchNickname, Long currentUserId);
 }

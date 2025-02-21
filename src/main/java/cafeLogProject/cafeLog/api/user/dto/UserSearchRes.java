@@ -1,5 +1,6 @@
 package cafeLogProject.cafeLog.api.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,15 +10,22 @@ import lombok.NoArgsConstructor;
 public class UserSearchRes {
 
     private Long userId;
+
     private String nickname;
-    private String introduce;
+
+    private Boolean isProfileImageExist;
+
+    @JsonProperty("isFollow")
+    private int isFollow;
+
+    private String followerCountMessage;
 
     @QueryProjection
-    public UserSearchRes(Long userId, String nickname, String introduce) {
+    public UserSearchRes(Long userId, String nickname, Boolean isProfileImageExist) {
 
         this.userId = userId;
         this.nickname = nickname;
-        this.introduce = introduce;
+        this.isProfileImageExist = isProfileImageExist;
     }
 
 }
