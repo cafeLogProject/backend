@@ -82,7 +82,7 @@ public class FollowRepositoryImpl implements FollowRepositoryCustom {
         List<Long> myFollowingList = getMyFollowingList(currentUserId);
         setIsFollow(currentUserId, followList, myFollowingList);
 
-        return paginateFollowList(limit, cursor, followList, currentUserId, otherUserId);
+        return paginateFollowList(limit, cursor, followList, currentUserId, otherUserId, isFollower);
     }
 
     private List<Long> getMyFollowingList(Long currentUserId) {
@@ -109,14 +109,14 @@ public class FollowRepositoryImpl implements FollowRepositoryCustom {
         }
     }
 
-    private List<UserFollowRes> paginateFollowList(int limit, Long cursor, List<UserFollowRes> followList, Long currentUserId, Long otherUserId) {
+    private List<UserFollowRes> paginateFollowList(int limit, Long cursor, List<UserFollowRes> followList, Long currentUserId, Long otherUserId, boolean isFollower) {
 
         List<UserFollowRes> result = new ArrayList<>();
 
         if (cursor == null) {
             result.addAll(getSortedFollowList(limit, followList));
         } else {
-            Integer isFollowFromCache = getIsFollowFromCache(currentUserId, otherUserId, cursor);
+            Integer isFollowFromCache = getIsFollowFromCache(currentUserId, otherUserId, cursor, isFollower);
             if (isFollowFromCache == 1) {
                 addFollowingUsers(result, followList, cursor, limit, cursor, otherUserId);
             } else {
@@ -126,7 +126,7 @@ public class FollowRepositoryImpl implements FollowRepositoryCustom {
 
         if (!result.isEmpty()) {
             UserFollowRes lastFollowRes = result.get(result.size() - 1);
-            cacheLastResult(lastFollowRes.getFollowId(), currentUserId, otherUserId, lastFollowRes.getIsFollow());
+            cacheLastResult(lastFollowRes.getFollowId(), currentUserId, otherUserId, lastFollowRes.getIsFollow(), isFollower);
         }
 
         return result;
@@ -155,9 +155,10 @@ public class FollowRepositoryImpl implements FollowRepositoryCustom {
      *
      * 마지막으로 조회했던 팔로우 아이디를 커서로 사용하지 않는 경우 예외 처리
      */
-    private Integer getIsFollowFromCache(Long currentUserId, Long otherUserId, Long cursor) {
-
-        String value = redisTemplate.opsForValue().get(currentUserId + ":" + otherUserId);
+    private Integer getIsFollowFromCache(Long currentUserId, Long otherUserId, Long cursor, boolean isFollower) {
+        String listType = isFollower ? "-follower" : "-following";
+        String key = currentUserId + ":" + otherUserId + listType;
+        String value = redisTemplate.opsForValue().get(key);
         String[] values = value.split(":");
 
         if (values[0].equals(cursor.toString())) {
@@ -173,9 +174,9 @@ public class FollowRepositoryImpl implements FollowRepositoryCustom {
      * 키는 현재유저아이디:타겟유저아이디 --> 유저마다 isFollow 값이 다르기 때문에
      * 값은 마지막으로 조회한 followId:isFollow
      */
-    private void cacheLastResult(Long lastResultFollowId, Long currentUserId, Long otherUserId, int isFollow) {
-
-        String key = currentUserId + ":" + otherUserId;
+    private void cacheLastResult(Long lastResultFollowId, Long currentUserId, Long otherUserId, int isFollow, boolean isFollower) {
+        String listType = isFollower ? "-follower" : "-following";
+        String key = currentUserId + ":" + otherUserId + listType;
         String value = lastResultFollowId + ":" + isFollow;
         redisTemplate.opsForValue().set(key, value, 1, TimeUnit.HOURS);
     }

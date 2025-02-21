@@ -2,9 +2,7 @@ package cafeLogProject.cafeLog.api.user.service;
 
 import cafeLogProject.cafeLog.api.user.dto.*;
 import cafeLogProject.cafeLog.common.auth.jwt.JWTUserDTO;
-import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
 import cafeLogProject.cafeLog.common.exception.user.UserNicknameException;
-import cafeLogProject.cafeLog.common.exception.user.UserNicknameNullException;
 import cafeLogProject.cafeLog.common.exception.user.UserNotFoundException;
 import cafeLogProject.cafeLog.domains.review.repository.ReviewRepository;
 import cafeLogProject.cafeLog.domains.user.domain.User;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static cafeLogProject.cafeLog.common.exception.ErrorCode.*;
 
@@ -57,19 +54,22 @@ public class UserService {
         return new IsExistNicknameRes(nickname, true);
     }
 
-    public List<UserSearchRes> searchUsersByNickname(String nickname) {
-
-        if (nickname == null || nickname.trim().isEmpty()) {
-            throw new UserNicknameNullException(USER_NICKNAME_NULL_ERROR);
-        }
-
-        return userRepository.findByNicknameContainingIgnoreCase(nickname);
-    }
-
     public OtherUserInfoRes getOtherUserInfo(String currentUsername, Long otherUserId) {
 
         return userRepository.findOtherUserInfo(currentUsername, otherUserId)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_ERROR));
+    }
+
+    public List<UserSearchRes> searchUserByNickname(String searchNickname, String currentUsername) {
+
+        if (searchNickname == null || searchNickname.trim().isEmpty()) {
+            throw new UserNicknameException(USER_NICKNAME_NULL_ERROR);
+        }
+
+        User user = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_ERROR));
+
+        return userRepository.searchUserByNickname(searchNickname, user.getId());
     }
 
     private void validateNickname(String userName, UserUpdateReq userUpdateReq) {
