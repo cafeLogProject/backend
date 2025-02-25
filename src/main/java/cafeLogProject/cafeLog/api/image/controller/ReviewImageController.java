@@ -53,6 +53,7 @@ public class ReviewImageController {
         }
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CACHE_CONTROL, "no-cache")
                 .header(HttpHeaders.LAST_MODIFIED, lastModifiedDate.format(DateTimeFormatter.RFC_1123_DATE_TIME))
                 .body(resource);
     }
