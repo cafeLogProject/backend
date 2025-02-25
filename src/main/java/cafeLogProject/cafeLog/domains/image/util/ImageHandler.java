@@ -13,6 +13,7 @@ import java.io.File;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 // 이미지 파일 서버 로컬 스토리지에 저장/불러오기
 @Slf4j
@@ -96,7 +97,8 @@ public class ImageHandler {
             File file = resource.getFile();
             Long lastModifiedNum = file.lastModified();
             if (lastModifiedNum == 0) throw new ImageLoadException("알 수 없는 원인으로 인해 lastModified값이 0입니다.", ErrorCode.IMAGE_LOAD_ERROR);
-            ZonedDateTime lastModifiedDate = Instant.ofEpochMilli(lastModifiedNum).atZone(ZoneId.systemDefault());
+            ZonedDateTime lastModifiedDate = Instant.ofEpochMilli(lastModifiedNum).atZone(ZoneId.of("UTC"))
+                    .truncatedTo(ChronoUnit.SECONDS);
             return lastModifiedDate;
         } catch (Exception e) {
             // 다른 저장소 (예: S3)에서 로드된 경우 (URL 리소스 처리하는 경우) 별도 처리 필요
