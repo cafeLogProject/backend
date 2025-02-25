@@ -39,13 +39,12 @@ public class JWTLoginHandler implements AuthenticationSuccessHandler {
         Long userId = userDTO.getUserId();
         UserRole role = userDTO.getUserRole();
 
-        tokenService.deleteTokenByUsername(username);
-
         String access = tokenService.createNewAccess(userId, username, role);
         String refresh = tokenService.createNewRefresh(userId, username, role);
 
-        tokenService.reissueAccessToken(username, access);
-        tokenService.reissueRefreshToken(username, refresh);
+        if (tokenService.isExistInBlacklist(refresh)) {
+            tokenService.deleteTokenInBlacklist(refresh);
+        }
 
         response.setContentType("application/json");
         response.setStatus(HttpStatus.OK.value());

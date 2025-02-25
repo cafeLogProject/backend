@@ -1,7 +1,6 @@
 package cafeLogProject.cafeLog.common.auth.jwt;
 
 import cafeLogProject.cafeLog.common.auth.exception.TokenExpiredException;
-import cafeLogProject.cafeLog.common.auth.exception.TokenNotFoundException;
 import cafeLogProject.cafeLog.common.auth.exception.TokenNullException;
 import cafeLogProject.cafeLog.common.auth.jwt.token.JWTTokenService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
@@ -18,7 +17,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.*;
 import static cafeLogProject.cafeLog.common.exception.ErrorCode.*;
@@ -31,6 +29,27 @@ public class JWTFilter extends OncePerRequestFilter {
     private final JWTTokenService tokenService;
     private final String[] whiteList;
 
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        if (isWhitelisted(request.getRequestURI())) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        String accessToken = extractToken(request, "access");
+        String refreshToken = extractToken(request, "refresh");
+
+        if (!checkRefreshTokenValidity(response, refreshToken)) return;
+
+        if (checkBlackList(response, refreshToken)) return;
+
+        checkNullOrEmpty(accessToken);
+
+        authenticateUser(extractUserInfo(accessToken, refreshToken, response));
+
+        chain.doFilter(request, response);
+    }
 
     private boolean isWhitelisted(String uri) {
         for (String pattern : whiteList) {
@@ -46,25 +65,35 @@ public class JWTFilter extends OncePerRequestFilter {
         return false;
     }
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        if (isWhitelisted(request.getRequestURI())) {
-            chain.doFilter(request, response);
-            return;
+    private boolean checkRefreshTokenValidity(HttpServletResponse response, String refreshToken) throws IOException {
+
+        try {
+            validateRefreshToken(refreshToken);
+        } catch (TokenExpiredException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json; charset=UTF-8");
+            String json = String.format("{\"status\": %d, \"message\": \"%s\"}",
+                    HttpServletResponse.SC_UNAUTHORIZED,
+                    "리프레시 토큰이 만료되었습니다.");
+            response.getWriter().write(json);
+            return false;
         }
 
-        String accessToken = extractToken(request, "access");
-        String refreshToken = extractToken(request, "refresh");
 
-        validateRefreshToken(refreshToken);
+        return true;
+    }
 
-        checkNullOrEmpty(accessToken);
-
-        JWTUserDTO userDTO = extractUserInfo(accessToken, refreshToken, response);
-
-        authenticateUser(userDTO);
-
-        chain.doFilter(request, response);
+    private boolean checkBlackList(HttpServletResponse response, String refreshToken) throws IOException {
+        if (tokenService.isExistInBlacklist(refreshToken)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json; charset=UTF-8");
+            String json = String.format("{\"status\": %d, \"message\": \"%s\"}",
+                    HttpServletResponse.SC_UNAUTHORIZED,
+                    "로그아웃 된 사용자입니다.");
+            response.getWriter().write(json);
+            return true;
+        }
+        return false;
     }
 
 
@@ -75,7 +104,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         if (refreshToken == null || jwtUtil.isExpired(refreshToken)) {
             log.warn("Refresh token is expired");
-            throw new TokenExpiredException(TOKEN_EXPIRED_ERROR); // 예외를 던져서 흐름을 중단
+            throw new TokenExpiredException(TOKEN_EXPIRED_ERROR);
         }
     }
 
@@ -116,27 +145,16 @@ public class JWTFilter extends OncePerRequestFilter {
 
         log.debug("Token expired, attempting to reissue");
 
-        String reissuedUsername = tokenService.reissue(refreshToken);
-        String newAccessToken = tokenService.getAccessTokenByUsername(reissuedUsername);
-        String newRefreshToken = tokenService.getRefreshTokenByUsername(reissuedUsername);
+        String tokens = tokenService.reissue(refreshToken);
+        String[] tokenArr = tokens.split(" ");
 
-        log.debug("New RefreshToken : {}", newRefreshToken);
-
-        if (newAccessToken == null || newRefreshToken == null) {
-            log.error("Failed to find new token, user: {}", reissuedUsername);
-            throw new TokenNotFoundException(TOKEN_NOT_FOUND_ERROR);
-        }
-
-//        response.addCookie(createCookie("access", newAccessToken));
-//        response.addCookie(createCookie("refresh", newRefreshToken));
-
-        ResponseCookie access = createCookie("access", newAccessToken);
-        ResponseCookie refresh = createCookie("refresh", newRefreshToken);
+        ResponseCookie access = createCookie("access", tokenArr[0]);
+        ResponseCookie refresh = createCookie("refresh", tokenArr[1]);
 
         addResponseCookie(response, access);
         addResponseCookie(response, refresh);
 
-        return tokenService.extractUserInfoFromToken(newAccessToken);
+        return tokenService.extractUserInfoFromToken(tokenArr[1]);
     }
 
     /**

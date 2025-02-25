@@ -21,7 +21,6 @@ public class JWTTokenService {
 
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
-    private final AccessRepository accessRepository;
 
     /**
      * 사용자의 accessToken 이 만료되었다면, accessToken, refreshToken 둘 다 재발급
@@ -34,20 +33,16 @@ public class JWTTokenService {
         String newAccess = createNewAccess(userInfo.getUserId(), userInfo.getUsername(), userInfo.getUserRole());
         String newRefresh = createNewRefresh(userInfo.getUserId(), userInfo.getUsername(), userInfo.getUserRole());
 
-        refreshRepository.deleteByUsername(userInfo.getUsername());
-
-        reissueAccessToken(userInfo.getUsername(), newAccess);
-        reissueRefreshToken(userInfo.getUsername(), newRefresh);
+        addBlacklist(userInfo.getUsername(), newRefresh);
         log.info("{} : Reissued token", userInfo.getUsername());
 
-        return userInfo.getUsername();
+        return newAccess + " " + newRefresh;
     }
 
     @Transactional
-    public void deleteTokenByUsername(String username) {
+    public void deleteTokenInBlacklist(String refreshToken) {
 
-        refreshRepository.deleteByUsername("refresh:" + username);
-        accessRepository.deleteByUsername("access:" + username);
+        refreshRepository.delete(refreshToken);
     }
 
     /**
@@ -67,22 +62,6 @@ public class JWTTokenService {
         }
     }
 
-    /**
-     * 사용자 이름으로 access 토큰 반환
-     */
-    public String getAccessTokenByUsername(String username) {
-
-        return accessRepository.findByUsername(username).getAccess();
-    }
-
-    /**
-     * 사용자 이름으로 refresh 토큰 반환
-     */
-    public String getRefreshTokenByUsername(String username) {
-
-        return refreshRepository.findByUsername(username).getRefresh();
-    }
-
 
     /**
      * 새로운 access 토큰 생성
@@ -100,23 +79,11 @@ public class JWTTokenService {
         return jwtUtil.createJWT(userId, username, role, "refresh", REFRESH_TOKEN_EXPIRATION);
     }
 
-    /**
-     * 새로 생성한 access 토큰을 저장
-     */
-    public void reissueAccessToken(String username, String newAccess) {
-
-        accessRepository.save(
-                AccessToken
-                .builder()
-                .username(username)
-                .access(newAccess)
-                .build());
-    }
 
     /**
      * 새로 생성한 refresh 토큰을 저장
      */
-    public void reissueRefreshToken(String username, String newRefresh) {
+    public void addBlacklist(String username, String newRefresh) {
 
         refreshRepository.save(
                 RefreshToken
@@ -125,6 +92,10 @@ public class JWTTokenService {
                         .refresh(newRefresh)
                         .build()
         );
+    }
+
+    public boolean isExistInBlacklist(String refreshToken) {
+        return refreshRepository.isExistInBlacklist(refreshToken);
     }
 
     public ExpiredCheckDTO checkTokenIsExpired(String accessToken, String refreshToken) {

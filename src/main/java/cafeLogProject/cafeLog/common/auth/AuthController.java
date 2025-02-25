@@ -1,9 +1,7 @@
 package cafeLogProject.cafeLog.common.auth;
 
-import cafeLogProject.cafeLog.common.auth.jwt.JWTUtil;
 import cafeLogProject.cafeLog.common.auth.jwt.token.JWTTokenService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2User;
-import cafeLogProject.cafeLog.domains.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.*;
-import static cafeLogProject.cafeLog.common.auth.common.CookieUtil.addResponseCookie;
 
 @Slf4j
 @RestController

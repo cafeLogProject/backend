@@ -3,7 +3,7 @@ package cafeLogProject.cafeLog.common.config;
 
 import cafeLogProject.cafeLog.common.auth.jwt.JWTFilter;
 import cafeLogProject.cafeLog.common.auth.jwt.JWTLoginHandler;
-import cafeLogProject.cafeLog.common.auth.jwt.JWTLogoutFilter;
+import cafeLogProject.cafeLog.common.auth.jwt.JWTLogoutHandler;
 import cafeLogProject.cafeLog.common.auth.jwt.JWTUtil;
 import cafeLogProject.cafeLog.common.auth.jwt.token.JWTTokenService;
 import cafeLogProject.cafeLog.common.auth.oauth2.CustomOAuth2UserService;
@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.web.SecurityFilterChain;
@@ -33,6 +34,7 @@ public class DevSecurityConfig {
     private final JWTUtil jwtUtil;
     private final JWTTokenService tokenService;
     private final ClientRegistrationRepository clientRegistrationRepository;
+    private final JWTLogoutHandler logoutHandler;
 
     public static final String[] whiteList = {
             "/api/auth/login",
@@ -76,13 +78,15 @@ public class DevSecurityConfig {
                         )
                         .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
                         .successHandler(loginHandler)
-                );
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/api/logout")
+                        .addLogoutHandler(logoutHandler)
+                        .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext())));;
 
         http
                 .addFilterAfter(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        http
-                .addFilterBefore(new JWTLogoutFilter(tokenService), LogoutFilter.class);
 //
 //        http
 //                .exceptionHandling(entrypoint -> entrypoint
