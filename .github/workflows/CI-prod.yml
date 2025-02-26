@@ -3,7 +3,7 @@ name: CI-prod
 on:
   pull_request:
     branches:
-      - develop
+      - main
 
 jobs:
   build:
@@ -34,18 +34,18 @@ jobs:
           mkdir -p src/main/resources
           echo "${{ secrets.PROD_APPLICATION_YML }}" > src/main/resources/application.yml
 
-      - name: Create Application-dev.yml
-        run: |
-          mkdir -p src/main/resources
-          echo "${{ secrets.PROD_APPLICATION_DEV_YML }}" > src/main/resources/application-dev.yml
-
-      - name: Create Application-test.yml
-        run: |
-          mkdir -p src/test/resources
-          echo "${{ secrets.PROD_APPLICATION_TEST_YML }}" > src/test/resources/application-test.yml
+#      - name: Create Application-dev.yml
+#        run: |
+#          mkdir -p src/main/resources
+#          echo "${{ secrets.PROD_APPLICATION_DEV_YML }}" > src/main/resources/application-dev.yml
+#
+#      - name: Create Application-test.yml
+#        run: |
+#          mkdir -p src/test/resources
+#          echo "${{ secrets.PROD_APPLICATION_TEST_YML }}" > src/test/resources/application-test.yml
 
       - name: Build Gradle
         run: |
           chmod +x ./gradlew
-          ./gradlew clean build -i --no-daemon
+          ./gradlew clean build -x --no-daemon
 
