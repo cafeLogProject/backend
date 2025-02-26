@@ -1,5 +1,6 @@
 package cafeLogProject.cafeLog.common.exception;
 
+import cafeLogProject.cafeLog.common.auth.exception.TokenExpiredException;
 import cafeLogProject.cafeLog.common.dto.ApiErrorResponse;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import lombok.extern.slf4j.Slf4j;
@@ -84,4 +85,5 @@ public class GlobalExceptionHandler {
                 .status(e.getErrorCode().getHttpStatus())
                 .body(new ApiErrorResponse(e));
     }
+
 }

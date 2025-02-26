@@ -27,9 +27,6 @@ public class JWTUtil {
         this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
-    /**
-     *  JWT 토큰에서 (DB에 저장된)사용자 ID 추출
-     */
     public Long getUserId(String token) {
         return parseClaims(token).get("userId", Long.class);
     }

@@ -12,15 +12,16 @@ public class RefreshRepository {
         this.redisTemplate = redisTemplate;
     }
 
-    public void deleteByUsername(String username) {
-        redisTemplate.delete("refresh:" + username);
+    public void delete(String refreshToken) {
+        redisTemplate.delete(refreshToken);
     }
 
     public void save(RefreshToken refreshToken) {
-        redisTemplate.opsForValue().set("refresh:" + refreshToken.getUsername(), refreshToken);
+        redisTemplate.opsForValue().set(refreshToken.getRefresh(), refreshToken);
     }
 
-    public RefreshToken findByUsername(String username) {
-        return redisTemplate.opsForValue().get("refresh:" + username);
+    public boolean isExistInBlacklist(String refreshToken) {
+
+        return redisTemplate.hasKey(refreshToken);
     }
 }
